@@ -5,11 +5,11 @@
         <div class="login">
           <div class="card box">
             <div class="has-text-centered">
-              <figure class="avatar">
+              <figure class="p-5 avatar">
                 <img
                   class="logo"
                   tag="img"
-                  src="../../assets/logo.png"
+                  src="../../assets/cuxtal/cuxtal_merida.png"
                   width="200px"
                   alt="Logo"
                 />
@@ -18,10 +18,10 @@
             <form @submit="false">
               <BInputWithValidation
                 v-model="form.username"
-                label="Usuario"
-                placeholder="Usuario"
-                message="Ingresa tu nombre de usuario"
-                name="username"
+                label="Correo electrónico"
+                placeholder="Correo electrónico"
+                message="Ingresa tu correo electrónico"
+                name="correo electrónico"
                 icon="account"
                 rules="required"
                 expanded
@@ -35,7 +35,7 @@
                 message="Ingresa tu contraseña"
                 expanded
                 type="password"
-                name="password"
+                name="contraseña"
                 icon="lock"
                 rules="required"
                 password-reveal
@@ -64,6 +64,7 @@
             </form>
           </div>
         </div>
+        <!--
         <vue-particles
           class="particles"
           color="#dedede"
@@ -82,6 +83,7 @@
           :click-effect="true"
           click-mode="push"
         />
+        -->
       </div>
     </section>
   </ValidationObserver>
@@ -124,7 +126,7 @@ export default {
   },
   head () {
     return {
-      title: 'Login — ParamQ'
+      title: 'Iniciar sesión — Cuxtal'
     }
   }
 }
@@ -136,7 +138,7 @@ export default {
 }
 
 .button:hover {
-  background: rgba(82, 30, 135, 0.8);
+  background: rgba(162, 0, 123, 0.8);
   transition: 0.6s;
 }
 
@@ -164,17 +166,12 @@ export default {
 }
 
 .hero {
-  background: linear-gradient(
-    50deg,
-    #361066 5%,
-    #441480 9.87%,
-    rgb(113, 33, 211) 30.04%,
-    #7322d6 36.71%,
-    #e94e1b 64.41%,
-    #ed5410 76.96%,
-    #ED5410.4%,
-    #ff9503 99.97%
-  );
+  background-color: #0403039a;
+  background-image: url('assets/cuxtal/background.jpg');
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-origin: content-box;
+  background-position: center;
 }
 .box {
   max-width: 400px;

@@ -3,14 +3,14 @@ export default {
    ** Headers of the page
    */
   head: {
-    title: 'PARAMQ - admin',
+    title: 'Cuxtal - admin',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       {
         hid: 'description',
         name: 'description',
-        content: 'Panel de control para aseguradoras'
+        content: 'Panel administrativo para el control de reportes, bitácoras y más.'
       }
     ],
     link: [
@@ -47,7 +47,7 @@ export default {
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: '#ff9503' },
+  loading: { color: '#a2007b' },
   /*
    ** Global CSS
    */
@@ -106,10 +106,10 @@ export default {
   },
   pwa: {
     icon: {
-      source: 'static/icon.png'
+      source: 'static/RC_V.png'
     },
     manifest: {
-      name: 'ParamQ',
+      name: 'Cuxtal',
       lang: 'es',
       theme_color: '#ff9503',
       useWebmanifestExtension: false

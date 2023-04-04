@@ -1,6 +1,10 @@
 <template>
   <nav v-show="isNavBarVisible" id="navbar-main" class="navbar is-fixed-top">
     <div class="navbar-brand">
+      <a class="navbar-item is-expanded" href="https://bulma.io">
+        <img src="@/assets/cuxtal/RC_V.png" width="auto" height="auto">
+      </a>
+      <!--
       <p
         :title="toggleTooltip"
         style="cursor:pointer"
@@ -15,8 +19,10 @@
       >
         <b-icon :icon="menuToggleMobileIcon" />
       </p>
+    -->
     </div>
     <div class="navbar-brand is-right">
+      <!--
       <p
         style="cursor:pointer"
         class="navbar-item navbar-item-menu-toggle is-hidden-desktop"
@@ -31,14 +37,79 @@
       >
         <b-icon :icon="menuNavBarToggleIcon" custom-size="default" />
       </p>
+      -->
     </div>
     <div
       class="navbar-menu fadeIn animated faster"
       :class="{ 'is-active': isMenuNavBarActive }"
     >
       <div class="navbar-end">
+        <nav-bar-menu class="has-divider">
+          <div class="is-user-name">
+            <span>Reportes</span>
+          </div>
+
+          <div slot="dropdown" class="navbar-dropdown">
+            <nuxt-link
+              to="/profile"
+              class="navbar-item"
+              exact-active-class="is-active"
+            >
+              <b-icon icon="account" custom-size="default" />
+              <span>General</span>
+            </nuxt-link>
+            <nuxt-link
+              to="/profile"
+              class="navbar-item"
+              exact-active-class="is-active"
+            >
+              <b-icon icon="account" custom-size="default" />
+              <span>Denuncias</span>
+            </nuxt-link>
+            <nuxt-link
+              to="/profile"
+              class="navbar-item"
+              exact-active-class="is-active"
+            >
+              <b-icon icon="account" custom-size="default" />
+              <span>Instituciones</span>
+            </nuxt-link>
+          </div>
+        </nav-bar-menu>
+        <nav-bar-menu class="has-divider">
+          <div class="is-user-name">
+            <span>Recorridos</span>
+          </div>
+
+          <div slot="dropdown" class="navbar-dropdown">
+            <nuxt-link
+              to="/profile"
+              class="navbar-item"
+              exact-active-class="is-active"
+            >
+              <b-icon icon="account" custom-size="default" />
+              <span>General</span>
+            </nuxt-link>
+            <nuxt-link
+              to="/profile"
+              class="navbar-item"
+              exact-active-class="is-active"
+            >
+              <b-icon icon="account" custom-size="default" />
+              <span>Bitácoras</span>
+            </nuxt-link>
+            <nuxt-link
+              to="/profile"
+              class="navbar-item"
+              exact-active-class="is-active"
+            >
+              <b-icon icon="account" custom-size="default" />
+              <span>Recorridos</span>
+            </nuxt-link>
+          </div>
+        </nav-bar-menu>
         <nav-bar-menu class="has-divider has-user-avatar">
-          <user-avatar />
+          <!--<user-avatar />-->
           <div class="is-user-name">
             <span>{{ userFullName || userName }}</span>
           </div>
@@ -59,6 +130,7 @@
             </a>
           </div>
         </nav-bar-menu>
+        <!--
         <a
           class="navbar-item has-divider is-desktop-icon-only"
           title="Dark mode"
@@ -79,6 +151,7 @@
           />
           <span>Mensajes del sistema</span>
         </a>
+        -->
       </div>
     </div>
   </nav>

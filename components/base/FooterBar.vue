@@ -1,5 +1,5 @@
 <template>
-  <footer v-show="isFooterBarVisible" class="footer">
+  <footer class="footer">
     <div class="container-fluid">
       <div class="level">
         <div class="level-left">

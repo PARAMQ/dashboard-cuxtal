@@ -1,6 +1,7 @@
 <template>
   <nav v-show="isNavBarVisible" id="navbar-main" class="navbar is-fixed-top">
     <div class="navbar-brand">
+      <!--
       <a :title="toggleTooltip" class="navbar-item is-desktop-icon-only is-hidden-touch" @click.prevent="menuToggle">
         <b-icon :icon="menuToggleIcon" />
       </a>
@@ -12,14 +13,17 @@
           <input class="input" placeholder="Search everywhere...">
         </div>
       </div>
+      -->
     </div>
     <div class="navbar-brand is-right">
+      <!--
       <a class="navbar-item navbar-item-menu-toggle is-hidden-desktop" @click.prevent="updatesToggle">
         <b-icon icon="bell" custom-size="default" />
       </a>
       <a class="navbar-item navbar-item-menu-toggle is-hidden-desktop" @click.prevent="menuNavBarToggle">
         <b-icon :icon="menuNavBarToggleIcon" custom-size="default" />
       </a>
+      -->
     </div>
     <div class="navbar-menu fadeIn animated faster" :class="{'is-active':isMenuNavBarActive}">
       <div class="navbar-end">
@@ -72,6 +76,7 @@
             </a>
           </div>
         </nav-bar-menu>
+        <!--
         <a class="navbar-item has-divider is-desktop-icon-only" title="Dark mode" @click="darkModeToggle">
           <b-icon :icon="darkModeToggleIcon" custom-size="default" />
           <span>Dark mode</span>
@@ -84,6 +89,7 @@
           <b-icon icon="bell" custom-size="default" :class="{'has-update-mark':hasUpdates}" />
           <span>Updates</span>
         </a>
+        -->
         <a class="navbar-item is-desktop-icon-only" title="Log out" @click="logout">
           <b-icon icon="logout" custom-size="default" />
           <span>Log out</span>

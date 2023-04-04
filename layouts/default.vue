@@ -1,10 +1,13 @@
 <template>
   <div id="app">
+    <!--
     <div class="float-button">
       <float-action-button />
     </div>
+    -->
     <nav-bar />
     <b-loading v-model="isLoading" :is-full-page="true" :can-cancel="false" />
+    <!--
     <aside-menu
       :menu="menu"
       :menu-bottom="menuBottom"
@@ -20,9 +23,11 @@
       @menu-click="menuClick"
       @close="menuSecondaryCloseClick"
     />
-    <title-bar :title-stack="titleStack" />
+    -->
+    <!--<title-bar :title-stack="titleStack" />-->
     <nuxt />
-    <aside-right />
+    <!--<aside-right />-->
+    <footer-bar />
   </div>
 </template>
 
@@ -267,5 +272,8 @@ export default {
 .events-card .card-table {
   max-height: 250px;
   overflow-y: scroll;
+}
+#app {
+  height: 100%;
 }
 </style>

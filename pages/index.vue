@@ -1,6 +1,24 @@
 <template>
-  <div>
-  </div>
+  <section class="hero is-fullheight">
+    <div class="hero-body">
+      <div class="columns">
+        <div class="column">
+          <div class="card">
+            <div class="card-content">
+              <p>tarjeta 1</p>
+            </div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="card">
+            <div class="card-content">
+              <p>Tarjeta 2</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </template>
 
 <style>
@@ -18,6 +36,17 @@ tr.is-danger {
 }
 tr.is-warning {
   background: #fca503;
+}
+.card {
+  background: white;
+}
+.hero.is-fullheight {
+  background-color: #0403039a;
+  background-image: url('assets/cuxtal/background.jpg');
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-origin: content-box;
+  background-position: center;
 }
 </style>
 
@@ -189,7 +218,7 @@ export default {
   },
   head () {
     return {
-      title: 'Panel de control — ParamQ'
+      title: 'Inicio — Cuxtal'
     }
   }
 }
