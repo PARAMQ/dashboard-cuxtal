@@ -3,16 +3,16 @@ import request from './config'
 /*  LOGIN  */
 export const login = (data) => {
   return request({
-    url: '/auth/token/',
+    url: '/Login.php/login',
     method: 'POST',
     data
   })
 }
 
 /*  USER  */
-export const getUserInfo = (id) => {
+export const getUserInfo = () => {
   return request({
-    url: `/users/${id}/`,
-    method: 'GET'
+    url: '/Login.php/user_data',
+    method: 'POST'
   })
 }

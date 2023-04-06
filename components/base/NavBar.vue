@@ -83,19 +83,19 @@
 
           <div slot="dropdown" class="navbar-dropdown">
             <nuxt-link
-              to="/profile"
+              to="/calendar"
               class="navbar-item"
               exact-active-class="is-active"
             >
-              <b-icon icon="account" custom-size="default" />
-              <span>General</span>
+              <b-icon icon="calendar-month-outline" custom-size="default" />
+              <span>Planificación</span>
             </nuxt-link>
             <nuxt-link
               to="/profile"
               class="navbar-item"
               exact-active-class="is-active"
             >
-              <b-icon icon="account" custom-size="default" />
+              <b-icon icon="file-document-edit-outline" custom-size="default" />
               <span>Bitácoras</span>
             </nuxt-link>
             <nuxt-link
@@ -103,7 +103,7 @@
               class="navbar-item"
               exact-active-class="is-active"
             >
-              <b-icon icon="account" custom-size="default" />
+              <b-icon icon="map-marker-distance" custom-size="default" />
               <span>Recorridos</span>
             </nuxt-link>
           </div>
@@ -123,13 +123,13 @@
               <b-icon icon="account" custom-size="default" />
               <span>Mi Cuenta</span>
             </nuxt-link>
-            <hr class="navbar-divider">
-            <a class="navbar-item has-text-danger" @click="logout">
-              <b-icon icon="logout" custom-size="default" />
-              <span>Cerrar Sesión</span>
-            </a>
           </div>
         </nav-bar-menu>
+        <nav-bar-item>
+          <a class="navbar-item has-text-danger" @click="logout">
+            <span>Cerrar Sesión</span>
+          </a>
+        </nav-bar-item>
         <!--
         <a
           class="navbar-item has-divider is-desktop-icon-only"
