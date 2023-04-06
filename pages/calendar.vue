@@ -12,6 +12,7 @@
         </div>
       </div>
     </b-modal>
+    <new-plan :is-active="activeFormModal" />
     <div class="container mt-4">
       <div class="card p-2">
         <div class="card-content">
@@ -82,6 +83,7 @@ export default {
   data () {
     return {
       activeModal: false,
+      activeFormModal: false,
       fakePlan: [
         {
           idusers: 16,
@@ -113,7 +115,7 @@ export default {
   },
   methods: {
     openModal () {
-      this.activeModal = true
+      this.activeFormModal = true
     }
   }
 }

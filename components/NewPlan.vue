@@ -5,34 +5,31 @@
         <div class="modal-card" style="width: auto">
           <header class="modal-card-head">
             <p class="modal-card-title">
-              Login
+              Nuevo registro
             </p>
-            <button type="button" class="delete" @click="$emit('close')" />
+            <button type="button" class="delete" @click="isActive = false" />
           </header>
           <section class="modal-card-body">
-            <b-field label="Email">
+            <b-field label="Personal">
               <b-input
-                type="email"
+                type="text"
                 :value="email"
-                placeholder="Your email"
+                placeholder="Escribe el nombre del personal"
                 required
               />
             </b-field>
 
-            <b-field label="Password">
+            <b-field label="Vehiculo">
               <b-input
-                type="password"
-                :value="password"
-                password-reveal
-                placeholder="Your password"
+                type="text"
+                :value="email"
+                placeholder="Escribe el nombre del personal"
                 required
               />
             </b-field>
-
-            <b-checkbox>Remember me</b-checkbox>
           </section>
           <footer class="modal-card-foot">
-            <b-button label="Close" @click="$emit('close')" />
+            <b-button label="Close" @click="isActive = false" />
             <b-button label="Login" type="is-primary" />
           </footer>
         </div>
