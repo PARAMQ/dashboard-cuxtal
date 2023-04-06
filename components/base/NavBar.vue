@@ -51,7 +51,7 @@
 
           <div slot="dropdown" class="navbar-dropdown">
             <nuxt-link
-              to="/profile"
+              to="/building"
               class="navbar-item"
               exact-active-class="is-active"
             >
@@ -59,7 +59,7 @@
               <span>General</span>
             </nuxt-link>
             <nuxt-link
-              to="/profile"
+              to="/building"
               class="navbar-item"
               exact-active-class="is-active"
             >
@@ -67,7 +67,7 @@
               <span>Denuncias</span>
             </nuxt-link>
             <nuxt-link
-              to="/profile"
+              to="/building"
               class="navbar-item"
               exact-active-class="is-active"
             >
@@ -91,7 +91,7 @@
               <span>Planificación</span>
             </nuxt-link>
             <nuxt-link
-              to="/profile"
+              to="/building"
               class="navbar-item"
               exact-active-class="is-active"
             >
@@ -99,7 +99,7 @@
               <span>Bitácoras</span>
             </nuxt-link>
             <nuxt-link
-              to="/profile"
+              to="/building"
               class="navbar-item"
               exact-active-class="is-active"
             >
@@ -116,7 +116,15 @@
 
           <div slot="dropdown" class="navbar-dropdown">
             <nuxt-link
-              to="/profile"
+              to="/"
+              class="navbar-item"
+              exact-active-class="is-active"
+            >
+              <b-icon icon="home-variant-outline" custom-size="default" />
+              <span>Inicio</span>
+            </nuxt-link>
+            <nuxt-link
+              to="/building"
               class="navbar-item"
               exact-active-class="is-active"
             >
@@ -125,7 +133,7 @@
             </nuxt-link>
           </div>
         </nav-bar-menu>
-        <nav-bar-item>
+        <nav-bar-item class="m-1">
           <a class="navbar-item has-text-danger" @click="logout">
             <span>Cerrar Sesión</span>
           </a>

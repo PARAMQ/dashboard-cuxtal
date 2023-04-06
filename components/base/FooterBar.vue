@@ -4,15 +4,13 @@
       <div class="level">
         <div class="level-left">
           <div class="level-item">
-            &copy; {{ year }}, myadmin.com
+            Panel administrativo - cuxtal
           </div>
         </div>
         <div class="level-right">
           <div class="level-item">
             <div class="logo">
-              <a href="">
-                Logo
-              </a>
+              <img src="@/assets/cuxtal/RC_V.png" width="auto" height="auto">
             </div>
           </div>
         </div>

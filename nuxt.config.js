@@ -90,7 +90,8 @@ export default {
       '~/components',
       '~/components/base',
       '~/components/forms',
-      '~/components/cards'
+      '~/components/cards',
+      '~/components/calendar'
     ]
   },
   devtools: true,

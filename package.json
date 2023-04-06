@@ -2,7 +2,7 @@
   "name": "cuxtal",
   "version": "1.3.0",
   "description": "Panel administrativo para el control de bitácora, reportes, etc.",
-  "author": "JustBoil.me",
+  "author": "ParamQ",
   "private": true,
   "scripts": {
     "dev": "nuxt",
