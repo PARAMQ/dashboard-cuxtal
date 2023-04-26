@@ -1,10 +1,9 @@
 <template>
   <nav v-show="isNavBarVisible" id="navbar-main" class="navbar is-fixed-top">
     <div class="navbar-brand">
-      <a class="navbar-item is-expanded" href="https://bulma.io">
+      <a class="navbar-item is-expanded" href="/">
         <img src="@/assets/cuxtal/RC_V.png" width="auto" height="auto">
       </a>
-      <!--
       <p
         :title="toggleTooltip"
         style="cursor:pointer"
@@ -19,7 +18,6 @@
       >
         <b-icon :icon="menuToggleMobileIcon" />
       </p>
-    -->
     </div>
     <div class="navbar-brand is-right">
       <!--

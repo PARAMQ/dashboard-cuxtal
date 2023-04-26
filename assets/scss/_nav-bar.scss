@@ -20,8 +20,10 @@ nav.navbar {
       padding-left: 0;
 
       .navbar-link {
+        /*
         padding-right: $navbar-item-h-padding;
         padding-left: $navbar-item-h-padding;
+        */
       }
     }
 
@@ -117,8 +119,8 @@ nav.navbar {
 
   nav.navbar {
     .navbar-item {
-      padding-right: $navbar-item-h-padding;
-      padding-left: $navbar-item-h-padding;
+      /*padding-right: $navbar-item-h-padding;
+      padding-left: $navbar-item-h-padding;*/
 
       &:not(.is-desktop-icon-only) {
         .icon:first-child {

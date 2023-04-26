@@ -35,7 +35,8 @@
     "vee-validate": "^3.4.5",
     "vue-chartjs": "^3.5.0",
     "vue-float-action-button": "^0.7.9",
-    "vue-particle": "^1.0.0"
+    "vue-particle": "^1.0.0",
+    "vue-sweetalert2": "^5.0.5"
   },
   "devDependencies": {
     "@nuxt/types": "^2.14.6",

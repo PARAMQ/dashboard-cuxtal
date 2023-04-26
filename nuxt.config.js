@@ -62,7 +62,8 @@ export default {
     { src: '~/plugins/after-each.js', mode: 'client' },
     { src: '~/plugins/particles.js', mode: 'client' },
     { src: '~/plugins/vue-float-action-button.js', mode: 'client' },
-    { src: '~/plugins/pop-up-window.js', mode: 'client' }
+    { src: '~/plugins/pop-up-window.js', mode: 'client' },
+    { src: '~/plugins/sweetalerts.js', mode: 'client' }
   ],
   /*
    ** Nuxt.js dev-modules
@@ -114,6 +115,14 @@ export default {
       lang: 'es',
       theme_color: '#ff9503',
       useWebmanifestExtension: false
+    },
+    workboxOptions: {
+      runtimeCaching: [
+        {
+          urlPattern: process.env.BASE_URL || 'https://paramq-asr.herokuapp.com/api',
+          handler: 'StaleWhileRevalidate'
+        }
+      ]
     }
   },
   env: {

@@ -1,4 +1,4 @@
-import each from 'lodash/each'
+// import each from 'lodash/each'
 import { removeValue, setValue } from '~/utils/cookies'
 
 export const namespaced = true
@@ -80,6 +80,7 @@ export const mutations = {
     state.isAsideVisible = !payload
     state.isFooterBarVisible = !payload
 
+    /*
     each(['has-aside-left', 'has-navbar-fixed-top'], htmlClass => {
       if (payload) {
         document.documentElement.classList.remove(htmlClass)
@@ -87,6 +88,7 @@ export const mutations = {
         document.documentElement.classList.add(htmlClass)
       }
     })
+    */
   },
 
   /* Aside Desktop */

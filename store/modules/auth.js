@@ -4,7 +4,7 @@ import {
   removeToken
 } from '../../utils/cookies'
 
-import { login, getUserInfo } from '../../api'
+import { login, getUserInfo, getNewToken } from '../../api'
 import { updateMainUser, changePassword } from '~/api/accounts'
 
 export const state = () => ({
@@ -22,6 +22,7 @@ export const mutations = {
 export const actions = {
   async login ({ commit }, data) {
     const res = await login(data)
+    // console.log(res)
     setToken(res)
     return res
   },
@@ -36,11 +37,17 @@ export const actions = {
     if (token && !state.user) {
       // const data = decodeToken(token)
       const user = await getUserInfo()
+      console.log(user)
       // TODO: refresh token
       commit('set_user', user)
       return user
     }
     return state.user
+  },
+  async getNewToken ({ commit }) {
+    removeToken()
+    const res = await getNewToken()
+    setToken(res)
   },
   async updateAccount ({ commit }, data) {
     const res = await updateMainUser(data)

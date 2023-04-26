@@ -5,7 +5,8 @@
       <float-action-button />
     </div>
     -->
-    <nav-bar />
+    <!--<nav-bar />-->
+    <nav-bar-2 />
     <b-loading v-model="isLoading" :is-full-page="true" :can-cancel="false" />
     <!--
     <aside-menu
@@ -168,9 +169,12 @@ export default {
     this.$buefy.config.setOptions(customIconConfig)
   },
   mounted () {
-    document.documentElement.classList.add('has-aside-left')
-    document.documentElement.classList.add('has-aside-mobile-transition')
-    document.documentElement.classList.add('has-navbar-fixed-top')
+    // document.documentElement.classList.add('has-aside-left')
+    // document.documentElement.classList.add('has-aside-mobile-transition')
+    // document.documentElement.classList.add('has-navbar-fixed-top')
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+    }
   },
   methods: {
     clickItem (idx) {

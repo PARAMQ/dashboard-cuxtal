@@ -16,3 +16,10 @@ export const getUserInfo = () => {
     method: 'POST'
   })
 }
+
+export const getNewToken = () => {
+  return request({
+    url: '/Login.php/getNewToken',
+    method: 'POST'
+  })
+}

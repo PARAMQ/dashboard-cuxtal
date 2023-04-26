@@ -7,6 +7,10 @@ const shortDate = datetime => {
   const config = { hour12: true, dateStyle: 'short', timeStyle: 'short' }
   return new Date(datetime).toLocaleString('es-MX', config)
 }
+const getDay = datetime => {
+  const date = new Date(datetime)
+  return date.getDate()
+}
 const birthdate = datetime => {
   const config = { hour12: true, dateStyle: 'long' }
   return new Date(datetime).toLocaleString('es-MX', config)
@@ -16,5 +20,6 @@ const currency = (num) => {
 }
 Vue.filter('date', date)
 Vue.filter('shortDate', shortDate)
+Vue.filter('getDay', getDay)
 Vue.filter('birthdate', birthdate)
 Vue.filter('currency', currency)

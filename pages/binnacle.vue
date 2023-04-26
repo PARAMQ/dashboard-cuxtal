@@ -4,14 +4,10 @@
       <div class="card">
         <div class="card-header">
           <p class="card-header-title">
-            {{ plan.start_date | getDay }} - {{ plan.end_date | getDay }}
+            Programado para el día {{ dateSelect | getDay }}
           </p>
         </div>
         <div class="card-content">
-          <div class="columns">
-            <div class="column">
-            </div>
-          </div>
           <p>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
             reiciendis sunt consectetur iure perferendis accusantium assumenda
@@ -28,11 +24,7 @@
             <div class="level-left" />
             <div class="level-right">
               <p class="level-item">
-                <b-button
-                  type="is-primary"
-                  outlined
-                  @click="isActive = true"
-                >
+                <b-button type="is-primary" outlined @click="openModal">
                   Nuevo registro
                 </b-button>
               </p>
@@ -44,7 +36,8 @@
                 <div class="card-header">
                   <div class="card-header-title">
                     <p class="subtitle">
-                      Recorridos programados para el día {{ dateSelect | getDay }}
+                      Bitácoras creadas el
+                      {{ dateSelect | getDay }}
                     </p>
                   </div>
                 </div>
@@ -54,18 +47,22 @@
                   :can-cancel="false"
                 />
                 <div class="card-content scroll">
-                  <div v-for="plan in plans" :key="plan" class="container">
-                    <div class="card" @click="openModal(plan)">
+                  <div
+                    v-for="binnacle in binnacles"
+                    :key="binnacle"
+                    class="container"
+                  >
+                    <div class="card">
                       <div class="card-content">
                         <div class="container">
                           <div class="columns">
                             <div class="column">
                               <p>
                                 <b-icon
-                                  icon="file-document-edit-outline"
+                                  icon="account-group"
                                   custom-size="default"
                                 />
-                                Bitácoras: {{ plan.binnacles.length }}
+                                {{ binnacle.participants }}
                               </p>
                             </div>
                             <div class="column">
@@ -74,7 +71,6 @@
                                   icon="calendar-today"
                                   custom-size="default"
                                 />
-                                {{ plan.start_date }} - {{ plan.end_date }}
                               </p>
                             </div>
                           </div>
@@ -111,14 +107,13 @@
 
 <script>
 export default {
-  name: 'Calendar',
+  name: 'Binnacle',
   data () {
     return {
       activeModal: false,
       isActive: false,
       isLoadingPlans: false,
-      plans: [],
-      plan: {},
+      binnacles: [],
       dateSelect: new Date()
     }
   },
@@ -126,39 +121,43 @@ export default {
     this.getData()
   },
   methods: {
-    openModal (plan) {
-      this.plan = plan
-      this.activeModal = true
+    openModal () {
+      this.isActive = true
     },
     async getData () {
       try {
         this.isLoadingPlans = true
         const plans = await this.$store.dispatch('modules/plans/getPlans')
-        this.plans = this.filterByDate(plans)
+        this.binnacles = this.filterByDate(plans)
         this.isLoadingPlans = false
       } catch (error) {
         console.log(error)
       }
     },
     filterByDate (plans) {
+      const binnacle = []
       console.log(plans)
-      console.log(this.dateSelect)
-      const firstFilter = plans.filter((x) => {
+      plans.forEach((x) => {
         const now = new Date(this.dateSelect)
         const startDate = new Date(x.start_date)
         const endDate = new Date(x.end_date)
-        if ((startDate.getDay() + 1) === now.getDay() && startDate.getMonth() === now.getMonth() && startDate.getFullYear() === now.getFullYear()) {
-          return x
-        } else if (endDate.getDay() === now.getDay() && endDate.getMonth() === now.getMonth() && endDate.getFullYear() === now.getFullYear()) {
-          return x
+        if (
+          startDate.getDay() + 1 === now.getDay() &&
+          startDate.getMonth() === now.getMonth() &&
+          startDate.getFullYear() === now.getFullYear()
+        ) {
+          binnacle.push(x.binnacles)
+        } else if (
+          endDate.getDay() === now.getDay() &&
+          endDate.getMonth() === now.getMonth() &&
+          endDate.getFullYear() === now.getFullYear()
+        ) {
+          binnacle.push(x.binnacles)
+        } else if (((startDate.getDay() + 1) !== now.getDay() && endDate.getDay() !== now.getDay()) && (now.getDate() > startDate.getDate() + 1 && now.getDate() < endDate.getDate())) {
+          binnacle.push(x.binnacles)
         }
       })
-      console.log(firstFilter)
-      /*
-      const secondFilter = firstFilter.filter(x => new Date(x.end_date) <= this.dateSelect)
-      console.log(secondFilter)
-      */
-      return firstFilter
+      return binnacle
     }
   }
 }
