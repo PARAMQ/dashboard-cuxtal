@@ -8,7 +8,7 @@
             <div class="level-right">
               <p class="level-item">
                 <b-button type="is-primary" outlined @click="isActive = true">
-                  Nuevo participante
+                  Nuevo departamento
                 </b-button>
               </p>
             </div>
@@ -18,11 +18,11 @@
               <div class="card">
                 <div class="card-content scroll">
                   <div
-                    v-for="participante in participantes"
-                    :key="participante"
+                    v-for="departamento in departamentos"
+                    :key="departamento"
                     class="container"
                   >
-                    <div class="card" @click="viewParticipant(participante)">
+                    <div class="card" @click="viewDepartament(departamento)">
                       <div class="card-content">
                         <div class="container">
                           <div class="columns">
@@ -32,7 +32,7 @@
                                   icon="account"
                                   custom-size="default"
                                 />
-                                {{ participante.name }} {{ participante.lastname }}
+                                {{ departamento.description }}
                               </p>
                             </div>
                           </div>
@@ -46,13 +46,13 @@
             <div
               class="column is-8 is-flex is-justify-content-center has-text-centered"
             >
-              <div v-if="selectParticipant" id="info-vehicle" class="card">
+              <div v-if="selectDepartament" id="info-vehicle" class="card">
                 <div class="card-header">
                   <div class="level">
                     <div class="level-left">
                       <div class="level-item">
                         <p class="card-header-title">
-                          Nombre completo: {{ participant.name }} {{ participant.lastname }}
+                          ID: {{ departament.id }}
                         </p>
                       </div>
                     </div>
@@ -62,7 +62,7 @@
                           size="is-small"
                           type="is-info is-light"
                           icon-right="pencil-outline"
-                          @click="editParticipant(participant)"
+                          @click="editDepartament(departament)"
                         />
                       </div>
                       <div class="level-item">
@@ -70,7 +70,7 @@
                           size="is-small"
                           type="is-danger is-light"
                           icon-right="delete"
-                          @click="deleteParticipant(participant)"
+                          @click="deleteDepartament(departament)"
                         />
                       </div>
                     </div>
@@ -78,32 +78,20 @@
                 </div>
                 <div class="card-content">
                   <p class="is-size-2">
-                    Dirección:
+                    Descripción:
                   </p>
                   <p class="is-size-3">
-                    - Calle: {{ participant.street }}
-                  </p>
-                  <p class="is-size-3">
-                    - Número de predio: {{ participant.number }}
-                  </p>
-                  <p class="is-size-3">
-                    - Colonia: {{ participant.settle }}
-                  </p>
-                  <p class="is-size-3">
-                    - Municipio: {{ participant.municipality }}
-                  </p>
-                  <p class="is-size-3">
-                    - Código postal: {{ participant.zip_code }}
+                    {{ departament.description }}
                   </p>
                 </div>
               </div>
               <div v-else class="card">
                 <div class="card-content">
                   <h1 class="is-size-3">
-                    Selecciona un participante
+                    Selecciona un departamento
                   </h1>
                   <p class="is-size-5">
-                    Si deseas ver la información de un participante haz click sobre
+                    Si deseas ver la información de un departamento haz click sobre
                     su tarjeta
                   </p>
                 </div>
@@ -113,7 +101,7 @@
         </div>
       </div>
     </div>
-    <new-participant
+    <new-depto
       :active-modal="isActive"
       @close="isActive = false"
       @create="updateView"
@@ -124,13 +112,13 @@
 <script>
 
 export default {
-  name: 'Participants',
+  name: 'Departaments',
   data () {
     return {
-      selectParticipant: false,
+      selectDepartament: false,
       isActive: false,
-      participantes: [],
-      participant: {},
+      departamentos: [],
+      departament: {},
       params: {
         _t: Date.now()
       }
@@ -143,23 +131,23 @@ export default {
     this.getData()
   },
   methods: {
-    viewParticipant (participant) {
-      this.participant = participant
-      this.selectParticipant = true
+    viewDepartament (departament) {
+      this.departament = departament
+      this.selectDepartament = true
     },
-    deleteParticipant (participant) {
+    deleteDepartament (departament) {
       this.$swal({
-        title: '¿Deseas borrar este participante?',
+        title: '¿Deseas borrar este departamento?',
         showDenyButton: true,
         confirmButtonText: 'Borrar',
         denyButtonText: 'Cancelar'
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            await this.$store.dispatch('modules/participants/deleteParticipant', participant)
+            await this.$store.dispatch('modules/deptos/deleteDepto', departament)
             this.getData()
-            this.participant = {}
-            this.selectParticipant = false
+            this.departament = {}
+            this.selectDepartament = false
             this.$swal('Eliminado!')
           } catch (error) {
             console.log(error)
@@ -167,8 +155,8 @@ export default {
         }
       })
     },
-    editParticipant (participant) {
-      console.log(participant)
+    editDepartament (departament) {
+      console.log(departament)
     },
     updateView () {
       this.isActive = false
@@ -176,9 +164,9 @@ export default {
     },
     async getData () {
       try {
-        this.participantes = []
-        const res = await this.$store.dispatch('modules/participants/getParticipants', this.params)
-        this.participantes = res
+        this.departamentos = []
+        const res = await this.$store.dispatch('modules/deptos/getDeptos', this.params)
+        this.departamentos = res
       } catch (error) {
         console.log(error)
       }

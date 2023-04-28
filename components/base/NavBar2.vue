@@ -14,8 +14,8 @@
         <b-navbar-item href="#">
           Denuncias
         </b-navbar-item>
-        <b-navbar-item href="#">
-          Instituciones
+        <b-navbar-item tag="router-link" :to="{ path: '/departaments' }">
+          Departamentos
         </b-navbar-item>
       </b-navbar-dropdown>
       <b-navbar-dropdown label="Recorridos">

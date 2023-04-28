@@ -4,14 +4,14 @@
       <div class="columns">
         <div class="column">
           <div class="card">
-            <div class="card-content">
+            <div class="card-content has-text-centered">
               <p>tarjeta 1</p>
             </div>
           </div>
         </div>
         <div class="column">
           <div class="card">
-            <div class="card-content">
+            <div class="card-content has-text-centered">
               <p>Tarjeta 2</p>
             </div>
           </div>

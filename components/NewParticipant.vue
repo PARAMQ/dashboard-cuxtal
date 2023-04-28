@@ -70,6 +70,14 @@
                 required
               />
             </b-field>
+            <b-field horizontal label="Código postal">
+              <b-input
+                v-model="form.zip_code"
+                name="Código postal"
+                type="text"
+                required
+              />
+            </b-field>
           </form>
         </div>
         <div class="card-footer">
@@ -104,14 +112,7 @@ export default {
       form: {
         date_register: new Date(),
         estatus: 'PR'
-      },
-      personas: [
-        { id: 1, name: 'Alice' },
-        { id: 2, name: 'Bob' },
-        { id: 3, name: 'Charlie' },
-        { id: 4, name: 'David' },
-        { id: 5, name: 'Emily' }
-      ]
+      }
     }
   },
   methods: {
