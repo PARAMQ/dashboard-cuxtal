@@ -278,6 +278,6 @@ export default {
   overflow-y: scroll;
 }
 #app {
-  height: 100%;
+  max-height: 90%;
 }
 </style>

@@ -18,6 +18,19 @@ const birthdate = datetime => {
 const currency = (num) => {
   return parseFloat(num).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
 }
+const status = (status) => {
+  switch (status) {
+    case status === 'process':
+      return 'is-warning'
+    case status === 'danger':
+      return 'is-danger'
+    case status === 'success':
+      return 'is-success'
+    default:
+      return 'is-info'
+  }
+}
+Vue.filter('status', status)
 Vue.filter('date', date)
 Vue.filter('shortDate', shortDate)
 Vue.filter('getDay', getDay)

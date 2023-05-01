@@ -4,7 +4,7 @@ import {
   removeToken
 } from '../../utils/cookies'
 
-import { login, getUserInfo, getNewToken } from '../../api'
+import { login, getUserInfo, getNewToken, checkToken } from '../../api'
 import { updateMainUser, changePassword } from '~/api/accounts'
 
 export const state = () => ({
@@ -37,8 +37,9 @@ export const actions = {
     if (token && !state.user) {
       // const data = decodeToken(token)
       const user = await getUserInfo()
-      console.log(user)
+      // console.log(user)
       // TODO: refresh token
+      delete user.password
       commit('set_user', user)
       return user
     }
@@ -48,6 +49,10 @@ export const actions = {
     removeToken()
     const res = await getNewToken()
     setToken(res)
+  },
+  async checkToken ({ commit }, data) {
+    const res = await checkToken(data)
+    return res
   },
   async updateAccount ({ commit }, data) {
     const res = await updateMainUser(data)

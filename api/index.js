@@ -23,3 +23,11 @@ export const getNewToken = () => {
     method: 'POST'
   })
 }
+
+export const checkToken = (data) => {
+  return request({
+    url: '/Login.php/getTokenExp',
+    method: 'POST',
+    data
+  })
+}

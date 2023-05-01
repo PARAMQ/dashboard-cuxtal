@@ -1,6 +1,7 @@
 <template>
   <b-modal v-model="activeModal" :destroy-on-hide="false">
     <div class="card">
+      <b-loading v-model="isLoading" :is-full-page="false" :can-cancel="true" />
       <div class="card-header">
         <p class="card-header-title">
           Nuevo recorrido
@@ -11,26 +12,13 @@
           <form @submit.prevent="submit">
             <div class="columns has-text-centered">
               <div class="column">
-                <b-field
-                  label="Fecha de inicio"
-                >
-                  <b-datepicker
-                    v-model="form.start_date"
-                    inline
-                    required
-                  />
+                <b-field label="Fechas del recorrido">
+                  <b-datepicker v-model="dates" inline range required />
                 </b-field>
-              </div>
-              <div class="column">
-                <b-field
-                  label="Fecha de finalización"
-                >
-                  <b-datepicker
-                    v-model="form.end_date"
-                    inline
-                    required
-                  />
-                </b-field>
+                <p class="has-text-grey">
+                  Te recorrdamos seleccionar primero la fecha de inicio y
+                  seguidamente la de finalización.
+                </p>
               </div>
             </div>
           </form>
@@ -42,7 +30,7 @@
             </b-button>
           </div>
           <div class="card-footer-item">
-            <b-button type="is-success" @click="printUser">
+            <b-button type="is-success" @click="createPlan">
               Guardar
             </b-button>
           </div>
@@ -66,45 +54,46 @@ export default {
     return {
       form: {
         date_register: new Date(),
-        estatus: 'PR'
+        estatus: 'active'
       },
-      personas: [
-        { id: 1, name: 'Alice' },
-        { id: 2, name: 'Bob' },
-        { id: 3, name: 'Charlie' },
-        { id: 4, name: 'David' },
-        { id: 5, name: 'Emily' }
-      ],
-      vehiculos: [
-        { id: 1, brand: 'Toyota', model: 'Camry' },
-        { id: 2, brand: 'Honda', model: 'Civic' },
-        { id: 3, brand: 'Ford', model: 'F-150' },
-        { id: 4, brand: 'Chevrolet', model: 'Silverado' },
-        { id: 5, brand: 'Jeep', model: 'Wrangler' }
-      ]
+      dates: [],
+      isLoading: false
     }
   },
   computed: {
-    ...mapState([
-      'user'
-    ])
+    ...mapState(['user'])
   },
   mounted () {
     this.form.idusers = this.user.idusers
   },
   methods: {
-    printUser () {
-      console.log(this.form)
-    },
     async createPlan () {
+      const startDate = new Date(this.dates[0])
+      const endDate = new Date(this.dates[1])
+      this.form.start_date =
+        startDate.getFullYear() +
+        '-' +
+        (startDate.getMonth() + 1) +
+        '-' +
+        startDate.getDay()
+      this.form.end_date =
+        endDate.getFullYear() +
+        '-' +
+        (endDate.getMonth() + 1) +
+        '-' +
+        endDate.getDay()
       try {
-        const res = await this.$store.dispatch(
-          'modules/plans/createPlan',
-          this.form
-        )
-        console.log(res)
+        this.isLoading = true
+        await this.$store.dispatch('modules/plans/createPlan', this.form)
+        this.dates = []
+        this.isLoading = false
+        this.$emit('close')
       } catch (error) {
-        console.log(error)
+        this.$buefy.snackbar.open('Ocurrió un problema, intente más tarde')
+        this.isLoading = false
+        // console.log(error)
+      } finally {
+        this.isLoading = false
       }
     }
   }

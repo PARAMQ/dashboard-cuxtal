@@ -208,7 +208,7 @@ export default {
     async getData () {
       try {
         this.vehiculos = []
-        const res = await this.$store.dispatch('modules/vehicles/getVehicles', this.params)
+        const res = await this.$store.dispatch('modules/vehicles/getVehicles')
         this.vehiculos = res
       } catch (error) {
         console.log(error)

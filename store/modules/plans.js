@@ -1,8 +1,8 @@
 import { getPlans, createPlan } from '~/api/plans'
 
 export const actions = {
-  async getPlans ({ commit }) {
-    const res = await getPlans()
+  async getPlans ({ commit }, data) {
+    const res = await getPlans(data)
     return res
   },
   async createPlan ({ commit }, data) {

@@ -39,7 +39,8 @@
                 <div class="card-header">
                   <div class="card-header-title">
                     <p class="subtitle">
-                      Recorridos programados
+                      Recorridos programados para el día
+                      {{ dateSelect | getDay }}
                     </p>
                   </div>
                 </div>
@@ -49,30 +50,11 @@
                   :can-cancel="false"
                 />
                 <div class="card-content scroll">
-                  <div v-for="plan in plans" :key="plan.id" class="container">
+                  <div v-for="plan in plans" :key="plan" class="container">
                     <div class="card" @click="openModal(plan)">
                       <div class="card-content">
                         <div class="container">
                           <div class="columns">
-                            <div class="column is-2">
-                              <b-tooltip
-                                :label="
-                                  plan.status === 'process'
-                                    ? 'En proceso'
-                                    : plan.status === 'danger'
-                                      ? 'Finalizado'
-                                      : plan.status === 'success'
-                                        ? 'Disponible'
-                                        : 'Sin estado'
-                                "
-                              >
-                                <b-icon
-                                  icon="routes-clock"
-                                  size="is-large"
-                                  :type="plan.status | status"
-                                />
-                              </b-tooltip>
-                            </div>
                             <div class="column">
                               <p>
                                 <b-icon
@@ -111,17 +93,7 @@
                   </div>
                 </div>
                 <div class="card-content">
-                  <b-datepicker
-                    v-model="datesSelect"
-                    inline
-                    range
-                    @input="getData"
-                  />
-                </div>
-                <div class="card-footer">
-                  <p class="card-footer-item has-text-grey">
-                    Puedes escoger un rango de fechas para ver más recorridos.
-                  </p>
+                  <b-datepicker v-model="dateSelect" inline @input="getData" />
                 </div>
               </div>
             </div>
@@ -135,7 +107,7 @@
 
 <script>
 export default {
-  name: 'Calendar',
+  name: 'EditPlanification',
   data () {
     return {
       activeModal: false,
@@ -143,11 +115,11 @@ export default {
       isLoadingPlans: false,
       plans: [],
       plan: {},
-      datesSelect: []
+      dateSelect: new Date()
     }
   },
   created () {
-    // this.getData()
+    this.getData()
   },
   methods: {
     openModal (plan) {
@@ -157,15 +129,40 @@ export default {
     async getData () {
       try {
         this.isLoadingPlans = true
-        const plans = await this.$store.dispatch(
-          'modules/plans/getPlans',
-          this.datesSelect
-        )
-        this.plans = plans
+        const plans = await this.$store.dispatch('modules/plans/getPlans')
+        this.plans = this.filterByDate(plans)
         this.isLoadingPlans = false
       } catch (error) {
         console.log(error)
       }
+    },
+    filterByDate (plans) {
+      console.log(plans)
+      console.log(this.dateSelect)
+      const firstFilter = plans.filter((x) => {
+        const now = new Date(this.dateSelect)
+        const startDate = new Date(x.start_date)
+        const endDate = new Date(x.end_date)
+        if (
+          startDate.getDay() + 1 === now.getDay() &&
+          startDate.getMonth() === now.getMonth() &&
+          startDate.getFullYear() === now.getFullYear()
+        ) {
+          return x
+        } else if (
+          endDate.getDay() === now.getDay() &&
+          endDate.getMonth() === now.getMonth() &&
+          endDate.getFullYear() === now.getFullYear()
+        ) {
+          return x
+        }
+      })
+      console.log(firstFilter)
+      /*
+        const secondFilter = firstFilter.filter(x => new Date(x.end_date) <= this.dateSelect)
+        console.log(secondFilter)
+        */
+      return firstFilter
     }
   }
 }
