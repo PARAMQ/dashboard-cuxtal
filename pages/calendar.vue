@@ -1,25 +1,5 @@
 <template>
   <section class="hero is-cuxtal">
-    <b-modal v-model="activeModal">
-      <div class="card">
-        <div class="card-header">
-          <p class="card-header-title">
-            {{ plan.start_date | getDay }} - {{ plan.end_date | getDay }}
-          </p>
-        </div>
-        <div class="card-content">
-          <div class="columns">
-            <div class="column" />
-          </div>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
-            reiciendis sunt consectetur iure perferendis accusantium assumenda
-            neque, quis sint, eum fugit nihil magni ipsum ad. Doloremque autem
-            cupiditate accusamus molestiae.
-          </p>
-        </div>
-      </div>
-    </b-modal>
     <div class="container mt-4">
       <div class="card p-2">
         <div class="card-content">
@@ -50,7 +30,7 @@
                 />
                 <div class="card-content scroll">
                   <div v-for="plan in plans" :key="plan.id" class="container">
-                    <div class="card" @click="openModal(plan)">
+                    <div class="card" @click="editPlan(plan)">
                       <div class="card-content">
                         <div class="container">
                           <div class="columns">
@@ -150,9 +130,8 @@ export default {
     // this.getData()
   },
   methods: {
-    openModal (plan) {
-      this.plan = plan
-      this.activeModal = true
+    editPlan (plan) {
+      this.$router.push('/planification/editPlanification/?id=' + plan.idplanification)
     },
     async getData () {
       try {
