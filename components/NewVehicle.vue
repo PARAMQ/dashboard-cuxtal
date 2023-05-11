@@ -1,10 +1,6 @@
 <template>
   <b-modal v-model="activeModal" :destroy-on-hide="false">
-    <b-loading
-      v-model="isLoading"
-      :is-full-page="true"
-      :can-cancel="false"
-    />
+    <b-loading v-model="isLoading" :is-full-page="true" :can-cancel="false" />
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
@@ -23,7 +19,12 @@
               />
             </b-field>
             <b-field horizontal label="Placa del vehículo">
-              <b-input v-model="form.plates" name="placa" type="text" required />
+              <b-input
+                v-model="form.plates"
+                name="placa"
+                type="text"
+                required
+              />
             </b-field>
             <b-field horizontal label="Modelo del vehículo">
               <b-input
@@ -79,32 +80,22 @@ export default {
   data () {
     return {
       isLoading: false,
-      form: {
-        date_register: new Date(),
-        estatus: 'PR'
-      },
-      personas: [
-        { id: 1, name: 'Alice' },
-        { id: 2, name: 'Bob' },
-        { id: 3, name: 'Charlie' },
-        { id: 4, name: 'David' },
-        { id: 5, name: 'Emily' }
-      ],
-      vehiculos: [
-        { id: 1, brand: 'Toyota', model: 'Camry' },
-        { id: 2, brand: 'Honda', model: 'Civic' },
-        { id: 3, brand: 'Ford', model: 'F-150' },
-        { id: 4, brand: 'Chevrolet', model: 'Silverado' },
-        { id: 5, brand: 'Jeep', model: 'Wrangler' }
-      ]
+      form: {}
     }
   },
   methods: {
     async createVehicle () {
       try {
         this.isLoading = true
-        await this.$store.dispatch('modules/vehicles/createVehicle', this.form)
+        await this.$store.dispatch(
+          'modules/vehicles/createOrUpdateVehicle',
+          this.form
+        )
         this.isLoading = false
+        this.$buefy.toast.open({
+          message: '¡Guardado correctamente!',
+          type: 'is-success'
+        })
         this.$emit('create')
       } catch (error) {
         console.log(error)

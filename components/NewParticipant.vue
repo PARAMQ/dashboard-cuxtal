@@ -120,9 +120,13 @@ export default {
       try {
         this.isLoading = true
         await this.$store.dispatch(
-          'modules/participants/createParticipant',
+          'modules/participants/createOrUpdateParticipant',
           this.form
         )
+        this.$buefy.toast.open({
+          message: '¡Participante guardado!',
+          type: 'is-success'
+        })
         this.$emit('create')
         this.isLoading = false
       } catch (error) {

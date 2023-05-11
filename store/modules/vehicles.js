@@ -5,7 +5,7 @@ export const actions = {
     const res = await getVehicles(query)
     return res
   },
-  async createVehicle ({ commit }, data) {
+  async createOrUpdateVehicle ({ commit }, data) {
     const res = await createVehicle(data)
     return res
   },

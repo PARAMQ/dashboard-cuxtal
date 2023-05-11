@@ -16,7 +16,7 @@
                   <b-datepicker v-model="dates" inline range required />
                 </b-field>
                 <p class="has-text-grey">
-                  Te recorrdamos seleccionar primero la fecha de inicio y
+                  Te recordamos seleccionar primero la fecha de inicio y
                   seguidamente la de finalización.
                 </p>
               </div>
@@ -53,7 +53,6 @@ export default {
   data () {
     return {
       form: {
-        date_register: new Date(),
         estatus: 'active'
       },
       dates: [],
@@ -68,25 +67,34 @@ export default {
   },
   methods: {
     async createPlan () {
+      console.log(this.dates)
+      const dateRegister = new Date()
       const startDate = new Date(this.dates[0])
       const endDate = new Date(this.dates[1])
+      this.form.date_register =
+        dateRegister.getFullYear() +
+        '-' +
+        (dateRegister.getMonth() + 1) +
+        '-' +
+        dateRegister.getDate()
       this.form.start_date =
         startDate.getFullYear() +
         '-' +
         (startDate.getMonth() + 1) +
         '-' +
-        startDate.getDay()
+        startDate.getDate()
       this.form.end_date =
         endDate.getFullYear() +
         '-' +
         (endDate.getMonth() + 1) +
         '-' +
-        endDate.getDay()
+        endDate.getDate()
       try {
         this.isLoading = true
-        await this.$store.dispatch('modules/plans/createPlan', this.form)
+        await this.$store.dispatch('modules/plans/createOrUpdatePlan', this.form)
         this.dates = []
         this.isLoading = false
+        this.$buefy.snackbar.open('¡Guardado!')
         this.$emit('close')
       } catch (error) {
         this.$buefy.snackbar.open('Ocurrió un problema, intente más tarde')

@@ -19,7 +19,7 @@
                 <div class="card-content scroll">
                   <div
                     v-for="participante in participantes"
-                    :key="participante"
+                    :key="participante.idparticipants"
                     class="container"
                   >
                     <div class="card" @click="viewParticipant(participante)">
@@ -28,11 +28,9 @@
                           <div class="columns">
                             <div class="column has-text-centered">
                               <p>
-                                <b-icon
-                                  icon="account"
-                                  custom-size="default"
-                                />
-                                {{ participante.name }} {{ participante.lastname }}
+                                <b-icon icon="account" custom-size="default" />
+                                {{ participante.name }}
+                                {{ participante.lastname }}
                               </p>
                             </div>
                           </div>
@@ -46,13 +44,18 @@
             <div
               class="column is-8 is-flex is-justify-content-center has-text-centered"
             >
-              <div v-if="selectParticipant" id="info-vehicle" class="card">
+              <div
+                v-if="selectParticipant && !hasEdit"
+                id="info-vehicle"
+                class="card"
+              >
                 <div class="card-header">
                   <div class="level">
                     <div class="level-left">
                       <div class="level-item">
                         <p class="card-header-title">
-                          Nombre completo: {{ participant.name }} {{ participant.lastname }}
+                          Nombre completo: {{ participant.name }}
+                          {{ participant.lastname }}
                         </p>
                       </div>
                     </div>
@@ -97,14 +100,116 @@
                   </p>
                 </div>
               </div>
+              <div
+                v-else-if="selectParticipant && hasEdit"
+                id="info-vehicle"
+                class="card"
+              >
+                <div class="card-header">
+                  <div class="level">
+                    <div class="level-left">
+                      <div class="level-item">
+                        <p class="card-header-title">
+                          Nombre completo: {{ participant.name }}
+                          {{ participant.lastname }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="level-right has-text-left">
+                      <div class="level-item">
+                        <b-button
+                          size="is-small"
+                          type="is-light"
+                          icon-right="keyboard-return"
+                          @click="cancelEdit"
+                        />
+                      </div>
+                      <div class="level-item">
+                        <b-button
+                          size="is-small"
+                          type="is-success is-light"
+                          icon-right="content-save"
+                          @click="saveEdit"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-content">
+                  <b-field horizontal label="Nombre">
+                    <b-input
+                      v-model="participant.name"
+                      name="Nombre"
+                      type="text"
+                      required
+                    />
+                  </b-field>
+                  <b-field horizontal label="Apellido">
+                    <b-input
+                      v-model="participant.lastname"
+                      name="Nombre"
+                      type="text"
+                      required
+                    />
+                  </b-field>
+                  <b-field horizontal label="Calle">
+                    <b-input
+                      v-model="participant.street"
+                      name="Calle"
+                      type="text"
+                      required
+                    />
+                  </b-field>
+                  <b-field horizontal label="Número">
+                    <b-input
+                      v-model="participant.number"
+                      name="Número"
+                      type="text"
+                      required
+                    />
+                  </b-field>
+                  <b-field horizontal label="Colonia">
+                    <b-input
+                      v-model="participant.settle"
+                      name="Colonia"
+                      type="text"
+                      required
+                    />
+                  </b-field>
+                  <b-field horizontal label="Municipio">
+                    <b-input
+                      v-model="participant.municipality"
+                      name="Municipio"
+                      type="text"
+                      required
+                    />
+                  </b-field>
+                  <b-field horizontal label="Estado">
+                    <b-input
+                      v-model="participant.state"
+                      name="Estado"
+                      type="text"
+                      required
+                    />
+                  </b-field>
+                  <b-field horizontal label="Código postal">
+                    <b-input
+                      v-model="participant.zip_code"
+                      name="Código postal"
+                      type="text"
+                      required
+                    />
+                  </b-field>
+                </div>
+              </div>
               <div v-else class="card">
                 <div class="card-content">
                   <h1 class="is-size-3">
                     Selecciona un participante
                   </h1>
                   <p class="is-size-5">
-                    Si deseas ver la información de un participante haz click sobre
-                    su tarjeta
+                    Si deseas ver la información de un participante haz click
+                    sobre su tarjeta
                   </p>
                 </div>
               </div>
@@ -122,7 +227,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'Participants',
   data () {
@@ -131,9 +235,7 @@ export default {
       isActive: false,
       participantes: [],
       participant: {},
-      params: {
-        _t: Date.now()
-      }
+      hasEdit: false
     }
   },
   created () {
@@ -156,19 +258,52 @@ export default {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            await this.$store.dispatch('modules/participants/deleteParticipant', participant)
+            await this.$store.dispatch(
+              'modules/participants/deleteParticipant',
+              participant
+            )
             this.getData()
             this.participant = {}
             this.selectParticipant = false
-            this.$swal('Eliminado!')
+            this.$buefy.toast.open({
+              message: '¡Eliminado!',
+              type: 'is-success'
+            })
           } catch (error) {
             console.log(error)
           }
         }
       })
     },
-    editParticipant (participant) {
-      console.log(participant)
+    editParticipant () {
+      this.hasEdit = true
+    },
+    async saveEdit () {
+      try {
+        this.isLoading = true
+        await this.$store.dispatch(
+          'modules/participants/createOrUpdateParticipant',
+          this.participant
+        )
+        this.hasEdit = false
+        this.selectParticipant = false
+        this.participant = {}
+        this.getData()
+        this.$buefy.toast.open({
+          message: '¡Cambios guardados!',
+          type: 'is-success'
+        })
+        this.isLoading = false
+      } catch (error) {
+        console.log(error)
+      }
+      console.log()
+    },
+    cancelEdit () {
+      this.hasEdit = false
+      this.selectParticipant = false
+      this.participant = {}
+      this.getData()
     },
     updateView () {
       this.isActive = false
@@ -177,7 +312,10 @@ export default {
     async getData () {
       try {
         this.participantes = []
-        const res = await this.$store.dispatch('modules/participants/getParticipants', this.params)
+        const res = await this.$store.dispatch(
+          'modules/participants/getParticipants',
+          this.params
+        )
         this.participantes = res
       } catch (error) {
         console.log(error)

@@ -1,5 +1,6 @@
 <template>
   <section class="hero is-cuxtal">
+    <b-loading v-model="isLoading" :is-full-page="true" :can-cancel="true" />
     <div class="container mt-4">
       <div class="card p-2">
         <div class="card-content">
@@ -19,7 +20,7 @@
                 <div class="card-content scroll">
                   <div
                     v-for="vehiculo in vehiculos"
-                    :key="vehiculo"
+                    :key="vehiculo.idvehicle"
                     class="container"
                   >
                     <div class="card" @click="viewVehicle(vehiculo)">
@@ -46,7 +47,11 @@
             <div
               class="column is-8 is-flex is-justify-content-center has-text-centered"
             >
-              <div v-if="selectVehicle" id="info-vehicle" class="card">
+              <div
+                v-if="selectVehicle && !hasEdit"
+                id="info-vehicle"
+                class="card"
+              >
                 <div class="card-header">
                   <div class="level">
                     <div class="level-left">
@@ -62,7 +67,7 @@
                           size="is-small"
                           type="is-info is-light"
                           icon-right="pencil-outline"
-                          @click="editVehicle(vehicle)"
+                          @click="editVehicle"
                         />
                       </div>
                       <div class="level-item">
@@ -70,7 +75,7 @@
                           size="is-small"
                           type="is-danger is-light"
                           icon-right="delete"
-                          @click="deleteVehicle(vehicle)"
+                          @click="deleteVehicle"
                         />
                       </div>
                     </div>
@@ -86,6 +91,88 @@
                   <p class="is-size-4">
                     Placa: {{ vehicle.plates }}
                   </p>
+                </div>
+              </div>
+              <div
+                v-else-if="selectVehicle && hasEdit"
+                id="info-vehicle"
+                class="card"
+              >
+                <div class="card-header">
+                  <div class="level">
+                    <div class="level-left">
+                      <div class="level-item">
+                        <p class="card-header-title">
+                          Número de identificación: {{ vehicle.number }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="level-right has-text-left">
+                      <div class="level-item">
+                        <b-button
+                          size="is-small"
+                          type="is-light"
+                          icon-right="keyboard-return"
+                          @click="cancelEdit"
+                        />
+                      </div>
+                      <div class="level-item">
+                        <b-button
+                          size="is-small"
+                          type="is-success is-light"
+                          icon-right="content-save"
+                          @click="saveEdit"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-content">
+                  <section>
+                    <b-field label="Número de identificación">
+                      <b-input
+                        v-model="vehicle.number"
+                        name="Nº identificación"
+                        type="text"
+                        required
+                      />
+                    </b-field>
+                    <b-field label="Placa del vehículo">
+                      <b-input
+                        v-model="vehicle.plates"
+                        name="placa"
+                        type="text"
+                        required
+                      />
+                    </b-field>
+                    <b-field label="Modelo del vehículo">
+                      <b-input
+                        v-model="vehicle.model"
+                        name="modelo"
+                        type="text"
+                        required
+                      />
+                    </b-field>
+                    <b-field label="Marca del vehículo">
+                      <b-input
+                        v-model="vehicle.brand"
+                        name="marca"
+                        type="text"
+                        required
+                      />
+                    </b-field>
+                    <b-field
+                      label="Línea del vehículo"
+                      message="Ejemplo: Pickup, Sedan"
+                    >
+                      <b-input
+                        v-model="vehicle.subbrand"
+                        name="marca"
+                        type="text"
+                        required
+                      />
+                    </b-field>
+                  </section>
                 </div>
               </div>
               <div v-else class="card">
@@ -113,7 +200,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'Vehicles',
   data () {
@@ -121,52 +207,9 @@ export default {
       selectVehicle: false,
       isActive: false,
       vehiculos: [],
-      vehiculosFake: [
-        {
-          id: 1,
-          model: 'Sedan',
-          number: 1234,
-          brand: 'Toyota',
-          subbrand: 'Corolla',
-          plates: 5678
-        },
-        {
-          id: 2,
-          model: 'SUV',
-          number: 5678,
-          brand: 'Honda',
-          subbrand: 'CR-V',
-          plates: 9012
-        },
-        {
-          id: 3,
-          model: 'Hatchback',
-          number: 9012,
-          brand: 'Ford',
-          subbrand: 'Focus',
-          plates: 3456
-        },
-        {
-          id: 4,
-          model: 'Coupe',
-          number: 3456,
-          brand: 'Chevrolet',
-          subbrand: 'Camaro',
-          plates: 7890
-        },
-        {
-          id: 5,
-          model: 'Pickup',
-          number: 7890,
-          brand: 'Dodge',
-          subbrand: 'Ram',
-          plates: 2345
-        }
-      ],
+      hasEdit: false,
       vehicle: {},
-      params: {
-        _t: Date.now()
-      }
+      isLoading: false
     }
   },
   created () {
@@ -180,7 +223,34 @@ export default {
       this.vehicle = vehicle
       this.selectVehicle = true
     },
-    deleteVehicle (vehicle) {
+    async saveEdit () {
+      try {
+        this.isLoading = true
+        await this.$store.dispatch(
+          'modules/vehicles/createOrUpdateVehicle',
+          this.vehicle
+        )
+        this.hasEdit = false
+        this.selectVehicle = false
+        this.vehicle = {}
+        this.getData()
+        this.$buefy.toast.open({
+          message: 'Cambios guardados!',
+          type: 'is-success'
+        })
+        this.isLoading = false
+      } catch (error) {
+        console.log(error)
+      }
+      console.log()
+    },
+    cancelEdit () {
+      this.hasEdit = false
+      this.selectVehicle = false
+      this.vehicle = {}
+      this.getData()
+    },
+    deleteVehicle () {
       this.$swal({
         title: '¿Deseas borrar ese vehículo?',
         showDenyButton: true,
@@ -189,17 +259,25 @@ export default {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            await this.$store.dispatch('modules/vehicles/deleteVehicle', vehicle)
+            await this.$store.dispatch(
+              'modules/vehicles/deleteVehicle',
+              this.vehicle
+            )
             this.getData()
-            this.$swal('Eliminado!')
+            this.selectVehicle = false
+            this.vehicle = {}
+            this.$buefy.toast.open({
+              message: 'Eliminado!',
+              type: 'is-success'
+            })
           } catch (error) {
             console.log(error)
           }
         }
       })
     },
-    editVehicle (vehicle) {
-      console.log(vehicle)
+    editVehicle () {
+      this.hasEdit = true
     },
     updateView () {
       this.isActive = false
@@ -207,9 +285,11 @@ export default {
     },
     async getData () {
       try {
+        this.isLoading = true
         this.vehiculos = []
         const res = await this.$store.dispatch('modules/vehicles/getVehicles')
         this.vehiculos = res
+        this.isLoading = false
       } catch (error) {
         console.log(error)
       }

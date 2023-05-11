@@ -5,7 +5,7 @@ export const actions = {
     const res = await getParticipants(query)
     return res
   },
-  async createParticipant ({ commit }, data) {
+  async createOrUpdateParticipant ({ commit }, data) {
     const res = await createParticipant(data)
     return res
   },

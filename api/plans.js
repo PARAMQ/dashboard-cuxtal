@@ -4,12 +4,12 @@ export const getPlans = (data) => {
   const startDate = new Date(data[0])
   const endDate = new Date(data[1])
   return request({
-    url: '/apiPlanning.php/plan/' + (startDate.getFullYear() + '-' + (startDate.getMonth() + 1) + '-' + startDate.getDay()) + '/' + (endDate.getFullYear() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getDay()),
+    url: '/apiPlanning.php/plan/' + (startDate.getFullYear() + '-' + (startDate.getMonth() + 1) + '-' + startDate.getDate()) + '/' + (endDate.getFullYear() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getDate()),
     method: 'GET'
   })
 }
 
-export const createPlan = (data) => {
+export const createOrUpdatePlan = (data) => {
   return request({
     url: '/apiPlanning.php/plan',
     method: 'POST',
