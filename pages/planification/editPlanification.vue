@@ -72,6 +72,7 @@
                           @click="editBinnacle"
                         />
                       </div>
+                      -->
                       <div class="level-item">
                         <b-button
                           size="is-small"
@@ -80,7 +81,6 @@
                           @click="deleteBinnacle"
                         />
                       </div>
-                      -->
                     </div>
                   </div>
                 </div>
@@ -245,11 +245,11 @@ export default {
     },
     async deleteBinnacle () {
       try {
-        const binnacles = this.plan.binnacles
-        console.log(this.indexBinnacle)
-        binnacles.splice(this.indexBinnacle, 1)
-        this.plan.binnacles = binnacles.length === 0 ? {} : binnacles
-        console.log(this.plan)
+        if (this.plan.binnacles_deleted) {
+          this.plan.binnacles_deleted.push(this.plan.binnacles[this.indexBinnacle])
+        } else {
+          this.plan.binnacles_deleted = [this.plan.binnacles[this.indexBinnacle]]
+        }
         await this.$store.dispatch(
           'modules/plans/createOrUpdatePlan',
           this.plan
