@@ -1,6 +1,6 @@
 <template>
   <section class="hero is-cuxtal">
-    <div class="container">
+    <div class="cont">
       <div class="card is-principal m-2">
         <div class="card-header">
           <div class="card-header-title">
@@ -38,11 +38,11 @@
                 </div>
                 <div class="card-content scroll">
                   <div
-                    v-for="binnacle in plan.binnacles"
+                    v-for="(binnacle, index) in plan.binnacles"
                     :key="binnacle.idbinnacle"
                     class="container"
                   >
-                    <div class="card" @click="viewBinnacle(binnacle)">
+                    <div class="card" @click="viewBinnacle(binnacle, index)">
                       <div class="card-content">
                         <p>Bitácora {{ binnacle.idbinnacle }}</p>
                       </div>
@@ -52,7 +52,7 @@
               </div>
             </div>
             <div class="column is-6 has-text-centered">
-              <div v-if="hasSelect" class="card is-card-binnacle">
+              <div v-if="hasSelect && !hasEdit" class="card is-card-binnacle">
                 <div class="card-header">
                   <div class="level">
                     <div class="level-left">
@@ -62,7 +62,8 @@
                         </p>
                       </div>
                     </div>
-                    <div class="level-right has-text-left">
+                    <div class="level-right">
+                      <!--
                       <div class="level-item">
                         <b-button
                           size="is-small"
@@ -79,10 +80,11 @@
                           @click="deleteBinnacle"
                         />
                       </div>
+                      -->
                     </div>
                   </div>
                 </div>
-                <div v-if="!hasEdit" class="card-content">
+                <div class="card-content">
                   <p class="subtitle">
                     Fecha: {{ binaccleSelect.date }}
                   </p>
@@ -117,6 +119,73 @@
                   </div>
                 </div>
               </div>
+              <div v-else-if="hasSelect && hasEdit" class="card">
+                <div class="card-content">
+                  <div class="columns has-text-centered">
+                    <div class="column">
+                      <b-field label="Fecha">
+                        <b-datepicker v-model="binnacleSelect.date" inline />
+                      </b-field>
+                    </div>
+                    <div class="column">
+                      <div class="container m-2">
+                        <div class="columns">
+                          <div class="column">
+                            <b-field label="Hora de inicio">
+                              <b-timepicker
+                                v-model="binnacleSelect.hour_init"
+                                inline
+                              />
+                            </b-field>
+                          </div>
+                          <div class="column">
+                            <b-field label="Hora de finalización">
+                              <b-timepicker
+                                v-model="binnacleSelect.hour_end"
+                                inline
+                              />
+                            </b-field>
+                          </div>
+                        </div>
+                      </div>
+                      <br>
+                      <div class="container m-2">
+                        <b-field label="Vehículo">
+                          <b-select v-model="binnacleSelect.idvehicle">
+                            <option
+                              v-for="vehicle in vehicles"
+                              :key="vehicle.idvehicle"
+                              :value="vehicle.idvehicle"
+                            >
+                              {{ vehicle.number }} - {{ vehicle.subbrand }}
+                            </option>
+                          </b-select>
+                        </b-field>
+                        <b-field label="Participantes">
+                          <b-taginput
+                            v-model="binnacleSelect.participants"
+                            :data="filteredParticipants"
+                            field="name"
+                            autocomplete
+                            @typing="filterData"
+                          >
+                            <template v-slot="props">
+                              <strong>{{ props.option.name }}
+                                {{ props.option.lastname }}</strong>
+                            </template>
+                            <template #empty>
+                              Sin resultados
+                            </template>
+                          </b-taginput>
+                        </b-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-else>
+                <p>Selecciona una bitácora</p>
+              </div>
             </div>
           </div>
         </div>
@@ -139,16 +208,20 @@ export default {
       idPlanification: this.$route.query.id,
       plan: {},
       hasEdit: false,
+      indexBinnacle: 0,
       hasSelect: false,
       binnacleSelect: {},
       vehicles: [],
       participants: [],
+      filteredParticipants: [],
       isActive: false
     }
   },
   created () {},
   mounted () {
     this.getPlan()
+    this.getVehicles()
+    this.getParticipants()
   },
   methods: {
     async getPlan () {
@@ -166,11 +239,73 @@ export default {
       this.isActive = false
       this.getPlan()
     },
-    viewBinnacle (binnacle) {
+    editBinnacle () {
+      console.log(this.indexBinnacle)
+      this.hasEdit = true
+    },
+    async deleteBinnacle () {
+      try {
+        const binnacles = this.plan.binnacles
+        console.log(this.indexBinnacle)
+        binnacles.splice(this.indexBinnacle, 1)
+        this.plan.binnacles = binnacles.length === 0 ? {} : binnacles
+        console.log(this.plan)
+        await this.$store.dispatch(
+          'modules/plans/createOrUpdatePlan',
+          this.plan
+        )
+        this.$buefy.toast.open({
+          message: '¡Bitácora eliminada!',
+          type: 'is-success'
+        })
+        this.hasSelect = false
+        this.binnacleSelect = {}
+        this.refresh()
+      } catch (error) {
+        this.$buefy.toast.open({
+          message: 'Ocurrió un error, intente más tarde',
+          type: 'is-danger'
+        })
+        console.log(error)
+      }
+    },
+    viewBinnacle (binnacle, index) {
       this.hasSelect = false
       this.binnacleSelect = {}
       this.hasSelect = true
       this.binaccleSelect = binnacle
+      this.indexBinnacle = index
+    },
+    async getVehicles () {
+      try {
+        const res = await this.$store.dispatch('modules/vehicles/getVehicles')
+        this.vehicles = res
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getParticipants () {
+      try {
+        const res = await this.$store.dispatch(
+          'modules/participants/getParticipants'
+        )
+        this.participants = res
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    filterData (text) {
+      this.filteredParticipants = this.participants.filter((option) => {
+        if (option.name.toString().toLowerCase().includes(text.toLowerCase())) {
+          return option
+        }
+      })
+    },
+    cancelEdit () {
+      this.hasEdit = false
+      this.hasSelect = true
+      this.binnacleSelect = {}
+      this.refresh()
     }
   }
 }
@@ -192,7 +327,7 @@ export default {
   width: 100%;
 }
 .is-card-binnacle {
-  width: 300px;
+  min-width: 300px;
 }
 .hero.is-cuxtal {
   background-color: #0403039a;
@@ -204,5 +339,9 @@ export default {
 }
 .modal-background {
   background-color: rgba(0, 0, 0, 0.568);
+}
+.cont {
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

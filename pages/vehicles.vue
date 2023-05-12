@@ -235,7 +235,7 @@ export default {
         this.vehicle = {}
         this.getData()
         this.$buefy.toast.open({
-          message: 'Cambios guardados!',
+          message: '¡Cambios guardados!',
           type: 'is-success'
         })
         this.isLoading = false
