@@ -23,6 +23,9 @@
         <b-navbar-item tag="router-link" :to="{ path: '/charges' }">
           Cargos
         </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/adscriptionsAreas' }">
+          Areas
+        </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/' }">
           Coordenadas
         </b-navbar-item>

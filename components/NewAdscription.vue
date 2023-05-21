@@ -8,7 +8,7 @@
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
-          Nueva zona
+          Nueva área
         </p>
       </div>
       <div class="card-content">
@@ -17,7 +17,7 @@
             <b-field horizontal label="Descripción breve">
               <b-input
                 v-model="form.description"
-                name="Nº identificación"
+                name="Nombre de la área"
                 type="text"
                 required
               />
@@ -43,7 +43,7 @@
 
 <script>
 export default {
-  name: 'NewZone',
+  name: 'NewAdscription',
   props: {
     activeModal: {
       default: false,
@@ -74,11 +74,11 @@ export default {
     async createZone () {
       try {
         this.isLoading = true
-        await this.$store.dispatch('modules/zones/createOrUpdateZone', this.form)
+        await this.$store.dispatch('modules/adscriptions/createOrUpdateAdscription', this.form)
         this.form = {}
         this.isLoading = false
         this.$buefy.toast.open({
-          message: 'Zona guardada!',
+          message: 'Área guardada!',
           type: 'is-success'
         })
         this.$emit('create')
