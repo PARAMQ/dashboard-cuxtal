@@ -20,6 +20,9 @@
         <b-navbar-item tag="router-link" :to="{ path: '/zones' }">
           Zonas
         </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/charges' }">
+          Cargos
+        </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/' }">
           Coordenadas
         </b-navbar-item>
