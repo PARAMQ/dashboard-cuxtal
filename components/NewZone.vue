@@ -8,7 +8,7 @@
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
-          Nuevo departamento
+          Nueva zona
         </p>
       </div>
       <div class="card-content">
@@ -31,7 +31,7 @@
             </b-button>
           </div>
           <div class="card-footer-item">
-            <b-button type="is-success" @click="createDepartament">
+            <b-button type="is-success" @click="createZone">
               Guardar
             </b-button>
           </div>
@@ -71,14 +71,14 @@ export default {
     }
   },
   methods: {
-    async createDepartament () {
+    async createZone () {
       try {
         this.isLoading = true
-        await this.$store.dispatch('modules/deptos/createOrUpdateDepto', this.form)
+        await this.$store.dispatch('modules/zones/createOrUpdateZone', this.form)
         this.form = {}
         this.isLoading = false
         this.$buefy.toast.open({
-          message: 'Departamento guardado!',
+          message: 'Zona guardada!',
           type: 'is-success'
         })
         this.$emit('create')

@@ -8,7 +8,7 @@
             <div class="level-right">
               <p class="level-item">
                 <b-button type="is-primary" outlined @click="isActive = true">
-                  Nuevo departamento
+                  Nueva zona
                 </b-button>
               </p>
             </div>
@@ -18,18 +18,18 @@
               <div class="card">
                 <div class="card-content scroll">
                   <div
-                    v-for="departamento in departamentos"
-                    :key="departamento.iddepto"
+                    v-for="zona in zonas"
+                    :key="zona.idzoning"
                     class="container"
                   >
-                    <div class="card" @click="viewDepartament(departamento)">
+                    <div class="card" @click="viewZone(zona)">
                       <div class="card-content">
                         <div class="container">
                           <div class="columns">
                             <div class="column has-text-centered">
                               <p>
                                 <b-icon icon="account" custom-size="default" />
-                                {{ departamento.description }}
+                                {{ zona.description }}
                               </p>
                             </div>
                           </div>
@@ -44,7 +44,7 @@
               class="column is-8 is-flex is-justify-content-center has-text-centered"
             >
               <div
-                v-if="selectDepartament && !hasEdit"
+                v-if="selectZone && !hasEdit"
                 id="info-vehicle"
                 class="card"
               >
@@ -53,7 +53,7 @@
                     <div class="level-left">
                       <div class="level-item">
                         <p class="card-header-title">
-                          ID: {{ departament.iddepto }}
+                          ID: {{ zone.idzoning }}
                         </p>
                       </div>
                     </div>
@@ -63,7 +63,7 @@
                           size="is-small"
                           type="is-info is-light"
                           icon-right="pencil-outline"
-                          @click="editDepartament"
+                          @click="edit"
                         />
                       </div>
                       <div class="level-item">
@@ -71,7 +71,7 @@
                           size="is-small"
                           type="is-danger is-light"
                           icon-right="delete"
-                          @click="deleteDepartament(departament)"
+                          @click="deleteZone(zone)"
                         />
                       </div>
                     </div>
@@ -82,12 +82,12 @@
                     Descripción:
                   </p>
                   <p class="is-size-3">
-                    {{ departament.description }}
+                    {{ zone.description }}
                   </p>
                 </div>
               </div>
               <div
-                v-else-if="selectDepartament && hasEdit"
+                v-else-if="selectZone && hasEdit"
                 id="info-vehicle"
                 class="card"
               >
@@ -96,7 +96,7 @@
                     <div class="level-left">
                       <div class="level-item">
                         <p class="card-header-title">
-                          ID: {{ departament.iddepto }}
+                          ID: {{ zone.idzoning }}
                         </p>
                       </div>
                     </div>
@@ -123,10 +123,10 @@
                 <div class="card-content">
                   <div class="content">
                     <form @submit.prevent="submit">
-                      <b-field horizontal label="Descripción breve">
+                      <b-field horizontal label="Nombre">
                         <b-input
-                          v-model="departament.description"
-                          name="Nº identificación"
+                          v-model="zone.description"
+                          name="Nombre de la zona"
                           type="text"
                           required
                         />
@@ -138,10 +138,10 @@
               <div v-else class="card">
                 <div class="card-content">
                   <h1 class="is-size-3">
-                    Selecciona un departamento
+                    Selecciona una zona
                   </h1>
                   <p class="is-size-5">
-                    Si deseas ver la información de un departamento haz click
+                    Si deseas ver la información de una zona haz click
                     sobre su tarjeta
                   </p>
                 </div>
@@ -151,7 +151,7 @@
         </div>
       </div>
     </div>
-    <new-depto
+    <new-zone
       :active-modal="isActive"
       @close="isActive = false"
       @create="updateView"
@@ -161,13 +161,13 @@
 
 <script>
 export default {
-  name: 'Departaments',
+  name: 'Zones',
   data () {
     return {
-      selectDepartament: false,
+      selectZone: false,
       isActive: false,
-      departamentos: [],
-      departament: {},
+      zonas: [],
+      zone: {},
       hasEdit: false,
       params: {
         _t: Date.now()
@@ -181,27 +181,27 @@ export default {
     this.getData()
   },
   methods: {
-    viewDepartament (departament) {
-      this.departament = departament
-      this.selectDepartament = true
+    viewZone (zone) {
+      this.zone = zone
+      this.selectZone = true
     },
     cancelEdit () {
-      this.departament = {}
-      this.selectDepartament = false
+      this.zone = {}
+      this.selectZone = false
       this.hasEdit = false
     },
     async saveEdit () {
       try {
         this.isLoading = true
         await this.$store.dispatch(
-          'modules/deptos/createOrUpdateDepto',
-          this.departament
+          'modules/zones/createOrUpdateZone',
+          this.zone
         )
-        this.departament = {}
-        this.selectDepartament = false
+        this.zone = {}
+        this.selectZone = false
         this.hasEdit = false
         this.$buefy.toast.open({
-          message: 'Departamento guardado!',
+          message: 'Zona guardada!',
           type: 'is-success'
         })
       } catch (error) {
@@ -212,9 +212,9 @@ export default {
         console.log(error)
       }
     },
-    deleteDepartament (departament) {
+    deleteZone (zone) {
       this.$swal({
-        title: '¿Deseas borrar este departamento?',
+        title: '¿Deseas borrar esta zona?',
         showDenyButton: true,
         confirmButtonText: 'Borrar',
         denyButtonText: 'Cancelar'
@@ -222,14 +222,14 @@ export default {
         if (result.isConfirmed) {
           try {
             await this.$store.dispatch(
-              'modules/deptos/deleteDepto',
-              departament
+              'modules/zones/deleteZone',
+              zone
             )
             this.getData()
-            this.departament = {}
-            this.selectDepartament = false
+            this.zone = {}
+            this.selectZone = false
             this.$buefy.toast.open({
-              message: '¡Departamento eliminado!',
+              message: 'Zona eliminada!',
               type: 'is-success'
             })
           } catch (error) {
@@ -241,7 +241,7 @@ export default {
         }
       })
     },
-    editDepartament () {
+    edit () {
       this.hasEdit = true
     },
     updateView () {
@@ -250,12 +250,11 @@ export default {
     },
     async getData () {
       try {
-        this.departamentos = []
+        this.zonas = []
         const res = await this.$store.dispatch(
-          'modules/deptos/getDeptos',
-          this.params
+          'modules/zones/getZones'
         )
-        this.departamentos = res
+        this.zonas = res
       } catch (error) {
         console.log(error)
       }

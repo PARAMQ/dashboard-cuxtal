@@ -106,31 +106,6 @@
             </nuxt-link>
           </div>
         </nav-bar-menu>
-        <nav-bar-menu class="has-divider has-user-avatar">
-          <!--<user-avatar />-->
-          <div class="is-user-name">
-            <span>{{ userFullName || userName }}</span>
-          </div>
-
-          <div slot="dropdown" class="navbar-dropdown">
-            <nuxt-link
-              to="/"
-              class="navbar-item"
-              exact-active-class="is-active"
-            >
-              <b-icon icon="home-variant-outline" custom-size="default" />
-              <span>Inicio</span>
-            </nuxt-link>
-            <nuxt-link
-              to="/building"
-              class="navbar-item"
-              exact-active-class="is-active"
-            >
-              <b-icon icon="account" custom-size="default" />
-              <span>Mi Cuenta</span>
-            </nuxt-link>
-          </div>
-        </nav-bar-menu>
         <nav-bar-item class="m-1">
           <a class="navbar-item has-text-danger" @click="logout">
             <span>Cerrar Sesión</span>

@@ -133,24 +133,14 @@ export default {
           this.idPlan
         )
         this.plan = res
-        console.log(this.plan)
       } catch (error) {
         console.log(error)
       }
     },
     async create () {
-      /*
       const temporalForm = JSON.parse(JSON.stringify(this.form))
-      const startHour = new Date(temporalForm.hour_init)
-      const endHour = new Date(temporalForm.hour_end)
-      const date = new Date(temporalForm.date)
-      temporalForm.hour_init =
-        startHour.getHours() + ':' + startHour.getMinutes()
-      temporalForm.hour_end = endHour.getHours() + ':' + endHour.getMinutes()
-      temporalForm.date =
-        date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
-        */
-      this.binnacles.push(this.form)
+      console.log(temporalForm)
+      this.binnacles.push(temporalForm)
       try {
         this.plan.binnacles = this.binnacles
         await this.$store.dispatch(

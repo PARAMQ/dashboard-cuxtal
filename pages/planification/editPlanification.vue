@@ -1,6 +1,6 @@
 <template>
   <section class="hero is-cuxtal">
-    <div class="cont">
+    <div v-if="!hasEdit" class="cont">
       <div class="card is-principal m-2">
         <div class="card-header">
           <div class="card-header-title">
@@ -20,7 +20,7 @@
                 </b-button>
               </div>
               <div class="level-item">
-                <b-button type="is-danger">
+                <b-button type="is-danger" @click="deletePlan">
                   Eliminar recorrido
                 </b-button>
               </div>
@@ -52,7 +52,7 @@
               </div>
             </div>
             <div class="column is-6 has-text-centered">
-              <div v-if="hasSelect && !hasEdit" class="card is-card-binnacle">
+              <div v-if="hasSelect" class="card is-card-binnacle">
                 <div class="card-header">
                   <div class="level">
                     <div class="level-left">
@@ -63,7 +63,6 @@
                       </div>
                     </div>
                     <div class="level-right">
-                      <!--
                       <div class="level-item">
                         <b-button
                           size="is-small"
@@ -72,7 +71,6 @@
                           @click="editBinnacle"
                         />
                       </div>
-                      -->
                       <div class="level-item">
                         <b-button
                           size="is-small"
@@ -89,10 +87,10 @@
                     Fecha: {{ binaccleSelect.date }}
                   </p>
                   <p class="subtitle">
-                    Hora de inicio: {{ binaccleSelect.hour_init }}
+                    Hora de inicio: {{ binaccleSelect.hour_init | getTime }}
                   </p>
                   <p class="subtitle">
-                    Hora de finalización {{ binaccleSelect.hour_end }}
+                    Hora de finalización {{ binaccleSelect.hour_end | getTime }}
                   </p>
                   <p>
                     Vehículo:
@@ -119,75 +117,106 @@
                   </div>
                 </div>
               </div>
-              <div v-else-if="hasSelect && hasEdit" class="card">
-                <div class="card-content">
-                  <div class="columns has-text-centered">
-                    <div class="column">
-                      <b-field label="Fecha">
-                        <b-datepicker v-model="binnacleSelect.date" inline />
-                      </b-field>
-                    </div>
-                    <div class="column">
-                      <div class="container m-2">
-                        <div class="columns">
-                          <div class="column">
-                            <b-field label="Hora de inicio">
-                              <b-timepicker
-                                v-model="binnacleSelect.hour_init"
-                                inline
-                              />
-                            </b-field>
-                          </div>
-                          <div class="column">
-                            <b-field label="Hora de finalización">
-                              <b-timepicker
-                                v-model="binnacleSelect.hour_end"
-                                inline
-                              />
-                            </b-field>
-                          </div>
-                        </div>
-                      </div>
-                      <br>
-                      <div class="container m-2">
-                        <b-field label="Vehículo">
-                          <b-select v-model="binnacleSelect.idvehicle">
-                            <option
-                              v-for="vehicle in vehicles"
-                              :key="vehicle.idvehicle"
-                              :value="vehicle.idvehicle"
-                            >
-                              {{ vehicle.number }} - {{ vehicle.subbrand }}
-                            </option>
-                          </b-select>
-                        </b-field>
-                        <b-field label="Participantes">
-                          <b-taginput
-                            v-model="binnacleSelect.participants"
-                            :data="filteredParticipants"
-                            field="name"
-                            autocomplete
-                            @typing="filterData"
-                          >
-                            <template v-slot="props">
-                              <strong>{{ props.option.name }}
-                                {{ props.option.lastname }}</strong>
-                            </template>
-                            <template #empty>
-                              Sin resultados
-                            </template>
-                          </b-taginput>
-                        </b-field>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
               <div v-else>
                 <p>Selecciona una bitácora</p>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    <div v-else-if="hasEdit" class="cont">
+      <div class="card is-principal m-2">
+        <div class="card-header">
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <p class="card-header-title">
+                  Bitácora {{ binnacleSelect.idbinnacle }}
+                </p>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <b-button
+                  size="is-small"
+                  type="is-light"
+                  icon-right="keyboard-return"
+                  @click="cancelEdit"
+                >
+                  Regresar
+                </b-button>
+              </div>
+              <div class="level-item">
+                <b-button
+                  size="is-small"
+                  type="is-success is-light"
+                  icon-right="content-save"
+                  @click="saveEdit"
+                >
+                  Guardar
+                </b-button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-content">
+          <!--
+          <div class="columns has-text-centered">
+            <div class="column">
+              <b-field label="Fecha">
+                <b-datepicker v-model="binnacleSelect.date" inline />
+              </b-field>
+            </div>
+            <div class="column">
+              <div class="container m-2">
+                <div class="columns">
+                  <div class="column">
+                    <b-field label="Hora de inicio">
+                      <b-timepicker v-model="binnacleSelect.hour_init" inline />
+                    </b-field>
+                  </div>
+                  <div class="column">
+                    <b-field label="Hora de finalización">
+                      <b-timepicker v-model="binnacleSelect.hour_end" inline />
+                    </b-field>
+                  </div>
+                </div>
+              </div>
+              <br>
+              <div class="container m-2">
+                <b-field label="Vehículo">
+                  <b-select v-model="binnacleSelect.idvehicle">
+                    <option
+                      v-for="vehicle in vehicles"
+                      :key="vehicle.idvehicle"
+                      :value="vehicle.idvehicle"
+                    >
+                      {{ vehicle.number }} - {{ vehicle.subbrand }}
+                    </option>
+                  </b-select>
+                </b-field>
+                <b-field label="Participantes">
+                  <b-taginput
+                    v-model="binnacleSelect.participants"
+                    :data="filteredParticipants"
+                    field="name"
+                    autocomplete
+                    @typing="filterData"
+                  >
+                    <template v-slot="props">
+                      <strong>{{ props.option.name }}
+                        {{ props.option.lastname }}</strong>
+                    </template>
+                    <template #empty>
+                      Sin resultados
+                    </template>
+                  </b-taginput>
+                </b-field>
+              </div>
+            </div>
+          </div>
+          -->
         </div>
       </div>
     </div>
@@ -240,15 +269,19 @@ export default {
       this.getPlan()
     },
     editBinnacle () {
-      console.log(this.indexBinnacle)
+      this.binnacleSelect = this.plan.binnacles[this.indexBinnacle]
       this.hasEdit = true
     },
     async deleteBinnacle () {
       try {
         if (this.plan.binnacles_deleted) {
-          this.plan.binnacles_deleted.push(this.plan.binnacles[this.indexBinnacle])
+          this.plan.binnacles_deleted.push(
+            this.plan.binnacles[this.indexBinnacle]
+          )
         } else {
-          this.plan.binnacles_deleted = [this.plan.binnacles[this.indexBinnacle]]
+          this.plan.binnacles_deleted = [
+            this.plan.binnacles[this.indexBinnacle]
+          ]
         }
         await this.$store.dispatch(
           'modules/plans/createOrUpdatePlan',
@@ -270,6 +303,7 @@ export default {
       }
     },
     viewBinnacle (binnacle, index) {
+      console.log(binnacle)
       this.hasSelect = false
       this.binnacleSelect = {}
       this.hasSelect = true
@@ -303,9 +337,26 @@ export default {
     },
     cancelEdit () {
       this.hasEdit = false
-      this.hasSelect = true
-      this.binnacleSelect = {}
+      this.hasSelect = false
       this.refresh()
+    },
+    saveEdit () {
+      console.log(this.binnacleSelect)
+    },
+    async deletePlan () {
+      try {
+        await this.$store.dispatch('modules/plans/deletePlan', this.plan)
+        this.$buefy.toast.open({
+          message: '¡Planificación eliminada!',
+          type: 'is-success'
+        })
+        this.$route.push('/calendar')
+      } catch (error) {
+        this.$buefy.toast.open({
+          message: 'Ocurrió un error, intente más tarde',
+          type: 'is-danger'
+        })
+      }
     }
   }
 }
@@ -322,9 +373,6 @@ export default {
 }
 .card {
   background-color: white !important;
-}
-.card-header {
-  width: 100%;
 }
 .is-card-binnacle {
   min-width: 300px;

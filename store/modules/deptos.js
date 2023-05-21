@@ -5,7 +5,7 @@ export const actions = {
     const res = await getDeptos(query)
     return res
   },
-  async createDepto ({ commit }, data) {
+  async createOrUpdateDepto ({ commit }, data) {
     const res = await createDepto(data)
     return res
   },

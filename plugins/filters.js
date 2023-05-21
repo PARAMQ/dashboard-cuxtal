@@ -7,6 +7,11 @@ const shortDate = datetime => {
   const config = { hour12: true, dateStyle: 'short', timeStyle: 'short' }
   return new Date(datetime).toLocaleString('es-MX', config)
 }
+const getTime = datetime => {
+  const date = new Date(datetime)
+  console.log(date)
+  return date.getHours() + ':' + date.getMinutes()
+}
 const getDay = datetime => {
   const date = new Date(datetime)
   return date.getDate()
@@ -30,6 +35,7 @@ const status = (status) => {
       return 'is-info'
   }
 }
+Vue.filter('getTime', getTime)
 Vue.filter('status', status)
 Vue.filter('date', date)
 Vue.filter('shortDate', shortDate)

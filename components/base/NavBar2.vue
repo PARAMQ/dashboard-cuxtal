@@ -7,15 +7,29 @@
     </template>
 
     <template #end>
+      <b-navbar-dropdown label="Catálogo">
+        <b-navbar-item tag="router-link" :to="{ path: '/vehicles' }">
+          Vehículos
+        </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/participants' }">
+          Participantes
+        </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/departaments' }">
+          Departamentos
+        </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/zones' }">
+          Zonas
+        </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/' }">
+          Coordenadas
+        </b-navbar-item>
+      </b-navbar-dropdown>
       <b-navbar-dropdown label="Reportes">
         <b-navbar-item href="#">
           General
         </b-navbar-item>
         <b-navbar-item href="#">
           Denuncias
-        </b-navbar-item>
-        <b-navbar-item tag="router-link" :to="{ path: '/departaments' }">
-          Departamentos
         </b-navbar-item>
       </b-navbar-dropdown>
       <b-navbar-dropdown label="Recorridos">
@@ -24,13 +38,6 @@
         </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/binnacle' }">
           Bitácoras
-        </b-navbar-item>
-        <hr class="navbar-divider">
-        <b-navbar-item tag="router-link" :to="{ path: '/vehicles' }">
-          Vehículos
-        </b-navbar-item>
-        <b-navbar-item tag="router-link" :to="{ path: '/participants' }">
-          Participantes
         </b-navbar-item>
       </b-navbar-dropdown>
       <b-navbar-item tag="div">
