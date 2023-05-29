@@ -12,7 +12,29 @@
         </div>
         <div class="card-content">
           <div class="level">
-            <div class="level-left" />
+            <div class="level-left">
+              <div class="level-item">
+                <b-select
+                  v-model="plan.status"
+                >
+                  <option
+                    v-for="option in options"
+                    :key="option.value"
+                    :value="option.value"
+                  >
+                    {{ option.label }}
+                  </option>
+                </b-select>
+              </div>
+              <div class="level-item">
+                <b-button
+                  size="is-small"
+                  type="is-success is-light"
+                  icon-right="content-save"
+                  @click="updateStatus"
+                />
+              </div>
+            </div>
             <div class="level-right">
               <div class="level-item">
                 <b-button @click="isActive = true">
@@ -243,7 +265,25 @@ export default {
       vehicles: [],
       participants: [],
       filteredParticipants: [],
-      isActive: false
+      isActive: false,
+      options: [
+        {
+          label: 'Finalizado',
+          value: 'success'
+        },
+        {
+          label: 'En proceso',
+          value: 'warning'
+        },
+        {
+          label: 'Programado',
+          value: 'info'
+        },
+        {
+          label: 'Sin estado',
+          value: null
+        }
+      ]
     }
   },
   created () {},
@@ -317,6 +357,9 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    updateStatus () {
+      console.log('hola')
     },
     async getParticipants () {
       try {

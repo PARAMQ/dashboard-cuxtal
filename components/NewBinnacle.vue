@@ -38,6 +38,7 @@
                 <br>
                 <div class="container m-2">
                   <b-field label="Vehículo">
+                    <!--
                     <b-select v-model="form.idvehicle">
                       <option
                         v-for="vehicle in vehicles"
@@ -47,6 +48,26 @@
                         {{ vehicle.number }} - {{ vehicle.subbrand }}
                       </option>
                     </b-select>
+                    -->
+                    <b-taginput
+                      v-model="form.vehicles"
+                      :data="filteredVehicles"
+                      field="name"
+                      autocomplete
+                      @typing="filterVehicles"
+                    >
+                      <template v-slot="props">
+                        <strong>{{ props.option.number }} -
+                          {{
+                            props.option.plates
+                              ? props.option.plates
+                              : 'sin placas reigstradas'
+                          }}</strong>
+                      </template>
+                      <template #empty>
+                        Sin resultados
+                      </template>
+                    </b-taginput>
                   </b-field>
                   <b-field label="Participantes">
                     <b-taginput
@@ -67,6 +88,17 @@
                   </b-field>
                 </div>
               </div>
+            </div>
+            <div class="section has-text-centeredAiññ">
+              <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d234.30763648330964!2d-89.66358841018851!3d21.013173871704232!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f567489cdc02749%3A0xf5009210d6a1fcf2!2sPerif.%20de%20M%C3%A9rida%20Lic.%20Manuel%20Berzunza%2C%20M%C3%A9rida%2C%20Yuc.!5e0!3m2!1ses!2smx!4v1684953624467!5m2!1ses!2smx"
+                      width="600"
+                      height="450"
+                      style="border: 0"
+                      allowfullscreen=""
+                      loading="lazy"
+                      referrerpolicy="no-referrer-when-downgrade"
+                    />
             </div>
           </form>
         </div>
@@ -108,6 +140,7 @@ export default {
       },
       isLoading: false,
       filteredParticipants: [],
+      filteredVehicles: [],
       participants: [],
       vehicles: [],
       plan: {},
@@ -182,7 +215,25 @@ export default {
     },
     filterData (text) {
       this.filteredParticipants = this.participants.filter((option) => {
-        if (option.name.toString().toLowerCase().includes(text.toLowerCase())) {
+        if (
+          option.name &&
+          option.name.toString().toLowerCase().includes(text.toLowerCase())
+        ) {
+          return option
+        }
+      })
+    },
+    filterVehicles (text) {
+      this.filteredVehicles = this.vehicles.filter((option) => {
+        if (
+          (option.plates &&
+            option.plates
+              .toString()
+              .toLowerCase()
+              .includes(text.toLowerCase())) ||
+          (option.number &&
+            option.number.toString().toLowerCase().includes(text.toLowerCase()))
+        ) {
           return option
         }
       })
