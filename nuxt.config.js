@@ -63,7 +63,8 @@ export default {
     { src: '~/plugins/particles.js', mode: 'client' },
     { src: '~/plugins/vue-float-action-button.js', mode: 'client' },
     { src: '~/plugins/pop-up-window.js', mode: 'client' },
-    { src: '~/plugins/sweetalerts.js', mode: 'client' }
+    { src: '~/plugins/sweetalerts.js', mode: 'client' },
+    { src: '~/plugins/vuelayers.js', mode: 'client' }
   ],
   /*
    ** Nuxt.js dev-modules
@@ -84,7 +85,8 @@ export default {
     ['nuxt-buefy', { materialDesignIcons: false }],
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
-    '@nuxtjs/pwa'
+    '@nuxtjs/pwa',
+    '~/shared/vuelayers'
   ],
   components: {
     dirs: [

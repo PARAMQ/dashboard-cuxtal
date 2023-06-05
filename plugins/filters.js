@@ -8,9 +8,13 @@ const shortDate = datetime => {
   return new Date(datetime).toLocaleString('es-MX', config)
 }
 const getTime = datetime => {
-  const date = new Date(datetime)
-  console.log(date)
-  return date.getHours() + ':' + date.getMinutes()
+  if (datetime) {
+    const date = new Date(datetime)
+    console.log(date)
+    return date.getHours() + ':' + date.getMinutes()
+  } else {
+    return 'Hora no registrada'
+  }
 }
 const getDay = datetime => {
   const date = new Date(datetime)

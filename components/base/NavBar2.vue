@@ -26,13 +26,13 @@
         <b-navbar-item tag="router-link" :to="{ path: '/adscriptionsAreas' }">
           Areas
         </b-navbar-item>
-        <b-navbar-item tag="router-link" :to="{ path: '/' }">
+        <b-navbar-item tag="router-link" :to="{ path: '/coordinates' }">
           Coordenadas
         </b-navbar-item>
       </b-navbar-dropdown>
-      <b-navbar-dropdown label="Reportes">
+      <b-navbar-dropdown label="Seguimiento">
         <b-navbar-item href="#">
-          General
+          Opinión tecnica
         </b-navbar-item>
         <b-navbar-item href="#">
           Denuncias
@@ -42,9 +42,11 @@
         <b-navbar-item tag="router-link" :to="{ path: '/calendar' }">
           Planificación
         </b-navbar-item>
+        <!--
         <b-navbar-item tag="router-link" :to="{ path: '/binnacle' }">
           Bitácoras
         </b-navbar-item>
+        -->
       </b-navbar-dropdown>
       <b-navbar-item tag="div">
         <div class="buttons">

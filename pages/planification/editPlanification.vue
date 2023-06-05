@@ -14,9 +14,7 @@
           <div class="level">
             <div class="level-left">
               <div class="level-item">
-                <b-select
-                  v-model="plan.status"
-                >
+                <b-select v-model="plan.status">
                   <option
                     v-for="option in options"
                     :key="option.value"
@@ -49,7 +47,7 @@
             </div>
           </div>
           <div class="columns">
-            <div class="column is-6">
+            <div class="column is-4">
               <div class="card">
                 <div class="card-header">
                   <div class="card-header-title">
@@ -73,7 +71,7 @@
                 </div>
               </div>
             </div>
-            <div class="column is-6 has-text-centered">
+            <div class="column is-8 has-text-centered">
               <div v-if="hasSelect" class="card is-card-binnacle">
                 <div class="card-header">
                   <div class="level">
@@ -105,38 +103,139 @@
                   </div>
                 </div>
                 <div class="card-content">
-                  <p class="subtitle">
-                    Fecha: {{ binaccleSelect.date }}
-                  </p>
-                  <p class="subtitle">
-                    Hora de inicio: {{ binaccleSelect.hour_init | getTime }}
-                  </p>
-                  <p class="subtitle">
-                    Hora de finalización {{ binaccleSelect.hour_end | getTime }}
-                  </p>
-                  <p>
-                    Vehículo:
-                    {{
-                      binaccleSelect.idvehicle
-                        ? binaccleSelect.idvehicle
-                        : 'No asignado'
-                    }}
-                  </p>
-                  <br>
-                  <div v-if="binaccleSelect.participants.length > 0">
+                  <div>
+                    <div class="divider">
+                      <p>Datos generales</p>
+                    </div>
                     <p class="subtitle">
-                      Participantes:
+                      Fecha: {{ binaccleSelect.date }}
                     </p>
+                    <p class="subtitle">
+                      Hora de inicio: {{ binaccleSelect.hour_init | getTime }}
+                    </p>
+                    <p class="subtitle">
+                      Hora de finalización
+                      {{ binaccleSelect.hour_end | getTime }}
+                    </p>
+                  </div>
+                  <div class="divider">
+                    <p>Vehículos</p>
+                  </div>
+                  <div>
                     <div
-                      v-for="participant in binaccleSelect.participants"
-                      :key="participant.id"
+                      v-if="
+                        binaccleSelect.vehicles &&
+                          binaccleSelect.vehicles.length > 0
+                      "
                     >
-                      <p>{{ participant.name }} {{ participant.lastname }}</p>
+                      <p class="subtitle">
+                        Participantes:
+                      </p>
+                      <div
+                        v-for="vehicle in binaccleSelect.vehicles"
+                        :key="vehicle.idvehicle"
+                      >
+                        <p>{{ vehicle.name }} {{ vehicle.lastname }}</p>
+                      </div>
+                    </div>
+                    <div v-else>
+                      No hay vehiculos asociados
                     </div>
                   </div>
-                  <div v-else>
-                    No hay participantes asociados
+                  <div class="divider">
+                    <p>Participantes</p>
                   </div>
+                  <div>
+                    <div
+                      v-if="
+                        binaccleSelect.participants &&
+                          binaccleSelect.participants.length > 0
+                      "
+                    >
+                      <p class="subtitle">
+                        Participantes:
+                      </p>
+                      <div
+                        v-for="participant in binaccleSelect.participants"
+                        :key="participant.idparticipant"
+                      >
+                        <p>{{ participant.name }} {{ participant.lastname }}</p>
+                      </div>
+                    </div>
+                    <div v-else>
+                      No hay participantes asociados
+                    </div>
+                  </div>
+                  <div class="divider">
+                    <p>Coordenadas</p>
+                  </div>
+                  <div>
+                    <div
+                      v-if="
+                        binaccleSelect.list_coordinates &&
+                          binaccleSelect.list_coordinates > 0
+                      "
+                    >
+                      <div
+                        v-for="coordinate in binaccle.Select.list_coordinates"
+                        :key="coordinate.idcoordinates"
+                      >
+                        <p>{{ coordinate }}</p>
+                      </div>
+                    </div>
+                    <div v-else>
+                      No hay coordenadas asociadas
+                    </div>
+                  </div>
+                  <!--
+                  <div class="divider">
+                    <p>Evidencias</p>
+                  </div>
+                  <div>
+                    <div
+                      v-if="
+                        binaccleSelect.list_image &&
+                          binaccleSelect.list_image > 0
+                      "
+                    >
+                      <b-carousel>
+                        <b-carousel-item
+                          v-for="(carousel, i) in carousels"
+                          :key="i"
+                        >
+                          <section
+                            :class="`hero is-medium is-${carousel.color}`"
+                          >
+                            <div class="hero-body has-text-centered">
+                              <h1 class="title">
+                                {{ carousel.text }}
+                              </h1>
+                            </div>
+                          </section>
+                        </b-carousel-item>
+                      </b-carousel>
+                    </div>
+                    <div v-else>
+                      <b-carousel>
+                        <b-carousel-item
+                          v-for="(carousel, i) in carousels"
+                          :key="i"
+                        >
+                          <section
+                            :class="`hero is-medium is-${carousel.color}`"
+                          >
+                            <div class="hero-body has-text-centered">
+                              <h1 class="title">
+                                {{ carousel.text }}
+                              </h1>
+                            </div>
+                          </section>
+                        </b-carousel-item>
+                      </b-carousel>
+                      No hay evidencias
+                    </div>
+                  </div>
+                  -->
                 </div>
               </div>
               <div v-else>
@@ -283,6 +382,13 @@ export default {
           label: 'Sin estado',
           value: null
         }
+      ],
+      carousels: [
+        { text: 'Slide 1', color: 'primary' },
+        { text: 'Slide 2', color: 'info' },
+        { text: 'Slide 3', color: 'success' },
+        { text: 'Slide 4', color: 'warning' },
+        { text: 'Slide 5', color: 'danger' }
       ]
     }
   },
@@ -412,7 +518,7 @@ export default {
 }
 .card.is-principal {
   background-color: white !important;
-  width: 700px;
+  width: 1000px;
 }
 .card {
   background-color: white !important;
@@ -434,5 +540,8 @@ export default {
 .cont {
   margin-left: auto;
   margin-right: auto;
+}
+.animation-content.modal-content {
+  max-width: 1200px !important;
 }
 </style>
