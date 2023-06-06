@@ -48,7 +48,7 @@
                     <div class="level-left">
                       <div class="level-item">
                         <p class="card-header-title">
-                          ID: {{ coordenada.idcoordinates }}
+                          ID: {{ coordinate.idcoordinates }}
                         </p>
                       </div>
                     </div>
@@ -57,21 +57,27 @@
                 <div class="card-content">
                   <div class="columns">
                     <div class="column">
-                      <vl-map data-projection="EPSG:4326" style="height: 400px">
+                      <vl-map
+                        :load-tiles-while-animating="true"
+                        :load-tiles-while-interacting="true"
+                        data-projection="EPSG:4326"
+                        style="height: 400px"
+                      >
                         <vl-view
                           :zoom.sync="zoom"
-                          :center.sync="center"
+                          :center.sync="point"
                           :rotation.sync="rotation"
                         />
 
-                        <vl-layer-tile>
+                        <vl-layer-tile id="osm">
                           <vl-source-osm />
                         </vl-layer-tile>
 
-                        <vl-feature>
-                          <vl-geom-point
-                            :coordinates="coordinates"
-                          />
+                        <vl-feature
+                          id="point"
+                          :properties="{ prop: 'value', prop2: 'value' }"
+                        >
+                          <vl-geom-point :coordinates="point" />
                         </vl-feature>
                       </vl-map>
                     </div>
@@ -134,7 +140,8 @@
                       Selecciona un punto
                     </h1>
                     <p class="is-size-5">
-                      Haz click sobre un punto de la lista y lo verás en el mapa.
+                      Haz click sobre un punto de la lista y lo verás en el
+                      mapa.
                     </p>
                   </div>
                   <div class="columns">
@@ -142,7 +149,7 @@
                       <vl-map data-projection="EPSG:4326" style="height: 400px">
                         <vl-view
                           :zoom.sync="zoom"
-                          :center.sync="center"
+                          :center.sync="point"
                           :rotation.sync="rotation"
                         />
 
@@ -151,9 +158,7 @@
                         </vl-layer-tile>
 
                         <vl-feature>
-                          <vl-geom-point
-                            :coordinates="coordinates"
-                          />
+                          <vl-geom-point :coordinates="point" />
                         </vl-feature>
                       </vl-map>
                     </div>
@@ -185,7 +190,7 @@ export default {
       hasEdit: false,
       zoom: 13,
       center: [-89.6095127687108, 20.867135753904403],
-      coordinates: [-89.6095127687108, 20.867135753904403],
+      point: [-89.6095127687108, 20.867135753904403],
       rotation: 0
     }
   },
@@ -197,7 +202,9 @@ export default {
   },
   methods: {
     viewCoordinate (coordinate) {
-      this.coordinate = coordinate
+      console.log(coordinate)
+      this.point = [coordinate.x, coordinate.y]
+      this.center = this.coordinate
       this.selectCoordinate = true
     },
     cancelEdit () {

@@ -11,7 +11,7 @@ export default async function ({ store, redirect, route }) {
     }
     res = await store.dispatch('modules/auth/checkToken', data)
   }
-  if (res && res.tiempo > 0) {
+  if (res && res.tiempo >= 0) {
     if (route.path === '/auth/login' || route.path === '/auth/register') {
       // if is logged in, redirect to the home page
       redirect('/')
@@ -33,7 +33,7 @@ export default async function ({ store, redirect, route }) {
       }
     }
   } else if (!whitelist.includes(route.name)) {
-    redirect(`/auth/login?redirect=${route.path}`)
+    redirect('/auth/login')
   }
   return Promise.resolve()
 }

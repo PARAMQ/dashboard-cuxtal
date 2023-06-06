@@ -107,15 +107,17 @@
                     <div class="divider">
                       <p>Datos generales</p>
                     </div>
-                    <p class="subtitle">
-                      Fecha: {{ binaccleSelect.date }}
+                    <p>
+                      <strong>Estado actual de la bitácora:</strong> {{ binaccleSelect.estatus ? binaccleSelect.estatus : 'Sin estado' }}
                     </p>
-                    <p class="subtitle">
-                      Hora de inicio: {{ binaccleSelect.hour_init | getTime }}
+                    <p>
+                      <strong>Fecha:</strong> {{ binaccleSelect.date }}
                     </p>
-                    <p class="subtitle">
-                      Hora de finalización
-                      {{ binaccleSelect.hour_end | getTime }}
+                    <p>
+                      <strong>Hora de inicio:</strong> {{ binaccleSelect.hour_init | getTime }}
+                    </p>
+                    <p>
+                      <strong>Hora de finalización</strong> {{ binaccleSelect.hour_end | getTime }}
                     </p>
                   </div>
                   <div class="divider">
@@ -124,18 +126,27 @@
                   <div>
                     <div
                       v-if="
-                        binaccleSelect.vehicles &&
-                          binaccleSelect.vehicles.length > 0
+                        binaccleSelect.list_vehicle &&
+                          binaccleSelect.list_vehicle.length > 0
                       "
                     >
                       <p class="subtitle">
-                        Participantes:
+                        Vehículos:
                       </p>
                       <div
-                        v-for="vehicle in binaccleSelect.vehicles"
+                        v-for="vehicle in binaccleSelect.list_vehicle"
                         :key="vehicle.idvehicle"
                       >
-                        <p>{{ vehicle.name }} {{ vehicle.lastname }}</p>
+                        <b-taglist attached class="m-2">
+                          <b-tag type="is-light">
+                            {{ vehicle.number }}
+                          </b-tag>
+                          <b-tag
+                            type="is-info"
+                          >
+                            {{ vehicle.model }} - {{ vehicle.brand }}
+                          </b-tag>
+                        </b-taglist>
                       </div>
                     </div>
                     <div v-else>
@@ -158,6 +169,7 @@
                       <div
                         v-for="participant in binaccleSelect.participants"
                         :key="participant.idparticipant"
+                        class="has-text-centered"
                       >
                         <p>{{ participant.name }} {{ participant.lastname }}</p>
                       </div>
@@ -170,24 +182,49 @@
                     <p>Coordenadas</p>
                   </div>
                   <div>
-                    <div
-                      v-if="
-                        binaccleSelect.list_coordinates &&
-                          binaccleSelect.list_coordinates > 0
-                      "
-                    >
-                      <div
-                        v-for="coordinate in binaccle.Select.list_coordinates"
-                        :key="coordinate.idcoordinates"
-                      >
-                        <p>{{ coordinate }}</p>
+                    <div v-if="binaccleSelect.coordinates_binnacle">
+                      <div class="columns">
+                        <div class="column is-3">
+                          <div
+                            v-for="coordinate in binaccleSelect.coordinates_binnacle"
+                            :key="coordinate.idcoordinates"
+                          >
+                            <b-tag class="m-2" @click="viewPoint(coordinate)">
+                              {{ coordinate.name }}
+                            </b-tag>
+                          </div>
+                        </div>
+                        <div class="column is-9">
+                          <vl-map
+                            :load-tiles-while-animating="true"
+                            :load-tiles-while-interacting="true"
+                            data-projection="EPSG:4326"
+                            style="height: 400px"
+                          >
+                            <vl-view
+                              :zoom="zoom"
+                              :center.sync="point"
+                              :rotation="rotation"
+                            />
+
+                            <vl-layer-tile id="osm">
+                              <vl-source-osm />
+                            </vl-layer-tile>
+
+                            <vl-feature
+                              id="point"
+                              :properties="{ prop: 'value', prop2: 'value' }"
+                            >
+                              <vl-geom-point :coordinates="point" />
+                            </vl-feature>
+                          </vl-map>
+                        </div>
                       </div>
                     </div>
                     <div v-else>
-                      No hay coordenadas asociadas
+                      sd No hay coordenadas asociadas
                     </div>
                   </div>
-                  <!--
                   <div class="divider">
                     <p>Evidencias</p>
                   </div>
@@ -195,47 +232,26 @@
                     <div
                       v-if="
                         binaccleSelect.list_image &&
-                          binaccleSelect.list_image > 0
+                          binaccleSelect.list_image.length > 0
                       "
                     >
-                      <b-carousel>
-                        <b-carousel-item
-                          v-for="(carousel, i) in carousels"
-                          :key="i"
-                        >
-                          <section
-                            :class="`hero is-medium is-${carousel.color}`"
-                          >
-                            <div class="hero-body has-text-centered">
-                              <h1 class="title">
-                                {{ carousel.text }}
-                              </h1>
-                            </div>
-                          </section>
+                      <b-carousel :indicator-inside="false">
+                        <b-carousel-item v-for="item in binaccleSelect.list_image " :key="item.idimage">
+                          <b-image class="image" :src="item.path" />
                         </b-carousel-item>
+                        <template #indicators="props">
+                          <b-image
+                            class="al image"
+                            :src="props.path"
+                            :title="props.description"
+                          />
+                        </template>
                       </b-carousel>
                     </div>
                     <div v-else>
-                      <b-carousel>
-                        <b-carousel-item
-                          v-for="(carousel, i) in carousels"
-                          :key="i"
-                        >
-                          <section
-                            :class="`hero is-medium is-${carousel.color}`"
-                          >
-                            <div class="hero-body has-text-centered">
-                              <h1 class="title">
-                                {{ carousel.text }}
-                              </h1>
-                            </div>
-                          </section>
-                        </b-carousel-item>
-                      </b-carousel>
                       No hay evidencias
                     </div>
                   </div>
-                  -->
                 </div>
               </div>
               <div v-else>
@@ -365,6 +381,10 @@ export default {
       participants: [],
       filteredParticipants: [],
       isActive: false,
+      zoom: 12,
+      center: [0, 0],
+      point: [-89.60984537598705, 20.85610769792424],
+      rotation: 0,
       options: [
         {
           label: 'Finalizado',
@@ -491,6 +511,9 @@ export default {
     },
     saveEdit () {
       console.log(this.binnacleSelect)
+    },
+    viewPoint (point) {
+      this.point = [point.x, point.y]
     },
     async deletePlan () {
       try {

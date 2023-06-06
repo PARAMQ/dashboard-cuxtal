@@ -57,14 +57,14 @@
               </div>
               <div class="column">
                 <b-field label="Estado actual de la bitácora">
-                  <b-select placeholder="Selecciona una opción">
-                    <option value="is-info">
+                  <b-select v-model="form.estatus" placeholder="Selecciona una opción">
+                    <option value="sin-revisar">
                       Sin revisar
                     </option>
-                    <option value="is-warning">
+                    <option value="en-revision">
                       En revisión
                     </option>
-                    <option value="is-success">
+                    <option value="revisado">
                       Revisado
                     </option>
                   </b-select>
@@ -259,12 +259,12 @@
         </div>
         <div class="card-footer">
           <div class="card-footer-item">
-            <b-button @click="closeModal">
+            <b-button :disabled="buttonDisabled" @click="closeModal">
               Cancelar
             </b-button>
           </div>
           <div class="card-footer-item">
-            <b-button type="is-success" @click="create">
+            <b-button type="is-success" :disabled="buttonDisabled" @click="create">
               Guardar
             </b-button>
           </div>
@@ -291,7 +291,9 @@ export default {
   data () {
     return {
       form: {
-        estatus: 'active'
+        estatus: 'sin-revisar',
+        date: new Date(),
+        hour_init: new Date()
       },
       isLoading: false,
       filteredParticipants: [],
@@ -312,6 +314,7 @@ export default {
       temporalFiles: [],
       typeBinnacle: null,
       temporalFile: null,
+      buttonDisabled: false,
       imageUrl: require('@/assets/cuxtal/RC_V.png')
     }
   },
@@ -342,8 +345,12 @@ export default {
       }
     },
     async create () {
+      this.isLoading = true
+      this.buttonDisabled = true
       const temporalForm = JSON.parse(JSON.stringify(this.form))
+      console.log(temporalForm)
       try {
+        console.log(temporalForm)
         this.binnacles.push(temporalForm)
         this.plan.binnacles = this.binnacles
         await this.$store.dispatch(
@@ -390,6 +397,8 @@ export default {
           message: '¡Bitácora guardada!',
           type: 'is-success'
         })
+        this.buttonDisabled = false
+        this.isLoading = false
         this.$emit('update')
       } catch (error) {
         this.$buefy.toast.open({
@@ -397,6 +406,8 @@ export default {
           type: 'is-danger'
         })
         console.log(error)
+      } finally {
+        this.isLoading = false
       }
     },
     readFile () {

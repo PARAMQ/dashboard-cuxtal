@@ -78,6 +78,41 @@
                 required
               />
             </b-field>
+            <section>
+              <b-field horizontal label="Cargo">
+                <b-select v-model="form.idcharge" placeholder="Seleccione uno">
+                  <option
+                    v-for="option in roles"
+                    :key="option.idcharge"
+                    :value="option.idcharge"
+                  >
+                    {{ option.description }}
+                  </option>
+                </b-select>
+              </b-field>
+              <b-field horizontal label="Departamento">
+                <b-select v-model="form.iddepto" placeholder="Seleccione uno">
+                  <option
+                    v-for="option in departaments"
+                    :key="option.iddepto"
+                    :value="option.iddepto"
+                  >
+                    {{ option.description }}
+                  </option>
+                </b-select>
+              </b-field>
+              <b-field horizontal label="Área">
+                <b-select v-model="form.idadscription_area" placeholder="Seleccione uno">
+                  <option
+                    v-for="option in areasAdsc"
+                    :key="option.idadscription_area"
+                    :value="option.idadscription_area"
+                  >
+                    {{ option.description }}
+                  </option>
+                </b-select>
+              </b-field>
+            </section>
           </form>
         </div>
         <div class="card-footer">
@@ -112,8 +147,16 @@ export default {
       form: {
         date_register: new Date(),
         estatus: 'PR'
-      }
+      },
+      departaments: [],
+      roles: [],
+      areasAdsc: []
     }
+  },
+  mounted () {
+    this.getDepartaments()
+    this.getAreasAdsc()
+    this.getRoles()
   },
   methods: {
     async createParticipant () {
@@ -129,6 +172,31 @@ export default {
         })
         this.$emit('create')
         this.isLoading = false
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getDepartaments () {
+      try {
+        this.departaments = await this.$store.dispatch(
+          'modules/deptos/getDeptos'
+        )
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getRoles () {
+      try {
+        this.roles = await this.$store.dispatch('modules/charges/getCharges')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getAreasAdsc () {
+      try {
+        this.areasAdsc = await this.$store.dispatch(
+          'modules/adscriptions/getAdscriptions'
+        )
       } catch (error) {
         console.log(error)
       }
