@@ -19,45 +19,11 @@
             </div>
             <div class="columns">
               <div class="column">
-                <section>
-                  <b-radio
-                    v-model="typeBinnacle"
-                    native-value="tech_op"
-                  >
-                    Opinión técnica
-                  </b-radio>
-                  <b-radio
-                    v-model="typeBinnacle"
-                    native-value="rapporteur"
-                  >
-                    Denuncia
-                  </b-radio>
-                  <b-radio
-                    v-model="typeBinnacle"
-                    native-value="programmed"
-                  >
-                    Recorrido programado
-                  </b-radio>
-                </section>
-                <section>
-                  <b-input
-                    v-if="typeBinnacle === 'tech_op'"
-                    v-model="form.tech_op"
-                  />
-                  <b-input
-                    v-else-if="typeBinnacle === 'rapporteur'"
-                    v-model="form.rapporteur"
-                  />
-                  <b-datepicker
-                    v-else-if="typeBinnacle === 'programmed'"
-                    v-model="form.programmed"
-                    placeholder="Escoje una fecha"
-                  />
-                </section>
-              </div>
-              <div class="column">
                 <b-field label="Estado actual de la bitácora">
-                  <b-select v-model="form.estatus" placeholder="Selecciona una opción">
+                  <b-select
+                    v-model="form.status"
+                    placeholder="Selecciona una opción"
+                  >
                     <option value="sin-revisar">
                       Sin revisar
                     </option>
@@ -68,6 +34,16 @@
                       Revisado
                     </option>
                   </b-select>
+                </b-field>
+              </div>
+            </div>
+            <div class="divider">
+              <strong>Relatoría</strong>
+            </div>
+            <div class="columns">
+              <div class="column">
+                <b-field label="Escriba aquí la relatoría">
+                  <b-input v-model="form.rapporteur" type="textarea" />
                 </b-field>
               </div>
             </div>
@@ -199,15 +175,12 @@
                     :rotation.sync="rotation"
                   />
 
-                  <vl-layer-tile id="osm">
+                  <vl-layer-tile>
                     <vl-source-osm />
                   </vl-layer-tile>
 
-                  <vl-feature
-                    id="point"
-                    :properties="{ prop: 'value', prop2: 'value' }"
-                  >
-                    <vl-geom-point :coordinates="point" />
+                  <vl-feature>
+                    <vl-geom-multi-point :coordinates="pointsMap" />
                   </vl-feature>
                 </vl-map>
               </div>
@@ -264,7 +237,11 @@
             </b-button>
           </div>
           <div class="card-footer-item">
-            <b-button type="is-success" :disabled="buttonDisabled" @click="create">
+            <b-button
+              type="is-success"
+              :disabled="buttonDisabled"
+              @click="createBinnacle"
+            >
               Guardar
             </b-button>
           </div>
@@ -276,6 +253,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import KML from 'ol/format/KML'
 export default {
   name: 'NewBinnacle',
   props: {
@@ -286,12 +264,16 @@ export default {
     idPlan: {
       default: '',
       type: String
+    },
+    idBinnacle: {
+      default: null,
+      type: Number
     }
   },
   data () {
     return {
       form: {
-        estatus: 'sin-revisar',
+        status: 'sin-revisar',
         date: new Date(),
         hour_init: new Date()
       },
@@ -311,6 +293,7 @@ export default {
       points: [],
       idPoints: [],
       idEvidences: [],
+      pointsMap: [[-89.60984537598705, 20.85610769792424]],
       temporalFiles: [],
       typeBinnacle: null,
       temporalFile: null,
@@ -332,6 +315,9 @@ export default {
     this.filteredParticipants = this.participants
   },
   methods: {
+    kmlFormatFactory () {
+      return new KML()
+    },
     async getPlan () {
       try {
         const res = await this.$store.dispatch(
@@ -344,31 +330,25 @@ export default {
         console.log(error)
       }
     },
-    async create () {
+    async createBinnacle () {
       this.isLoading = true
       this.buttonDisabled = true
       const temporalForm = JSON.parse(JSON.stringify(this.form))
-      console.log(temporalForm)
       try {
-        console.log(temporalForm)
-        this.binnacles.push(temporalForm)
-        this.plan.binnacles = this.binnacles
-        await this.$store.dispatch(
-          'modules/plans/createOrUpdatePlan',
-          this.plan
+        const idBinnacle = await this.$store.dispatch(
+          'modules/binnacles/createOrUpdateBinnacle',
+          temporalForm
         )
-        await this.getPlan()
-        const binnacles = this.plan.binnacles
-        const binnacleCreated = binnacles.pop()
+        const binnacle = await this.getBinnacle(idBinnacle)
         if (this.points.length > 0) {
           this.points.map((point) => {
             const coord = point
-            coord.idbinnacle = binnacleCreated.idbinnacle
+            coord.idbinnacle = idBinnacle
             return coord
           })
-          await this.createPoints(this.points, binnacleCreated.idbinnacle)
-          binnacleCreated.list_coordinates = this.idPoints
-          await this.updateBinnacle(binnacleCreated)
+          await this.createPoints(this.points, idBinnacle)
+          binnacle.list_coordinates = this.idPoints
+          await this.updateBinnacle(binnacle)
         }
         if (this.files.length > 0) {
           const formData = new FormData()
@@ -378,12 +358,12 @@ export default {
           this.files.forEach((files, index) => {
             this.temporalFiles.push({
               description: 'evidencia ' + (index + 1),
-              idbinnacle: binnacleCreated.idbinnacle,
+              idbinnacle: idBinnacle,
               position: index + 1
             })
           })
-          binnacleCreated.list_image = this.temporalFiles
-          const positionsRelation = await this.updateBinnacle(binnacleCreated)
+          binnacle.list_image = this.temporalFiles
+          const positionsRelation = await this.updateBinnacle(idBinnacle)
           this.temporalFiles.forEach((x, index) => {
             formData.append('idimages[' + index + ']', positionsRelation[index])
           })
@@ -392,7 +372,9 @@ export default {
         this.form = {}
         this.temporalFiles = []
         this.files = []
+        this.idPoints = []
         this.points = []
+        this.pointsMap = []
         this.$buefy.toast.open({
           message: '¡Bitácora guardada!',
           type: 'is-success'
@@ -401,12 +383,9 @@ export default {
         this.isLoading = false
         this.$emit('update')
       } catch (error) {
-        this.$buefy.toast.open({
-          message: 'Ocurrió un error, intente nuevamente',
-          type: 'is-danger'
-        })
         console.log(error)
       } finally {
+        this.buttonDisabled = false
         this.isLoading = false
       }
     },
@@ -498,11 +477,13 @@ export default {
       })
     },
     addPoint () {
-      if (
-        this.point[0] !== -89.60984537598705 &&
-        this.point[1] !== 20.85610769792424 &&
-        this.formCoord.name !== ''
-      ) {
+      if (this.formCoord.name && this.formCoord.name !== '') {
+        if (this.points.length === 0) {
+          const temporalPoints = [[this.point[0], this.point[1]]]
+          this.pointsMap = temporalPoints
+        } else {
+          this.pointsMap.push([this.point[0], this.point[1]])
+        }
         this.formCoord.x = this.point[0]
         this.formCoord.y = this.point[1]
         this.points.push(this.formCoord)
@@ -512,6 +493,21 @@ export default {
           y: 0
         }
         this.point = [-89.60984537598705, 20.85610769792424]
+      } else {
+        this.$buefy.toast.open({
+          duration: 4000,
+          message: 'Es necesario asignar un nombre a las coordenadas',
+          position: 'is-bottom',
+          type: 'is-danger'
+        })
+      }
+    },
+    async getBinnacle (id) {
+      try {
+        const res = await this.$store.dispatch('modules/binnacles/getBinnacle', id)
+        return res
+      } catch (error) {
+        console.log(error)
       }
     },
     viewPoint (point) {
@@ -522,6 +518,7 @@ export default {
     },
     deletePoint (index) {
       this.points.splice(index, 1)
+      this.pointsMap.splice(index, 1)
     },
     viewIamge (image) {
       this.imageUrl = URL.createObjectURL(image)

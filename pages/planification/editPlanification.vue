@@ -14,7 +14,7 @@
           <div class="level">
             <div class="level-left">
               <div class="level-item">
-                <b-select v-model="plan.status">
+                <b-select v-model="plan.estatus">
                   <option
                     v-for="option in options"
                     :key="option.value"
@@ -469,7 +469,6 @@ export default {
       }
     },
     viewBinnacle (binnacle, index) {
-      console.log(binnacle)
       this.hasSelect = false
       this.binnacleSelect = {}
       this.hasSelect = true
@@ -484,8 +483,15 @@ export default {
         console.log(error)
       }
     },
-    updateStatus () {
-      console.log('hola')
+    async updateStatus () {
+      try {
+        await this.$store.dispatch(
+          'modules/plans/createOrUpdatePlan',
+          this.plan
+        )
+      } catch (error) {
+        console.log(error)
+      }
     },
     async getParticipants () {
       try {

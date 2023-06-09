@@ -16,3 +16,10 @@ export const uploadEvidences = (data) => {
     headers: { 'Content-Type': 'multipart/form-data' }
   })
 }
+
+export const getBinnalce = (id) => {
+  return request({
+    url: '/apiBinnacle.php/binnacle/' + id,
+    method: 'GET'
+  })
+}
