@@ -35,8 +35,10 @@ const status = (status) => {
       return 'is-danger'
     case status === 'success':
       return 'is-success'
-    default:
+    case status === 'active':
       return 'is-info'
+    default:
+      return 'is-dark'
   }
 }
 Vue.filter('getTime', getTime)

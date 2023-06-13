@@ -24,10 +24,13 @@
           Cargos
         </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/adscriptionsAreas' }">
-          Areas
+          Áreas
         </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/coordinates' }">
           Coordenadas
+        </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/' }">
+          Usuarios
         </b-navbar-item>
       </b-navbar-dropdown>
       <b-navbar-dropdown label="Seguimiento">

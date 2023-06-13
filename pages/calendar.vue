@@ -37,19 +37,21 @@
                             <div class="column is-2">
                               <b-tooltip
                                 :label="
-                                  plan.status === 'process'
+                                  plan.estatus === 'process'
                                     ? 'En proceso'
-                                    : plan.status === 'danger'
+                                    : plan.estatus === 'danger'
                                       ? 'Finalizado'
-                                      : plan.status === 'success'
+                                      : plan.estatus === 'success'
                                         ? 'Disponible'
-                                        : 'Sin estado'
+                                        : plan.estatus === 'active'
+                                          ? 'Por comenzar'
+                                          : 'Sin estado'
                                 "
                               >
                                 <b-icon
                                   icon="routes-clock"
                                   size="is-large"
-                                  :type="plan.status | status"
+                                  :type="plan.estatus | status"
                                 />
                               </b-tooltip>
                             </div>

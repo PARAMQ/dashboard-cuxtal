@@ -67,7 +67,6 @@ export default {
   },
   methods: {
     async createPlan () {
-      console.log(this.dates)
       const dateRegister = new Date()
       const startDate = new Date(this.dates[0])
       const endDate = new Date(this.dates[1])
@@ -89,6 +88,7 @@ export default {
         (endDate.getMonth() + 1) +
         '-' +
         endDate.getDate()
+      console.log(this.form)
       try {
         this.isLoading = true
         await this.$store.dispatch('modules/plans/createOrUpdatePlan', this.form)

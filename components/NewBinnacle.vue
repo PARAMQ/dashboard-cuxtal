@@ -73,7 +73,7 @@
                 </div>
                 <br>
                 <div class="container m-2">
-                  <b-field label="Vehículo">
+                  <b-field label="Vehículos">
                     <b-taginput
                       v-model="form.vehicles"
                       :data="filteredVehicles"
@@ -102,16 +102,60 @@
                       autocomplete
                       @typing="filterData"
                     >
-                      <template v-slot="props">
+                      <template slot-scope="props">
                         <strong>{{ props.option.name }}
                           {{ props.option.lastname }}</strong>
                       </template>
                       <template #empty>
                         Sin resultados
                       </template>
+                      <template #selected>
+                        <b-tag
+                          v-for="(tag, index) in form.participants"
+                          :key="index"
+                          closable
+                          @close="removeParticipant(index)"
+                        >
+                          {{ tag.name }} {{ tag.lastname }}
+                        </b-tag>
+                      </template>
                     </b-taginput>
                   </b-field>
                 </div>
+              </div>
+            </div>
+            <div class="divider">
+              <strong>Zona y vegetación</strong>
+            </div>
+            <div class="columns">
+              <div class="column">
+                <b-field label="Zona involucrada">
+                  <b-taginput
+                    v-model="form.participants"
+                    :data="filteredParticipants"
+                    field="name"
+                    autocomplete
+                    @typing="filterData"
+                  >
+                    <template slot-scope="props">
+                      <strong>{{ props.option.name }}
+                        {{ props.option.lastname }}</strong>
+                    </template>
+                    <template #empty>
+                      Sin resultados
+                    </template>
+                    <template #selected>
+                      <b-tag
+                        v-for="(tag, index) in form.participants"
+                        :key="index"
+                        closable
+                        @close="removeParticipant(index)"
+                      >
+                        {{ tag.name }} {{ tag.lastname }}
+                      </b-tag>
+                    </template>
+                  </b-taginput>
+                </b-field>
               </div>
             </div>
             <div class="divider">
@@ -504,7 +548,10 @@ export default {
     },
     async getBinnacle (id) {
       try {
-        const res = await this.$store.dispatch('modules/binnacles/getBinnacle', id)
+        const res = await this.$store.dispatch(
+          'modules/binnacles/getBinnacle',
+          id
+        )
         return res
       } catch (error) {
         console.log(error)
@@ -519,6 +566,9 @@ export default {
     deletePoint (index) {
       this.points.splice(index, 1)
       this.pointsMap.splice(index, 1)
+    },
+    removeParticipant (index) {
+      this.form.participants.splice(index, 1)
     },
     viewIamge (image) {
       this.imageUrl = URL.createObjectURL(image)
