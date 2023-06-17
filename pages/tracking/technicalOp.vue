@@ -5,14 +5,14 @@
         <div class="card-header">
           <div class="card-header-title">
             <p class="subtitle">
-              Recorrido para las fechas {{ plan.start_date }} -
-              {{ plan.end_date }}
+              <strong>Opiniones técnicas</strong>
             </p>
           </div>
         </div>
         <div class="card-content">
           <div class="level">
             <div class="level-left">
+            <!--
               <div class="level-item">
                 <b-select v-model="plan.estatus">
                   <option
@@ -32,33 +32,29 @@
                   @click="updateStatus"
                 />
               </div>
+                -->
             </div>
             <div class="level-right">
               <div class="level-item">
                 <b-button @click="isActive = true">
-                  Nueva bitácora
+                  Nueva opinión técnica
                 </b-button>
               </div>
+              <!--
               <div class="level-item">
                 <b-button type="is-danger" @click="deletePlan">
                   Eliminar recorrido
                 </b-button>
               </div>
+                -->
             </div>
           </div>
           <div class="columns">
             <div class="column is-4">
               <div class="card">
-                <div class="card-header">
-                  <div class="card-header-title">
-                    <p class="subtitle">
-                      Bitácoras
-                    </p>
-                  </div>
-                </div>
                 <div class="card-content scroll">
                   <div
-                    v-for="(binnacle, index) in plan.binnacles"
+                    v-for="(binnacle, index) in binnacles"
                     :key="binnacle.idbinnacle"
                     class="container"
                   >
@@ -108,16 +104,17 @@
                       <p>Datos generales</p>
                     </div>
                     <p>
-                      <strong>Estado actual de la bitácora:</strong> {{ binaccleSelect.status | statusBinnacle }}
+                      <strong>Estado actual de la bitácora:</strong>
+                      {{ binaccleSelect.status | statusBinnacle }}
+                    </p>
+                    <p><strong>Fecha:</strong> {{ binaccleSelect.date }}</p>
+                    <p>
+                      <strong>Hora de inicio:</strong>
+                      {{ binaccleSelect.hour_init | getTime }}
                     </p>
                     <p>
-                      <strong>Fecha:</strong> {{ binaccleSelect.date }}
-                    </p>
-                    <p>
-                      <strong>Hora de inicio:</strong> {{ binaccleSelect.hour_init | getTime }}
-                    </p>
-                    <p>
-                      <strong>Hora de finalización</strong> {{ binaccleSelect.hour_end | getTime }}
+                      <strong>Hora de finalización</strong>
+                      {{ binaccleSelect.hour_end | getTime }}
                     </p>
                   </div>
                   <div class="divider">
@@ -141,9 +138,7 @@
                           <b-tag type="is-light">
                             {{ vehicle.number }}
                           </b-tag>
-                          <b-tag
-                            type="is-info"
-                          >
+                          <b-tag type="is-info">
                             {{ vehicle.model }} - {{ vehicle.brand }}
                           </b-tag>
                         </b-taglist>
@@ -236,7 +231,10 @@
                       "
                     >
                       <b-carousel :indicator-inside="false">
-                        <b-carousel-item v-for="item in binaccleSelect.list_image " :key="item.idimage">
+                        <b-carousel-item
+                          v-for="item in binaccleSelect.list_image"
+                          :key="item.idimage"
+                        >
                           <b-image class="image" :src="item.path" />
                         </b-carousel-item>
                         <template #indicators="props">
@@ -299,73 +297,76 @@
         </div>
         <div class="card-content">
           <!--
-          <div class="columns has-text-centered">
-            <div class="column">
-              <b-field label="Fecha">
-                <b-datepicker v-model="binnacleSelect.date" inline />
-              </b-field>
-            </div>
-            <div class="column">
-              <div class="container m-2">
-                <div class="columns">
-                  <div class="column">
-                    <b-field label="Hora de inicio">
-                      <b-timepicker v-model="binnacleSelect.hour_init" inline />
-                    </b-field>
+              <div class="columns has-text-centered">
+                <div class="column">
+                  <b-field label="Fecha">
+                    <b-datepicker v-model="binnacleSelect.date" inline />
+                  </b-field>
+                </div>
+                <div class="column">
+                  <div class="container m-2">
+                    <div class="columns">
+                      <div class="column">
+                        <b-field label="Hora de inicio">
+                          <b-timepicker v-model="binnacleSelect.hour_init" inline />
+                        </b-field>
+                      </div>
+                      <div class="column">
+                        <b-field label="Hora de finalización">
+                          <b-timepicker v-model="binnacleSelect.hour_end" inline />
+                        </b-field>
+                      </div>
+                    </div>
                   </div>
-                  <div class="column">
-                    <b-field label="Hora de finalización">
-                      <b-timepicker v-model="binnacleSelect.hour_end" inline />
+                  <br>
+                  <div class="container m-2">
+                    <b-field label="Vehículo">
+                      <b-select v-model="binnacleSelect.idvehicle">
+                        <option
+                          v-for="vehicle in vehicles"
+                          :key="vehicle.idvehicle"
+                          :value="vehicle.idvehicle"
+                        >
+                          {{ vehicle.number }} - {{ vehicle.subbrand }}
+                        </option>
+                      </b-select>
+                    </b-field>
+                    <b-field label="Participantes">
+                      <b-taginput
+                        v-model="binnacleSelect.participants"
+                        :data="filteredParticipants"
+                        field="name"
+                        autocomplete
+                        @typing="filterData"
+                      >
+                        <template v-slot="props">
+                          <strong>{{ props.option.name }}
+                            {{ props.option.lastname }}</strong>
+                        </template>
+                        <template #empty>
+                          Sin resultados
+                        </template>
+                      </b-taginput>
                     </b-field>
                   </div>
                 </div>
               </div>
-              <br>
-              <div class="container m-2">
-                <b-field label="Vehículo">
-                  <b-select v-model="binnacleSelect.idvehicle">
-                    <option
-                      v-for="vehicle in vehicles"
-                      :key="vehicle.idvehicle"
-                      :value="vehicle.idvehicle"
-                    >
-                      {{ vehicle.number }} - {{ vehicle.subbrand }}
-                    </option>
-                  </b-select>
-                </b-field>
-                <b-field label="Participantes">
-                  <b-taginput
-                    v-model="binnacleSelect.participants"
-                    :data="filteredParticipants"
-                    field="name"
-                    autocomplete
-                    @typing="filterData"
-                  >
-                    <template v-slot="props">
-                      <strong>{{ props.option.name }}
-                        {{ props.option.lastname }}</strong>
-                    </template>
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                  </b-taginput>
-                </b-field>
-              </div>
-            </div>
-          </div>
-          -->
+              -->
         </div>
       </div>
     </div>
     <new-binnacle
       :active-modal="isActive"
-      :id-plan="idPlanification"
+      :is-extraordinary="true"
+      :type="'techOp'"
       @update="refresh"
       @close="isActive = false"
     />
     <edit-binnacle
       :active-modal="isActiveEdit"
       :id-binnacle="idBinnacle"
+      :is-extraordinary="true"
+      :type="'techOp'"
       @update="refresh"
       @close="isActiveEdit = false"
     />
@@ -374,13 +375,11 @@
 
 <script>
 export default {
-  name: 'EditPlanification',
+  name: 'Programmed',
   data () {
     return {
       idPlanification: this.$route.query.id,
-      plan: {},
       hasEdit: false,
-      indexBinnacle: 0,
       idBinnacle: '',
       isActiveEdit: false,
       hasSelect: false,
@@ -388,6 +387,7 @@ export default {
       vehicles: [],
       participants: [],
       filteredParticipants: [],
+      binnacles: [],
       isActive: false,
       zoom: 12,
       center: [0, 0],
@@ -410,31 +410,25 @@ export default {
           label: 'Sin estado',
           value: null
         }
-      ],
-      carousels: [
-        { text: 'Slide 1', color: 'primary' },
-        { text: 'Slide 2', color: 'info' },
-        { text: 'Slide 3', color: 'success' },
-        { text: 'Slide 4', color: 'warning' },
-        { text: 'Slide 5', color: 'danger' }
       ]
     }
   },
   created () {},
   mounted () {
-    this.getPlan()
+    this.getData()
     this.getVehicles()
     this.getParticipants()
   },
   methods: {
-    async getPlan () {
-      // console.log(this.idPlanification)
+    async getData () {
       try {
         const res = await this.$store.dispatch(
-          'modules/plans/readPlan',
-          this.idPlanification
+          'modules/binnacles/getBinnacles'
         )
-        this.plan = res
+        console.log(res)
+        const filterBinnacles = res.filter(x => x.isextraordinary && x.type === 'techOp')
+        console.log(filterBinnacles)
+        // this.binnacles = res
       } catch (error) {
         console.log(error)
       }

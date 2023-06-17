@@ -8,7 +8,7 @@
       />
       <div class="card-header">
         <p class="card-header-title">
-          Nueva bitácora
+          Editar bitácora
         </p>
       </div>
       <div class="card-content">
@@ -299,7 +299,7 @@
 import { mapState } from 'vuex'
 import KML from 'ol/format/KML'
 export default {
-  name: 'NewBinnacle',
+  name: 'EditBinnacle',
   props: {
     activeModal: {
       default: false,
@@ -310,14 +310,6 @@ export default {
       type: String
     },
     idBinnacle: {
-      default: null,
-      type: Number
-    },
-    isExtraordinary: {
-      default: false,
-      type: Boolean
-    },
-    type: {
       default: '',
       type: String
     }
@@ -353,20 +345,30 @@ export default {
       imageUrl: require('@/assets/cuxtal/RC_V.png')
     }
   },
+  watch: {
+    idBinnacle (newVal, oldVal) {
+      if (newVal) {
+        this.getBinnacle(newVal)
+      } else if (oldVal && !newVal) {
+        this.getBinnacle(oldVal)
+      }
+    },
+    isExtraordinary (newVal, oldVal) {
+      if (newVal) {
+        this.isExtraordinary = newVal
+      }
+    }
+  },
   computed: {
     ...mapState(['user'])
   },
-  created () {},
+  created () {
+    console.log(this.idBinnacle)
+  },
   mounted () {
     this.center = this.point ? this.point : [0, 0]
     this.form.idusers = this.user.idusers
     this.form.idplanification = this.idPlan
-    if (!this.isExtraordinary) {
-      this.getPlan()
-      console.log('No es extraordinaria')
-    } else {
-      console.log('Es extraordinaria')
-    }
     this.getVehicles()
     this.getParticipants()
     this.filteredParticipants = this.participants
@@ -375,14 +377,17 @@ export default {
     kmlFormatFactory () {
       return new KML()
     },
-    async getPlan () {
+    async getBinnacle (id) {
       try {
         const res = await this.$store.dispatch(
-          'modules/plans/readPlan',
-          this.idPlan
+          'modules/binnacles/getBinnacle',
+          id
         )
-        this.plan = res
-        this.binnacles = res.binnacles ? res.binnacles : []
+        console.log(res)
+        res.date = new Date(res.date)
+        res.hour_end = new Date(res.hour_end)
+        res.hour_init = new Date(res.hour_init)
+        this.form = res
       } catch (error) {
         console.log(error)
       }
@@ -392,20 +397,25 @@ export default {
       this.buttonDisabled = true
       const temporalForm = JSON.parse(JSON.stringify(this.form))
       try {
+        console.log(temporalForm)
+        /*
+        // Cambiar esta parte por el this.updateBinnacle()
         const idBinnacle = await this.$store.dispatch(
           'modules/binnacles/createOrUpdateBinnacle',
           temporalForm
         )
         const binnacle = await this.getBinnacle(idBinnacle)
+        */
+        await this.updateBinnacle(temporalForm)
         if (this.points.length > 0) {
           this.points.map((point) => {
             const coord = point
-            coord.idbinnacle = idBinnacle
+            coord.idbinnacle = this.idBinnacle
             return coord
           })
-          await this.createPoints(this.points, idBinnacle)
-          binnacle.list_coordinates = this.idPoints
-          await this.updateBinnacle(binnacle)
+          await this.createPoints(this.points, this.idBinnacle)
+          temporalForm.list_coordinates = this.idPoints
+          await this.updateBinnacle(temporalForm)
         }
         if (this.files.length > 0) {
           const formData = new FormData()
@@ -415,12 +425,12 @@ export default {
           this.files.forEach((files, index) => {
             this.temporalFiles.push({
               description: 'evidencia ' + (index + 1),
-              idbinnacle: idBinnacle,
+              idbinnacle: this.idBinnacle,
               position: index + 1
             })
           })
-          binnacle.list_image = this.temporalFiles
-          const positionsRelation = await this.updateBinnacle(idBinnacle)
+          temporalForm.list_image = this.temporalFiles
+          const positionsRelation = await this.updateBinnacle(temporalForm)
           this.temporalFiles.forEach((x, index) => {
             formData.append('idimages[' + index + ']', positionsRelation[index])
           })
@@ -430,7 +440,7 @@ export default {
         this.temporalFiles = []
         this.files = []
         this.idPoints = []
-        this.points = []
+        this.points = [-89.60984537598705, 20.85610769792424]
         this.pointsMap = [[-89.60984537598705, 20.85610769792424]]
         this.$buefy.toast.open({
           message: '¡Bitácora guardada!',
@@ -438,6 +448,9 @@ export default {
         })
         this.buttonDisabled = false
         this.isLoading = false
+        if (temporalForm.status === 'revisado') {
+          console.log('revisado')
+        }
         this.$emit('update')
       } catch (error) {
         console.log(error)
@@ -557,17 +570,6 @@ export default {
           position: 'is-bottom',
           type: 'is-danger'
         })
-      }
-    },
-    async getBinnacle (id) {
-      try {
-        const res = await this.$store.dispatch(
-          'modules/binnacles/getBinnacle',
-          id
-        )
-        return res
-      } catch (error) {
-        console.log(error)
       }
     },
     viewPoint (point) {

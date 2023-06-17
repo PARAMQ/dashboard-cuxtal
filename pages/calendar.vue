@@ -43,7 +43,7 @@
                                       ? 'Finalizado'
                                       : plan.estatus === 'success'
                                         ? 'Disponible'
-                                        : plan.estatus === 'active'
+                                        : plan.estatus === 'info'
                                           ? 'Por comenzar'
                                           : 'Sin estado'
                                 "
@@ -55,6 +55,7 @@
                                 />
                               </b-tooltip>
                             </div>
+                            <!--
                             <div class="column">
                               <p>
                                 <b-icon
@@ -64,6 +65,7 @@
                                 Bitácoras: {{ plan.binnacles.length }}
                               </p>
                             </div>
+                            -->
                             <div class="column">
                               <p>
                                 <b-icon
@@ -131,6 +133,9 @@ export default {
   created () {
     // this.getData()
   },
+  mounted () {
+    this.plans = []
+  },
   methods: {
     editPlan (plan) {
       this.$router.push('/planification/editPlanification/?id=' + plan.idplanification)
@@ -142,6 +147,7 @@ export default {
           'modules/plans/getPlans',
           this.datesSelect
         )
+        this.plans = []
         this.plans = plans
         this.isLoadingPlans = false
       } catch (error) {

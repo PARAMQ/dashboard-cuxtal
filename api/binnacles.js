@@ -23,3 +23,10 @@ export const getBinnalce = (id) => {
     method: 'GET'
   })
 }
+
+export const getBinnacles = () => {
+  return request({
+    url: '/apiBinnacle.php/binnacles',
+    method: 'GET'
+  })
+}

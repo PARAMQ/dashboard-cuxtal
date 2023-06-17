@@ -108,16 +108,17 @@
                       <p>Datos generales</p>
                     </div>
                     <p>
-                      <strong>Estado actual de la bitácora:</strong> {{ binaccleSelect.status | statusBinnacle }}
+                      <strong>Estado actual de la bitácora:</strong>
+                      {{ binaccleSelect.status | statusBinnacle }}
+                    </p>
+                    <p><strong>Fecha:</strong> {{ binaccleSelect.date }}</p>
+                    <p>
+                      <strong>Hora de inicio:</strong>
+                      {{ binaccleSelect.hour_init | getTime }}
                     </p>
                     <p>
-                      <strong>Fecha:</strong> {{ binaccleSelect.date }}
-                    </p>
-                    <p>
-                      <strong>Hora de inicio:</strong> {{ binaccleSelect.hour_init | getTime }}
-                    </p>
-                    <p>
-                      <strong>Hora de finalización</strong> {{ binaccleSelect.hour_end | getTime }}
+                      <strong>Hora de finalización</strong>
+                      {{ binaccleSelect.hour_end | getTime }}
                     </p>
                   </div>
                   <div class="divider">
@@ -141,9 +142,7 @@
                           <b-tag type="is-light">
                             {{ vehicle.number }}
                           </b-tag>
-                          <b-tag
-                            type="is-info"
-                          >
+                          <b-tag type="is-info">
                             {{ vehicle.model }} - {{ vehicle.brand }}
                           </b-tag>
                         </b-taglist>
@@ -236,7 +235,10 @@
                       "
                     >
                       <b-carousel :indicator-inside="false">
-                        <b-carousel-item v-for="item in binaccleSelect.list_image " :key="item.idimage">
+                        <b-carousel-item
+                          v-for="item in binaccleSelect.list_image"
+                          :key="item.idimage"
+                        >
                           <b-image class="image" :src="item.path" />
                         </b-carousel-item>
                         <template #indicators="props">
@@ -299,61 +301,61 @@
         </div>
         <div class="card-content">
           <!--
-          <div class="columns has-text-centered">
-            <div class="column">
-              <b-field label="Fecha">
-                <b-datepicker v-model="binnacleSelect.date" inline />
-              </b-field>
-            </div>
-            <div class="column">
-              <div class="container m-2">
-                <div class="columns">
-                  <div class="column">
-                    <b-field label="Hora de inicio">
-                      <b-timepicker v-model="binnacleSelect.hour_init" inline />
-                    </b-field>
-                  </div>
-                  <div class="column">
-                    <b-field label="Hora de finalización">
-                      <b-timepicker v-model="binnacleSelect.hour_end" inline />
-                    </b-field>
+            <div class="columns has-text-centered">
+              <div class="column">
+                <b-field label="Fecha">
+                  <b-datepicker v-model="binnacleSelect.date" inline />
+                </b-field>
+              </div>
+              <div class="column">
+                <div class="container m-2">
+                  <div class="columns">
+                    <div class="column">
+                      <b-field label="Hora de inicio">
+                        <b-timepicker v-model="binnacleSelect.hour_init" inline />
+                      </b-field>
+                    </div>
+                    <div class="column">
+                      <b-field label="Hora de finalización">
+                        <b-timepicker v-model="binnacleSelect.hour_end" inline />
+                      </b-field>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <br>
-              <div class="container m-2">
-                <b-field label="Vehículo">
-                  <b-select v-model="binnacleSelect.idvehicle">
-                    <option
-                      v-for="vehicle in vehicles"
-                      :key="vehicle.idvehicle"
-                      :value="vehicle.idvehicle"
+                <br>
+                <div class="container m-2">
+                  <b-field label="Vehículo">
+                    <b-select v-model="binnacleSelect.idvehicle">
+                      <option
+                        v-for="vehicle in vehicles"
+                        :key="vehicle.idvehicle"
+                        :value="vehicle.idvehicle"
+                      >
+                        {{ vehicle.number }} - {{ vehicle.subbrand }}
+                      </option>
+                    </b-select>
+                  </b-field>
+                  <b-field label="Participantes">
+                    <b-taginput
+                      v-model="binnacleSelect.participants"
+                      :data="filteredParticipants"
+                      field="name"
+                      autocomplete
+                      @typing="filterData"
                     >
-                      {{ vehicle.number }} - {{ vehicle.subbrand }}
-                    </option>
-                  </b-select>
-                </b-field>
-                <b-field label="Participantes">
-                  <b-taginput
-                    v-model="binnacleSelect.participants"
-                    :data="filteredParticipants"
-                    field="name"
-                    autocomplete
-                    @typing="filterData"
-                  >
-                    <template v-slot="props">
-                      <strong>{{ props.option.name }}
-                        {{ props.option.lastname }}</strong>
-                    </template>
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                  </b-taginput>
-                </b-field>
+                      <template v-slot="props">
+                        <strong>{{ props.option.name }}
+                          {{ props.option.lastname }}</strong>
+                      </template>
+                      <template #empty>
+                        Sin resultados
+                      </template>
+                    </b-taginput>
+                  </b-field>
+                </div>
               </div>
             </div>
-          </div>
-          -->
+            -->
         </div>
       </div>
     </div>
@@ -374,7 +376,7 @@
 
 <script>
 export default {
-  name: 'EditPlanification',
+  name: 'Programmed',
   data () {
     return {
       idPlanification: this.$route.query.id,
@@ -410,13 +412,6 @@ export default {
           label: 'Sin estado',
           value: null
         }
-      ],
-      carousels: [
-        { text: 'Slide 1', color: 'primary' },
-        { text: 'Slide 2', color: 'info' },
-        { text: 'Slide 3', color: 'success' },
-        { text: 'Slide 4', color: 'warning' },
-        { text: 'Slide 5', color: 'danger' }
       ]
     }
   },

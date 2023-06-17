@@ -28,6 +28,7 @@ const currency = (num) => {
   return parseFloat(num).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
 }
 const status = (status) => {
+  /*
   switch (status) {
     case status === 'process':
       return 'is-warning'
@@ -40,9 +41,28 @@ const status = (status) => {
     default:
       return 'is-dark'
   }
+  */
+  return status === 'process' ? 'is-warning' : (status === 'danger' ? 'is-danger' : (status === 'success' ? 'is-success' : (status === 'active' ? 'is-info' : 'is-dark')))
+}
+const statusBinnacle = (status) => {
+  console.log(status)
+  /*
+  switch (status) {
+    case status === 'sin-revisar':
+      return 'Sin revisar'
+    case status === 'en-revision':
+      return 'En revisión'
+    case status === 'revisado':
+      return 'Revisado'
+    default:
+      return 'en-revision'
+  }
+  */
+  return status === 'sin-revisar' ? 'Sin revisar' : (status === 'en-revision' ? 'En revisión' : (status === 'revisado' ? 'Revisado' : 'Sin estado'))
 }
 Vue.filter('getTime', getTime)
 Vue.filter('status', status)
+Vue.filter('statusBinnacle', statusBinnacle)
 Vue.filter('date', date)
 Vue.filter('shortDate', shortDate)
 Vue.filter('getDay', getDay)
