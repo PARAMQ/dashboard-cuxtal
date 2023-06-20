@@ -5,8 +5,7 @@
         <div class="card-header">
           <div class="card-header-title">
             <p class="subtitle">
-              Recorrido para las fechas {{ plan.start_date }} -
-              {{ plan.end_date }}
+              Recorrido del <strong>{{ plan.start_date }}</strong> al <strong>{{ plan.end_date }}</strong>
             </p>
           </div>
         </div>

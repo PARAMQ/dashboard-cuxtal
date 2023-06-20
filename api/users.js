@@ -1,28 +1,24 @@
 import request from './config'
 
-export const updateUser = (id, data) => {
+export const createUser = data => {
   return request({
-    url: '/users/' + id + '/',
-    method: 'PUT',
+    url: '/Login.php/user',
+    method: 'POST',
     data
   })
 }
 
-export const getUsers = params => {
+export const getUsers = () => {
   return request({
-    url: '/users/',
-    method: 'GET',
-    params
+    url: '/apiUsers.php/users',
+    method: 'GET'
   })
 }
 
-export const createUser = data => {
+export const deleteUser = (data) => {
   return request({
-    url: '/users/',
-    method: 'POST',
-    data: {
-      ...data,
-      is_active: true
-    }
+    url: '/apiUsers.php/user',
+    method: 'DELETE',
+    data
   })
 }

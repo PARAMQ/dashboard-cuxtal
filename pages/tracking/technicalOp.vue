@@ -438,7 +438,7 @@ export default {
       this.isActiveEdit = false
       this.idBinnacle = ''
       this.binnacleSelect = {}
-      this.getPlan()
+      this.getData()
     },
     editBinnacle () {
       this.isActiveEdit = true

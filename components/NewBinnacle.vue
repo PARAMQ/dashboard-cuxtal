@@ -8,7 +8,7 @@
       />
       <div class="card-header">
         <p class="card-header-title">
-          Nueva bitácora
+          Nueva bitácora {{ isExtraordinary ? ' - Extraordinaria' : '' }}
         </p>
       </div>
       <div class="card-content">
@@ -121,6 +121,22 @@
                       </template>
                     </b-taginput>
                   </b-field>
+                  <!--
+                  <b-field label="Persona que llevó el recorrido">
+                    <b-autocomplete
+                      v-model="form.participants"
+                      rounded
+                      :data="filteredDataArray"
+                      icon="magnify"
+                      clearable
+                      @select="(option) => (selected = option)"
+                    >
+                      <template #empty>
+                        No results found
+                      </template>
+                    </b-autocomplete>
+                  </b-field>
+                  -->
                 </div>
               </div>
             </div>
@@ -128,8 +144,9 @@
               <strong>Zona y vegetación</strong>
             </div>
             <div class="columns">
+              <!--
               <div class="column">
-                <b-field label="Zona involucrada">
+                <b-field label="Zona(s)">
                   <b-taginput
                     v-model="form.participants"
                     :data="filteredParticipants"
@@ -153,6 +170,27 @@
                       >
                         {{ tag.name }} {{ tag.lastname }}
                       </b-tag>
+                    </template>
+                  </b-taginput>
+                </b-field>
+              </div>
+              -->
+            </div>
+            <div class="columns">
+              <div class="column">
+                <b-field label="Vegetación">
+                  <b-taginput
+                    v-model="list_vegetable_affected"
+                    :data="filteredVegetation"
+                    field="description"
+                    autocomplete
+                    @typing="filterVegetation"
+                  >
+                    <template v-slot="props">
+                      <strong>{{ props.option.description }}</strong>
+                    </template>
+                    <template #empty>
+                      Sin resultados
                     </template>
                   </b-taginput>
                 </b-field>
@@ -332,8 +370,11 @@ export default {
       isLoading: false,
       filteredParticipants: [],
       filteredVehicles: [],
+      filteredVegetation: [],
       participants: [],
       vehicles: [],
+      vegetation: [],
+      list_vegetable_affected: [],
       plan: {},
       binnacles: [],
       zoom: 12,
@@ -363,12 +404,13 @@ export default {
     this.form.idplanification = this.idPlan
     if (!this.isExtraordinary) {
       this.getPlan()
-      console.log('No es extraordinaria')
     } else {
-      console.log('Es extraordinaria')
+      this.form.isextraordinary = true
+      this.form.type = this.type
     }
     this.getVehicles()
     this.getParticipants()
+    this.getVeg()
     this.filteredParticipants = this.participants
   },
   methods: {
@@ -396,7 +438,15 @@ export default {
           'modules/binnacles/createOrUpdateBinnacle',
           temporalForm
         )
+        console.log(idBinnacle)
         const binnacle = await this.getBinnacle(idBinnacle)
+        if (this.list_vegetable_affected.length > 0) {
+          binnacle.list_vegetable_affected = this.list_vegetable_affected.map((x) => {
+            x.idbinnacle = idBinnacle
+            return x
+          })
+          await this.updateBinnacle(binnacle)
+        }
         if (this.points.length > 0) {
           this.points.map((point) => {
             const coord = point
@@ -513,6 +563,16 @@ export default {
         console.log(error)
       }
     },
+    async getVeg () {
+      try {
+        const res = await this.$store.dispatch(
+          'modules/vegetation/getVegetations'
+        )
+        this.vegetation = res
+      } catch (error) {
+        console.log(error)
+      }
+    },
     async getParticipants () {
       try {
         const res = await this.$store.dispatch(
@@ -611,6 +671,32 @@ export default {
               .includes(text.toLowerCase())) ||
           (option.number &&
             option.number.toString().toLowerCase().includes(text.toLowerCase()))
+        ) {
+          return option
+        }
+      })
+    },
+    filterVegetation (text) {
+      this.filteredVegetation = this.vegetation.filter((option) => {
+        if (
+          option.description &&
+          option.description
+            .toString()
+            .toLowerCase()
+            .includes(text.toLowerCase())
+        ) {
+          return option
+        }
+      })
+    },
+    filterPart (text) {
+      this.filteredVegetation = this.vegetation.filter((option) => {
+        if (
+          option.description &&
+          option.description
+            .toString()
+            .toLowerCase()
+            .includes(text.toLowerCase())
         ) {
           return option
         }

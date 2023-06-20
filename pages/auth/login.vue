@@ -18,10 +18,10 @@
             <form @submit="false">
               <BInputWithValidation
                 v-model="form.username"
-                label="Correo electrónico"
-                placeholder="Correo electrónico"
-                message="Ingresa tu correo electrónico"
-                name="correo electrónico"
+                label="Usuario"
+                placeholder="Usuario"
+                message="Ingresa tu usuario"
+                name="usuario"
                 icon="account"
                 rules="required"
                 expanded

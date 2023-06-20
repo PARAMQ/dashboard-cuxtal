@@ -1,22 +1,16 @@
-import { getUsers, updateUser, createUser } from '~/api/users'
-import { getGroups } from '~/api/groups'
+import { getUsers, createUser, deleteUser } from '~/api/users'
 
 export const actions = {
-  async getUsersByLicense ({ commit }, query) {
-    const res = await getUsers(query)
+  async getUsers ({ commit }) {
+    const res = await getUsers()
     return res
   },
-  async createOrUpdate ({ commit }, data) {
-    if (data.id) {
-      const res = await updateUser(data.id, data)
-      return res.id
-    } else {
-      const res = await createUser(data)
-      return res.id
-    }
+  async createUser ({ commit }, data) {
+    const res = await createUser(data)
+    return res
   },
-  async getGroupsList ({ commit }, query) {
-    const res = await getGroups(query)
+  async deleteUser ({ commit }, data) {
+    const res = await deleteUser(data)
     return res
   }
 }

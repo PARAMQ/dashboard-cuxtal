@@ -17,6 +17,9 @@
         <b-navbar-item tag="router-link" :to="{ path: '/departaments' }">
           Departamentos
         </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/coordinations' }">
+          Coordinaciones
+        </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/zones' }">
           Zonas
         </b-navbar-item>
@@ -26,10 +29,13 @@
         <b-navbar-item tag="router-link" :to="{ path: '/adscriptionsAreas' }">
           Áreas
         </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/vegetationAffected' }">
+          Vegetación
+        </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/coordinates' }">
           Coordenadas
         </b-navbar-item>
-        <b-navbar-item tag="router-link" :to="{ path: '/' }">
+        <b-navbar-item tag="router-link" :to="{ path: '/users' }">
           Usuarios
         </b-navbar-item>
       </b-navbar-dropdown>
@@ -40,14 +46,19 @@
         <b-navbar-item tag="router-link" :to="{ path: '/tracking/programmed' }">
           Programados
         </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/tracking/complaint' }">
+          Denuncias
+        </b-navbar-item>
       </b-navbar-dropdown>
       <b-navbar-dropdown label="Recorridos">
         <b-navbar-item tag="router-link" :to="{ path: '/calendar' }">
           Planificación
         </b-navbar-item>
+        <!--
         <b-navbar-item tag="router-link" :to="{ path: '/binnacle' }">
           Bitácoras
         </b-navbar-item>
+        -->
       </b-navbar-dropdown>
       <b-navbar-item tag="div">
         <div class="buttons">
