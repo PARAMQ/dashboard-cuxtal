@@ -375,7 +375,7 @@
 
 <script>
 export default {
-  name: 'Programmed',
+  name: 'TechnicalOp',
   data () {
     return {
       idPlanification: this.$route.query.id,
@@ -425,10 +425,8 @@ export default {
         const res = await this.$store.dispatch(
           'modules/binnacles/getBinnacles'
         )
-        console.log(res)
         const filterBinnacles = res.filter(x => x.isextraordinary && x.type === 'techOp')
-        console.log(filterBinnacles)
-        // this.binnacles = res
+        this.binnacles = filterBinnacles
       } catch (error) {
         console.log(error)
       }

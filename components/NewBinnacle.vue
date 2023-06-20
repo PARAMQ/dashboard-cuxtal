@@ -433,6 +433,7 @@ export default {
       this.isLoading = true
       this.buttonDisabled = true
       const temporalForm = JSON.parse(JSON.stringify(this.form))
+      console.log(temporalForm)
       try {
         const idBinnacle = await this.$store.dispatch(
           'modules/binnacles/createOrUpdateBinnacle',
