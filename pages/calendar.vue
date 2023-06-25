@@ -34,24 +34,39 @@
                       <div class="card-content">
                         <div class="container">
                           <div class="columns">
-                            <div class="column is-2">
+                            <div class="column is-2 is-flex is-flex-direction-column is-justify-content-center">
                               <b-tooltip
                                 :label="
                                   plan.estatus === 'process'
                                     ? 'En proceso'
-                                    : plan.estatus === 'danger'
+                                    : plan.estatus === 'finally'
                                       ? 'Finalizado'
-                                      : plan.estatus === 'success'
-                                        ? 'Disponible'
-                                        : plan.estatus === 'info'
-                                          ? 'Por comenzar'
-                                          : 'Sin estado'
+                                      : plan.estatus === 'active'
+                                        ? 'Por comenzar'
+                                        : 'Sin estado'
+                                "
+                                :type="
+                                  plan.estatus === 'process'
+                                    ? 'is-warning'
+                                    : plan.estatus === 'finally'
+                                      ? 'is-danger'
+                                      : plan.estatus === 'active'
+                                        ? 'is-success'
+                                        : 'is-dark'
                                 "
                               >
                                 <b-icon
                                   icon="routes-clock"
                                   size="is-large"
-                                  :type="plan.estatus | status"
+                                  :type="
+                                    plan.estatus === 'process'
+                                      ? 'is-warning'
+                                      : plan.estatus === 'finally'
+                                        ? 'is-danger'
+                                        : plan.estatus === 'active'
+                                          ? 'is-success'
+                                          : 'is-dark'
+                                  "
                                 />
                               </b-tooltip>
                             </div>
@@ -66,7 +81,8 @@
                               </p>
                             </div>
                             -->
-                            <div class="column">
+                            <div class="column m-2 has-text-centered">
+                              <!--
                               <p>
                                 <b-icon
                                   icon="calendar-today"
@@ -74,6 +90,15 @@
                                 />
                                 {{ plan.start_date }} - {{ plan.end_date }}
                               </p>
+                              -->
+                              <div class="m-2">
+                                <div>
+                                  {{ plan.start_date }}
+                                </div>
+                                <div>
+                                  {{ plan.end_date }}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -138,7 +163,9 @@ export default {
   },
   methods: {
     editPlan (plan) {
-      this.$router.push('/planification/editPlanification/?id=' + plan.idplanification)
+      this.$router.push(
+        '/planification/editPlanification/?id=' + plan.idplanification
+      )
     },
     async getData () {
       try {

@@ -53,7 +53,7 @@ export default {
   data () {
     return {
       form: {
-        estatus: 'info'
+        estatus: 'active'
       },
       dates: [],
       isLoading: false

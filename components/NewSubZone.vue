@@ -1,34 +1,36 @@
 <template>
   <b-modal v-model="activeModal" :destroy-on-hide="false">
-    <b-loading
-      v-model="isLoading"
-      :is-full-page="true"
-      :can-cancel="false"
-    />
+    <b-loading v-model="isLoading" :is-full-page="true" :can-cancel="false" />
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
-          Nueva vegetación
+          Nueva zona
         </p>
       </div>
       <div class="card-content">
         <div class="content">
           <form @submit.prevent="submit">
-            <b-field horizontal label="Nombre común">
+            <b-field horizontal label="Descripción breve">
               <b-input
                 v-model="form.description"
-                name="nombre común"
+                name="Nombre de indentificación"
                 type="text"
                 required
               />
             </b-field>
-            <b-field horizontal label="Nombre científico">
-              <b-input
-                v-model="form.cientificName"
-                name="nombre científico"
-                type="text"
-                required
-              />
+            <b-field horizontal label="Zona legal relacionada">
+              <b-autocomplete
+                v-model="text"
+                rounded
+                :data="filteredDataArray"
+                icon="magnify"
+                clearable
+                @select="(option) => form.idzoning = option.idzoning"
+              >
+                <template #empty>
+                  No hay resultados
+                </template>
+              </b-autocomplete>
             </b-field>
           </form>
         </div>
@@ -39,7 +41,7 @@
             </b-button>
           </div>
           <div class="card-footer-item">
-            <b-button type="is-success" @click="createVeg">
+            <b-button type="is-success" @click="createZone">
               Guardar
             </b-button>
           </div>
@@ -51,7 +53,7 @@
 
 <script>
 export default {
-  name: 'NewZone',
+  name: 'NewSubZone',
   props: {
     activeModal: {
       default: false,
@@ -61,31 +63,50 @@ export default {
   data () {
     return {
       isLoading: false,
-      form: {}
+      form: {},
+      legalZones: [],
+      text: ''
     }
   },
+  mounted () {
+    this.getZones()
+  },
   methods: {
-    async createVeg () {
+    async createZone () {
+      console.log(this.form)
       try {
         this.isLoading = true
-        await this.$store.dispatch('modules/vegetation/createOrUpdateVegetation', this.form)
+        await this.$store.dispatch(
+          'modules/zones/createOrUpdateZone',
+          this.form
+        )
         this.form = {}
         this.isLoading = false
         this.$buefy.toast.open({
-          message: 'Vegetación guardada!',
+          message: 'Zona guardada!',
           type: 'is-success'
         })
         this.$emit('create')
       } catch (error) {
-        this.isLoading = false
         this.$buefy.toast.open({
           message: 'Ocurrió un error, intente nuevamente',
           type: 'is-danger'
         })
         console.log(error)
-      } finally {
-        this.isLoading = false
       }
+    },
+    async getZones () {
+      try {
+        const res = await this.$store.dispatch('modules/zones/getZones')
+        this.legalZones = res
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    filteredDataArray () {
+      return this.legalZones.filter((option) => {
+        return option.description.toString().toLowerCase().includes(this.text.toLowerCase())
+      })
     }
   }
 }

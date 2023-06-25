@@ -36,6 +36,12 @@
                   </b-select>
                 </b-field>
               </div>
+              <div class="column">
+                <!---
+                <b-field label="Responsable de la bitácora">
+                </b-fied>
+                -->
+              </div>
             </div>
             <div class="divider">
               <strong>Relatoría</strong>
@@ -122,7 +128,7 @@
                     </b-taginput>
                   </b-field>
                   <!--
-                  <b-field label="Persona que llevó el recorrido">
+                  <b-field label="Persona que realizó el recorrido">
                     <b-autocomplete
                       v-model="form.participants"
                       rounded
@@ -144,37 +150,34 @@
               <strong>Zona y vegetación</strong>
             </div>
             <div class="columns">
-              <!--
               <div class="column">
-                <b-field label="Zona(s)">
+                <b-field label="Zona(s) legal(es)">
                   <b-taginput
-                    v-model="form.participants"
-                    :data="filteredParticipants"
+                    v-model="form.legalZones"
+                    :data="filteredLegalZones"
                     field="name"
                     autocomplete
-                    @typing="filterData"
+                    @typing="filterZone"
                   >
                     <template slot-scope="props">
-                      <strong>{{ props.option.name }}
-                        {{ props.option.lastname }}</strong>
+                      <strong>{{ props.option.description }}</strong>
                     </template>
                     <template #empty>
                       Sin resultados
                     </template>
                     <template #selected>
                       <b-tag
-                        v-for="(tag, index) in form.participants"
+                        v-for="(tag, index) in form.legalZones"
                         :key="index"
                         closable
-                        @close="removeParticipant(index)"
+                        @close="removeLegalZone(index)"
                       >
-                        {{ tag.name }} {{ tag.lastname }}
+                        {{ tag.description }}
                       </b-tag>
                     </template>
                   </b-taginput>
                 </b-field>
               </div>
-              -->
             </div>
             <div class="columns">
               <div class="column">
@@ -371,9 +374,13 @@ export default {
       filteredParticipants: [],
       filteredVehicles: [],
       filteredVegetation: [],
+      filteredLegalZones: [],
+      filteredSubZone: [],
       participants: [],
       vehicles: [],
       vegetation: [],
+      legalZones: [],
+      subZones: [],
       list_vegetable_affected: [],
       plan: {},
       binnacles: [],
@@ -411,6 +418,7 @@ export default {
     this.getVehicles()
     this.getParticipants()
     this.getVeg()
+    this.getLegalZones()
     this.filteredParticipants = this.participants
   },
   methods: {
@@ -429,18 +437,26 @@ export default {
         console.log(error)
       }
     },
-    async createBinnacle () {
-      this.isLoading = true
-      this.buttonDisabled = true
+    createBinnacle () {
+      // this.isLoading = true
+      // this.buttonDisabled = true
       const temporalForm = JSON.parse(JSON.stringify(this.form))
       console.log(temporalForm)
+      /*
       try {
-        const idBinnacle = await this.$store.dispatch(
-          'modules/binnacles/createOrUpdateBinnacle',
-          temporalForm
-        )
-        console.log(idBinnacle)
-        const binnacle = await this.getBinnacle(idBinnacle)
+        let binnacle
+        let idBinnacle
+        if (this.idBinnacle) {
+          idBinnacle = this.idBinnacle
+          await this.updateBinnacle(temporalForm)
+          binnacle = await this.getBinnacle(idBinnacle)
+        } else {
+          idBinnacle = await this.$store.dispatch(
+            'modules/binnacles/createOrUpdateBinnacle',
+            temporalForm
+          )
+          binnacle = await this.getBinnacle(idBinnacle)
+        }
         if (this.list_vegetable_affected.length > 0) {
           binnacle.list_vegetable_affected = this.list_vegetable_affected.map((x) => {
             x.idbinnacle = idBinnacle
@@ -471,7 +487,7 @@ export default {
             })
           })
           binnacle.list_image = this.temporalFiles
-          const positionsRelation = await this.updateBinnacle(idBinnacle)
+          const positionsRelation = await this.updateBinnacle(binnacle)
           this.temporalFiles.forEach((x, index) => {
             formData.append('idimages[' + index + ']', positionsRelation[index])
           })
@@ -487,15 +503,28 @@ export default {
           message: '¡Bitácora guardada!',
           type: 'is-success'
         })
+        if (binnacle.status === 'revisado') {
+          this.$swal.fire({
+            title: '¿Qué tipo de bitácora es?',
+            text: 'Selecciona una opción',
+            showDenyButton: true,
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: 'Opinión técnica',
+            denyButtonText: 'Denuncia',
+            cancelButtonText: 'Programada'
+          })
+        }
         this.buttonDisabled = false
         this.isLoading = false
-        this.$emit('update')
+        // this.$emit('update')
       } catch (error) {
         console.log(error)
       } finally {
         this.buttonDisabled = false
         this.isLoading = false
       }
+      */
     },
     readFile () {
       this.temporalFile = this.$refs.file.files[0]
@@ -570,6 +599,20 @@ export default {
           'modules/vegetation/getVegetations'
         )
         this.vegetation = res
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getLegalZones () {
+      try {
+        this.legalZones = await this.$store.dispatch('modules/zones/getZones')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getSubZones () {
+      try {
+        this.subZones = await this.$store.dispatch('modules/zones/getSubZones')
       } catch (error) {
         console.log(error)
       }
@@ -692,6 +735,32 @@ export default {
     },
     filterPart (text) {
       this.filteredVegetation = this.vegetation.filter((option) => {
+        if (
+          option.description &&
+          option.description
+            .toString()
+            .toLowerCase()
+            .includes(text.toLowerCase())
+        ) {
+          return option
+        }
+      })
+    },
+    filterZone (text) {
+      this.filteredLegalZones = this.legalZones.filter((option) => {
+        if (
+          option.description &&
+          option.description
+            .toString()
+            .toLowerCase()
+            .includes(text.toLowerCase())
+        ) {
+          return option
+        }
+      })
+    },
+    filterSubZone (text) {
+      this.filteredSubZone = this.subZones.filter((option) => {
         if (
           option.description &&
           option.description

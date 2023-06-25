@@ -18,18 +18,18 @@
               <div class="card">
                 <div class="card-content scroll">
                   <div
-                    v-for="veg in vegetacion"
-                    :key="veg.idva"
+                    v-for="subzona in subzonas"
+                    :key="subzona.idzoning"
                     class="container"
                   >
-                    <div class="card" @click="viewVeg(veg)">
+                    <div class="card" @click="viewSubZone(subzona)">
                       <div class="card-content">
                         <div class="container">
                           <div class="columns">
                             <div class="column has-text-centered">
                               <p>
                                 <b-icon icon="account" custom-size="default" />
-                                {{ veg.description }}
+                                {{ subzona.description }}
                               </p>
                             </div>
                           </div>
@@ -44,7 +44,7 @@
               class="column is-8 is-flex is-justify-content-center has-text-centered"
             >
               <div
-                v-if="selectVeg && !hasEdit"
+                v-if="selectSub && !hasEdit"
                 id="info-vehicle"
                 class="card"
               >
@@ -53,7 +53,7 @@
                     <div class="level-left">
                       <div class="level-item">
                         <p class="card-header-title">
-                          ID: {{ vegetation.idva }}
+                          ID: {{ subzone.idzoning }}
                         </p>
                       </div>
                     </div>
@@ -71,7 +71,7 @@
                           size="is-small"
                           type="is-danger is-light"
                           icon-right="delete"
-                          @click="deleteVeg(vegetation)"
+                          @click="deleteSubZone(subzone)"
                         />
                       </div>
                     </div>
@@ -82,12 +82,12 @@
                     Descripción:
                   </p>
                   <p class="is-size-3">
-                    {{ vegetation.description }}
+                    {{ subzone.description }}
                   </p>
                 </div>
               </div>
               <div
-                v-else-if="selectVeg && hasEdit"
+                v-else-if="selectSub && hasEdit"
                 id="info-vehicle"
                 class="card"
               >
@@ -96,7 +96,7 @@
                     <div class="level-left">
                       <div class="level-item">
                         <p class="card-header-title">
-                          ID: {{ vegetation.idva }}
+                          ID: {{ subzone.idzoning }}
                         </p>
                       </div>
                     </div>
@@ -125,8 +125,8 @@
                     <form @submit.prevent="submit">
                       <b-field horizontal label="Descripción breve">
                         <b-input
-                          v-model="vegetation.description"
-                          name="Descripcion de la vegetación"
+                          v-model="subzone.description"
+                          name="Descripcion de la subzona"
                           type="text"
                           required
                         />
@@ -138,10 +138,10 @@
               <div v-else class="card">
                 <div class="card-content">
                   <h1 class="is-size-3">
-                    Selecciona una vegetación
+                    Selecciona una subzona
                   </h1>
                   <p class="is-size-5">
-                    Si deseas ver la información de una vegetación haz click
+                    Si deseas ver la información de una subzona haz click
                     sobre su tarjeta
                   </p>
                 </div>
@@ -151,7 +151,7 @@
         </div>
       </div>
     </div>
-    <new-vegetation
+    <new-subzone
       :active-modal="isActive"
       @close="isActive = false"
       @create="updateView"
@@ -161,13 +161,13 @@
 
 <script>
 export default {
-  name: 'Vegetation',
+  name: 'SubZone',
   data () {
     return {
-      selectVeg: false,
+      selectSub: false,
       isActive: false,
-      vegetacion: [],
-      vegetation: {},
+      subzonas: [],
+      subzone: {},
       hasEdit: false,
       params: {
         _t: Date.now()
@@ -178,27 +178,27 @@ export default {
     this.getData()
   },
   methods: {
-    viewVeg (vegetation) {
-      this.vegetation = vegetation
-      this.selectVeg = true
+    viewSubZone (subzone) {
+      this.subzone = subzone
+      this.selectSub = true
     },
     cancelEdit () {
-      this.vegetation = {}
-      this.selectVeg = false
+      this.subzone = {}
+      this.selectSub = false
       this.hasEdit = false
     },
     async saveEdit () {
       try {
         this.isLoading = true
         await this.$store.dispatch(
-          'modules/vegetation/createOrUpdateVegetation',
-          this.vegetation
+          'modules/zones/createOrUpdateSubZone',
+          this.subzone
         )
-        this.vegetation = {}
-        this.selectVeg = false
+        this.subzone = {}
+        this.selectSub = false
         this.hasEdit = false
         this.$buefy.toast.open({
-          message: 'Vegetación guardada!',
+          message: 'Subzona guardada!',
           type: 'is-success'
         })
       } catch (error) {
@@ -209,7 +209,7 @@ export default {
         console.log(error)
       }
     },
-    deleteVeg (vegetation) {
+    deleteSubZone (subzone) {
       this.$swal({
         title: '¿Deseas borrar esta vegetación?',
         showDenyButton: true,
@@ -219,14 +219,14 @@ export default {
         if (result.isConfirmed) {
           try {
             await this.$store.dispatch(
-              'modules/vegetation/deleteVegetation',
-              vegetation
+              'modules/zones/deleteSubZone',
+              subzone
             )
             this.getData()
-            this.vegetation = {}
-            this.selectVeg = false
+            this.subzone = {}
+            this.selectSub = false
             this.$buefy.toast.open({
-              message: 'Vegetación eliminada!',
+              message: 'Subzona eliminada!',
               type: 'is-success'
             })
           } catch (error) {
@@ -247,11 +247,11 @@ export default {
     },
     async getData () {
       try {
-        this.vegetacion = []
+        this.subzonas = []
         const res = await this.$store.dispatch(
-          'modules/vegetation/getVegetations'
+          'modules/zones/getSubZones'
         )
-        this.vegetacion = res
+        this.subzonas = res
       } catch (error) {
         console.log(error)
       }

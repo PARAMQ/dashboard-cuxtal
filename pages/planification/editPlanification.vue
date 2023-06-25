@@ -395,27 +395,20 @@ export default {
       options: [
         {
           label: 'Finalizado',
-          value: 'success'
+          value: 'finally'
         },
         {
           label: 'En proceso',
-          value: 'warning'
+          value: 'process'
         },
         {
           label: 'Programado',
-          value: 'info'
+          value: 'active'
         },
         {
           label: 'Sin estado',
           value: null
         }
-      ],
-      carousels: [
-        { text: 'Slide 1', color: 'primary' },
-        { text: 'Slide 2', color: 'info' },
-        { text: 'Slide 3', color: 'success' },
-        { text: 'Slide 4', color: 'warning' },
-        { text: 'Slide 5', color: 'danger' }
       ]
     }
   },
@@ -496,6 +489,7 @@ export default {
       }
     },
     async updateStatus () {
+      console.log(this.plan)
       try {
         await this.$store.dispatch(
           'modules/plans/createOrUpdatePlan',
@@ -505,6 +499,7 @@ export default {
           message: '¡Estado actualizado!',
           type: 'is-success'
         })
+        this.getPlan()
       } catch (error) {
         console.log(error)
       }

@@ -7,33 +7,39 @@
     </template>
 
     <template #end>
-      <b-navbar-dropdown label="Catálogo">
+      <b-navbar-dropdown label="Catálogos">
         <b-navbar-item tag="router-link" :to="{ path: '/vehicles' }">
           Vehículos
         </b-navbar-item>
-        <b-navbar-item tag="router-link" :to="{ path: '/participants' }">
-          Participantes
-        </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/departaments' }">
-          Departamentos
+          Dependencias
         </b-navbar-item>
+        <!--
         <b-navbar-item tag="router-link" :to="{ path: '/coordinations' }">
           Coordinaciones
         </b-navbar-item>
+        -->
         <b-navbar-item tag="router-link" :to="{ path: '/zones' }">
-          Zonas
+          Zonas legales
         </b-navbar-item>
-        <b-navbar-item tag="router-link" :to="{ path: '/charges' }">
-          Cargos
+        <b-navbar-item tag="router-link" :to="{ path: '/subzones' }">
+          Sub zonas
         </b-navbar-item>
+        <!--
         <b-navbar-item tag="router-link" :to="{ path: '/adscriptionsAreas' }">
           Áreas
         </b-navbar-item>
+        -->
         <b-navbar-item tag="router-link" :to="{ path: '/vegetationAffected' }">
           Vegetación
         </b-navbar-item>
-        <b-navbar-item tag="router-link" :to="{ path: '/coordinates' }">
-          Coordenadas
+      </b-navbar-dropdown>
+      <b-navbar-dropdown label="Administrativo">
+        <b-navbar-item tag="router-link" :to="{ path: '/participants' }">
+          Guardaparques
+        </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/charges' }">
+          Cargos
         </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/users' }">
           Usuarios
@@ -43,9 +49,11 @@
         <b-navbar-item tag="router-link" :to="{ path: '/tracking/technicalOp' }">
           Opinión técnica
         </b-navbar-item>
+        <!--
         <b-navbar-item tag="router-link" :to="{ path: '/tracking/programmed' }">
           Programados
         </b-navbar-item>
+        -->
         <b-navbar-item tag="router-link" :to="{ path: '/tracking/complaint' }">
           Denuncias
         </b-navbar-item>
@@ -54,11 +62,12 @@
         <b-navbar-item tag="router-link" :to="{ path: '/calendar' }">
           Planificación
         </b-navbar-item>
-        <!--
         <b-navbar-item tag="router-link" :to="{ path: '/binnacle' }">
           Bitácoras
         </b-navbar-item>
-        -->
+        <b-navbar-item tag="router-link" :to="{ path: '/coordinates' }">
+          Coordenadas registradas
+        </b-navbar-item>
       </b-navbar-dropdown>
       <b-navbar-item tag="div">
         <div class="buttons">

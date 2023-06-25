@@ -17,7 +17,7 @@
             <b-field horizontal label="Descripción breve">
               <b-input
                 v-model="form.description"
-                name="Nº identificación"
+                name="Nombre de indentificación"
                 type="text"
                 required
               />
@@ -53,21 +53,7 @@ export default {
   data () {
     return {
       isLoading: false,
-      form: {},
-      personas: [
-        { id: 1, name: 'Alice' },
-        { id: 2, name: 'Bob' },
-        { id: 3, name: 'Charlie' },
-        { id: 4, name: 'David' },
-        { id: 5, name: 'Emily' }
-      ],
-      vehiculos: [
-        { id: 1, brand: 'Toyota', model: 'Camry' },
-        { id: 2, brand: 'Honda', model: 'Civic' },
-        { id: 3, brand: 'Ford', model: 'F-150' },
-        { id: 4, brand: 'Chevrolet', model: 'Silverado' },
-        { id: 5, brand: 'Jeep', model: 'Wrangler' }
-      ]
+      form: {}
     }
   },
   methods: {
