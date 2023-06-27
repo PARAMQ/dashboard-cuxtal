@@ -28,7 +28,7 @@
                           <div class="columns">
                             <div class="column has-text-centered">
                               <p>
-                                <b-icon icon="account" custom-size="default" />
+                                <b-icon icon="flower" custom-size="default" />
                                 {{ veg.description }}
                               </p>
                             </div>
@@ -78,12 +78,22 @@
                   </div>
                 </div>
                 <div class="card-content">
-                  <p class="is-size-2">
-                    Descripción:
-                  </p>
-                  <p class="is-size-3">
-                    {{ vegetation.description }}
-                  </p>
+                  <div>
+                    <p class="is-size-2">
+                      Nombre común:
+                    </p>
+                    <p class="is-size-3">
+                      {{ vegetation.description }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="is-size-2">
+                      Nombre científico:
+                    </p>
+                    <p class="is-size-3">
+                      {{ vegetation.cientificName ? vegetation.cientificName : 'No registrado' }}
+                    </p>
+                  </div>
                 </div>
               </div>
               <div
@@ -127,6 +137,14 @@
                         <b-input
                           v-model="vegetation.description"
                           name="Descripcion de la vegetación"
+                          type="text"
+                          required
+                        />
+                      </b-field>
+                      <b-field horizontal label="Nombre científico">
+                        <b-input
+                          v-model="form.cientificName"
+                          name="nombre científico"
                           type="text"
                           required
                         />
