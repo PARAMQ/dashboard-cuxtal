@@ -449,25 +449,29 @@ export default {
           confirmButtonText: 'Opinión técnica',
           denyButtonText: 'Denuncia',
           cancelButtonText: 'Programada'
-        }).then((result) => {
+        }).then(async (result) => {
           console.log(result)
           if (result.isConfirmed) {
             // eslint-disable-next-line no-unused-expressions
             temporalForm.type = 'techOp'
-            console.log('Opinion tecnica')
-            this.$router.push('/tracking/technicalOp/')
+            await this.createOrUpdate(temporalForm)
+            // console.log('Opinion tecnica')
+            // this.$router.push('/tracking/technicalOp/')
           } else if (result.isDenied) {
             temporalForm.type = 'complaint'
-            console.log('Denuncia')
-            this.$router.push('/tracking/complaint/')
+            await this.createOrUpdate(temporalForm)
+            // console.log('Denuncia')
+            // this.$router.push('/tracking/complaint/')
           } else if (result.isDismissed) {
             temporalForm.type = 'programmed'
-            console.log('programada')
-            this.$router.push('/tracking/programmed/')
+            await this.createOrUpdate(temporalForm)
+            // console.log('programada')
+            // this.$router.push('/tracking/programmed/')
           }
         })
       }
-      /*
+    },
+    async createOrUpdate (temporalForm) {
       try {
         let binnacle
         let idBinnacle
@@ -528,28 +532,15 @@ export default {
           message: '¡Bitácora guardada!',
           type: 'is-success'
         })
-        if (binnacle.status === 'revisado') {
-          this.$swal.fire({
-            title: '¿Qué tipo de bitácora es?',
-            text: 'Selecciona una opción',
-            showDenyButton: true,
-            showCancelButton: true,
-            showConfirmButton: true,
-            confirmButtonText: 'Opinión técnica',
-            denyButtonText: 'Denuncia',
-            cancelButtonText: 'Programada'
-          })
-        }
         this.buttonDisabled = false
         this.isLoading = false
-        // this.$emit('update')
+        this.$emit('update')
       } catch (error) {
         console.log(error)
       } finally {
         this.buttonDisabled = false
         this.isLoading = false
       }
-      */
     },
     readFile () {
       this.temporalFile = this.$refs.file.files[0]

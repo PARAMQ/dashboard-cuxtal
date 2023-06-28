@@ -11,8 +11,11 @@
         </div>
         <div class="column">
           <div class="card">
-            <div class="card-content has-text-centered">
-              <p>Tarjeta 2</p>
+            <div v-if="series.length > 0" class="card-content is-flex is-justify-content-center">
+              <apexchart width="380" type="donut" :options="options" :series="series" />
+            </div>
+            <div v-else class="card-content has-text-centered">
+              <p>No hay datos por mostrar</p>
             </div>
           </div>
         </div>
@@ -59,36 +62,23 @@ export default {
   fetch () {
     this.$store.commit('setTitleStack', ['Inicio'])
   },
+  async created () {
+    await this.getData()
+    this.getInfoDonnut()
+  },
+  async mounted () {
+    await this.getData()
+    this.getInfoDonnut()
+  },
   data () {
     return {
-      action: '',
-      status: {
-        Familiar: 'is-info',
-        Basic: 'is-danger',
-        Premium: 'is-warning'
+      series: [],
+      options: {
+        labels: ['Opiniones técnicas', 'Denuncias', 'Programadas']
       },
-      listQuery: {
-        page: 1,
-        limit: 10,
-        offset: 0
-      },
-      activePolicy: {
-        product: {},
-        insurance: {},
-        client: {
-          person: {}
-        },
-        employee: {
-          person: {}
-        },
-        properties: [{}]
-      },
-      selectedPolicies: [],
-      checkPayments: [],
-      valuePayments: [],
-      paymentIndex: 0,
-      payLoading: false,
-      failedPayments: 0
+      techOp: [],
+      complaint: [],
+      programmed: []
     }
   },
   computed: {
@@ -104,116 +94,22 @@ export default {
       return ['Admin', 'Dashboard']
     }
   },
-  async created () {
-  },
   methods: {
-    getDataRefresh (refresh) {
-      this.checkRows = []
-      this.paymentIndex = 0
-      this.valuePayments = []
-      this.selectedPolicies = []
-      if (!refresh) {
-        this.getData()
-      }
-    },
-    firstPaymentValidation (item) {
-      const payments = item.payments.filter(
-        el =>
-          ['danger', 'warning', 'orange'].includes(el.status) &&
-          !el.payed &&
-          !el.cancelled
-      )
-      if (payments.length) {
-        return payments[0]
-      } else {
-        return item
-      }
-    },
-    CheckRows (rows) {
-      this.selectedPolicies = rows
-    },
-    checkPayment (row) {
-      if (row.value) {
-        this.checkPayments[this.paymentIndex] = row
-        this.paymentIndex++
-      } else {
-        this.paymentIndex--
-        this.checkPayments[this.paymentIndex] = null
-      }
-      console.log(this.checkPayments)
-    },
-    payPolicies () {
-      const payments = []
-      for (const i in this.selectedPolicies) {
-        payments[i] = this.selectedPolicies[i].payments[0]
-      }
-      this.payPayments(payments)
-      console.log(payments)
-    },
-    payPayments (items) {
-      let payments = []
-      let n = 0
-      if (items) {
-        payments = items
-        n = payments.length
-      } else {
-        payments = this.checkPayments.filter(
-          el => !null && !el.payed && !el.cancelled
+    async getData () {
+      try {
+        const res = await this.$store.dispatch(
+          'modules/binnacles/getBinnacles'
         )
-        n = this.paymentIndex
+        console.log(res)
+        this.techOp = res.filter((x) => x.type === 'techOp')
+        this.complaint = res.filter((x) => x.type === 'complaint')
+        this.programmed = res.filter((x) => x.type === 'programmed')
+      } catch (error) {
+        console.log(error)
       }
-      for (const index in payments) {
-        payments[index] = payments[index].id
-      }
-      this.$buefy.dialog.confirm({
-        title: 'Marcar como pagados',
-        message:
-          'Estás a punto de marcar como pagados ' +
-          n +
-          ' recibos ¿Deseas continuar?',
-        cancelText: 'Cancelar',
-        confirmText: 'Marcar como pagados',
-        type: 'is-success',
-        hasIcon: true,
-        onConfirm: async () => {
-          if (payments.length > 0) {
-            try {
-              await this.$store.dispatch(
-                'modules/pagos/markAsPayedPayments',
-                payments
-              )
-              this.getDataRefresh()
-              this.$buefy.snackbar.open({
-                message: 'Recibos actualizados',
-                queue: false
-              })
-            } catch (error) {
-              this.$buefy.snackbar.open({
-                message:
-                  'No se puede Guardar en este momento, por favor intente más tarde',
-                type: 'is-danger',
-                queue: false
-              })
-            }
-          } else {
-            this.getDataRefresh()
-          }
-        }
-      })
     },
-    actionSample () {
-      this.$buefy.toast.open({
-        message: 'Espere un momento...',
-        type: 'is-info',
-        queue: false
-      })
-    },
-    newOrEditPolicy (item) {
-      if (item) {
-        this.$router.push('/policy/edit/' + item.id + '/')
-      } else {
-        this.$router.push('/policy/edit/')
-      }
+    getInfoDonnut () {
+      this.series = [Number(this.techOp.length), Number(this.complaint.length), Number(this.programmed.length)]
     }
   },
   head () {
