@@ -127,22 +127,20 @@
                       </template>
                     </b-taginput>
                   </b-field>
-                  <!--
                   <b-field label="Persona que realizó el recorrido">
                     <b-autocomplete
-                      v-model="form.participants"
+                      v-model="form.idparticipant"
                       rounded
-                      :data="filteredDataArray"
+                      :data="filterParticipantData"
                       icon="magnify"
                       clearable
-                      @select="(option) => (selected = option)"
+                      @select="(option) => (selected = option.id)"
                     >
                       <template #empty>
                         No results found
                       </template>
                     </b-autocomplete>
                   </b-field>
-                  -->
                 </div>
               </div>
             </div>
@@ -325,7 +323,7 @@
             <b-button
               type="is-success"
               :disabled="buttonDisabled"
-              @click="createBinnacle"
+              @click="createOrUpdateBinnacle"
             >
               Guardar
             </b-button>
@@ -437,11 +435,38 @@ export default {
         console.log(error)
       }
     },
-    createBinnacle () {
-      // this.isLoading = true
-      // this.buttonDisabled = true
+    createOrUpdateBinnacle () {
+      this.isLoading = true
+      this.buttonDisabled = true
       const temporalForm = JSON.parse(JSON.stringify(this.form))
-      console.log(temporalForm)
+      if (temporalForm.status === 'revisado') {
+        this.$swal.fire({
+          title: '¿Qué tipo de bitácora es?',
+          text: 'Selecciona una opción',
+          showDenyButton: true,
+          showCancelButton: true,
+          showConfirmButton: true,
+          confirmButtonText: 'Opinión técnica',
+          denyButtonText: 'Denuncia',
+          cancelButtonText: 'Programada'
+        }).then((result) => {
+          console.log(result)
+          if (result.isConfirmed) {
+            // eslint-disable-next-line no-unused-expressions
+            temporalForm.type = 'techOp'
+            console.log('Opinion tecnica')
+            this.$router.push('/tracking/technicalOp/')
+          } else if (result.isDenied) {
+            temporalForm.type = 'complaint'
+            console.log('Denuncia')
+            this.$router.push('/tracking/complaint/')
+          } else if (result.isDismissed) {
+            temporalForm.type = 'programmed'
+            console.log('programada')
+            this.$router.push('/tracking/programmed/')
+          }
+        })
+      }
       /*
       try {
         let binnacle

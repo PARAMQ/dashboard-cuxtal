@@ -41,6 +41,9 @@
         <b-navbar-item tag="router-link" :to="{ path: '/charges' }">
           Cargos
         </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/coordinations' }">
+          Coordinaciones
+        </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/users' }">
           Usuarios
         </b-navbar-item>

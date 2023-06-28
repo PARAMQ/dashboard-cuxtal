@@ -424,7 +424,7 @@ export default {
       try {
         const res = await this.$store.dispatch('modules/binnacles/getBinnacles')
         const filterBinnacles = res.filter(
-          (x) => x.isextraordinary && x.type === 'Complaint'
+          (x) => x.isextraordinary && x.type === 'complaint'
         )
         this.binnacles = filterBinnacles
       } catch (error) {
