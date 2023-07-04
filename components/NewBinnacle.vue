@@ -149,6 +149,36 @@
             </div>
             <div class="columns">
               <div class="column">
+                <b-field label="Zona(s) operativa(s)">
+                  <b-taginput
+                    v-model="form.operative_zones"
+                    :data="filteredOpZones"
+                    field="name"
+                    autocomplete
+                    @typing="filterZone"
+                  >
+                    <template slot-scope="props">
+                      <strong>{{ props.option.description }}</strong>
+                    </template>
+                    <template #empty>
+                      Sin resultados
+                    </template>
+                    <template #selected>
+                      <b-tag
+                        v-for="(tag, index) in form.legalZones"
+                        :key="index"
+                        closable
+                        @close="removeLegalZone(index)"
+                      >
+                        {{ tag.description }}
+                      </b-tag>
+                    </template>
+                  </b-taginput>
+                </b-field>
+              </div>
+            </div>
+            <div class="columns">
+              <div class="column">
                 <b-field label="Zona(s) legal(es)">
                   <b-taginput
                     v-model="form.legalZones"

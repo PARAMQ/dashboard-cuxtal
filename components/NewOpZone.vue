@@ -8,7 +8,7 @@
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
-          Nueva coordinación
+          Nueva zona operativa
         </p>
       </div>
       <div class="card-content">
@@ -17,7 +17,7 @@
             <b-field horizontal label="Descripción breve">
               <b-input
                 v-model="form.description"
-                name="Nº identificación"
+                name="Nombre de indentificación"
                 type="text"
                 required
               />
@@ -31,7 +31,7 @@
             </b-button>
           </div>
           <div class="card-footer-item">
-            <b-button type="is-success" @click="createDepartament">
+            <b-button type="is-success" @click="createZone">
               Guardar
             </b-button>
           </div>
@@ -43,7 +43,7 @@
 
 <script>
 export default {
-  name: 'NewDepto',
+  name: 'NewOpZone',
   props: {
     activeModal: {
       default: false,
@@ -53,32 +53,18 @@ export default {
   data () {
     return {
       isLoading: false,
-      form: {},
-      personas: [
-        { id: 1, name: 'Alice' },
-        { id: 2, name: 'Bob' },
-        { id: 3, name: 'Charlie' },
-        { id: 4, name: 'David' },
-        { id: 5, name: 'Emily' }
-      ],
-      vehiculos: [
-        { id: 1, brand: 'Toyota', model: 'Camry' },
-        { id: 2, brand: 'Honda', model: 'Civic' },
-        { id: 3, brand: 'Ford', model: 'F-150' },
-        { id: 4, brand: 'Chevrolet', model: 'Silverado' },
-        { id: 5, brand: 'Jeep', model: 'Wrangler' }
-      ]
+      form: {}
     }
   },
   methods: {
-    async createDepartament () {
+    async createZone () {
       try {
         this.isLoading = true
-        await this.$store.dispatch('modules/deptos/createOrUpdateDepto', this.form)
+        await this.$store.dispatch('modules/operativeZones/createOrUpdateZone', this.form)
         this.form = {}
         this.isLoading = false
         this.$buefy.toast.open({
-          message: 'Departamento guardado!',
+          message: 'Zona guardada!',
           type: 'is-success'
         })
         this.$emit('create')

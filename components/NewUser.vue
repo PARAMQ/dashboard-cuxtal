@@ -1,10 +1,6 @@
 <template>
   <b-modal v-model="activeModal" :destroy-on-hide="false">
-    <b-loading
-      v-model="isLoading"
-      :is-full-page="true"
-      :can-cancel="false"
-    />
+    <b-loading v-model="isLoading" :is-full-page="true" :can-cancel="false" />
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
@@ -17,7 +13,7 @@
             <b-field label="Nombre de usuario">
               <b-input
                 v-model="form.username"
-                name="Nombre de usuario"
+                name="usuario"
                 type="text"
                 required
               />
@@ -25,7 +21,7 @@
             <b-field label="Nombre(s)">
               <b-input
                 v-model="form.name"
-                name="placa"
+                name="nombres(s)"
                 type="text"
                 required
               />
@@ -33,7 +29,7 @@
             <b-field label="Apellido(s)">
               <b-input
                 v-model="form.lastname"
-                name="modelo"
+                name="apellido(s)"
                 type="text"
                 required
               />
@@ -41,10 +37,32 @@
             <b-field label="Correo electrónico">
               <b-input
                 v-model="form.email"
-                name="marca"
+                name="correo electronico"
                 type="text"
                 required
               />
+            </b-field>
+            <b-field label="Cargo (rol dentro de cuxtal)">
+              <b-select placeholder="Selecciona uno">
+                <option
+                  v-for="option in charges"
+                  :key="option.idcharge"
+                  :value="option.idcharge"
+                >
+                  {{ option.description }}
+                </option>
+              </b-select>
+            </b-field>
+            <b-field label="Coordinaciones">
+              <b-select placeholder="Selecciona una">
+                <option
+                  v-for="option in departaments"
+                  :key="option.iddepto"
+                  :value="option.iddepto"
+                >
+                  {{ option.description }}
+                </option>
+              </b-select>
             </b-field>
           </form>
         </div>
@@ -79,10 +97,34 @@ export default {
   data () {
     return {
       isLoading: false,
-      form: {}
+      form: {},
+      departaments: [],
+      charges: []
     }
   },
+  mounted () {
+    this.getDepartaments()
+    this.getCharges()
+  },
   methods: {
+    async getDepartaments () {
+      try {
+        this.departaments = await this.$store.dispatch(
+          'modules/deptos/getDeptos'
+        )
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getCharges () {
+      try {
+        this.charges = await this.$store.dispatch(
+          'modules/charges/getCharges'
+        )
+      } catch (error) {
+        console.log(error)
+      }
+    },
     async createUser () {
       const password = generator.generate({
         length: 10,

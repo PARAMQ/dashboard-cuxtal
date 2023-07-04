@@ -11,7 +11,7 @@
         <b-navbar-item tag="router-link" :to="{ path: '/vehicles' }">
           Vehículos
         </b-navbar-item>
-        <b-navbar-item tag="router-link" :to="{ path: '/departaments' }">
+        <b-navbar-item tag="router-link" :to="{ path: '/coordinations' }">
           Dependencias
         </b-navbar-item>
         <!--
@@ -19,11 +19,14 @@
           Coordinaciones
         </b-navbar-item>
         -->
-        <b-navbar-item tag="router-link" :to="{ path: '/zones' }">
+        <b-navbar-item tag="router-link" :to="{ path: '/operativeZones' }">
+          Zonas operativas
+        </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/legalZones' }">
           Zonas legales
         </b-navbar-item>
-        <b-navbar-item tag="router-link" :to="{ path: '/subzones' }">
-          Sub zonas
+        <b-navbar-item tag="router-link" :to="{ path: '/subZones' }">
+          Sub-zonas
         </b-navbar-item>
         <!--
         <b-navbar-item tag="router-link" :to="{ path: '/adscriptionsAreas' }">
@@ -36,12 +39,12 @@
       </b-navbar-dropdown>
       <b-navbar-dropdown label="Administrativo">
         <b-navbar-item tag="router-link" :to="{ path: '/participants' }">
-          Guardaparques
+          Participantes
         </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/charges' }">
           Cargos
         </b-navbar-item>
-        <b-navbar-item tag="router-link" :to="{ path: '/coordinations' }">
+        <b-navbar-item tag="router-link" :to="{ path: '/departaments' }">
           Coordinaciones
         </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/users' }">
@@ -63,10 +66,10 @@
       </b-navbar-dropdown>
       <b-navbar-dropdown label="Recorridos">
         <b-navbar-item tag="router-link" :to="{ path: '/calendar' }">
-          Planificación
+          Recorridos programados
         </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/binnacle' }">
-          Bitácoras
+          Bitácoras programadas
         </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/coordinates' }">
           Coordenadas registradas

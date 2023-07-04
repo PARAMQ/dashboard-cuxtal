@@ -8,7 +8,7 @@
             <div class="level-right">
               <p class="level-item">
                 <b-button type="is-primary" outlined @click="isActive = true">
-                  Nueva dependencia
+                  Nueva zona operativa
                 </b-button>
               </p>
             </div>
@@ -18,18 +18,18 @@
               <div class="card">
                 <div class="card-content scroll">
                   <div
-                    v-for="coord in coordinaciones"
-                    :key="coord.idcoordination"
+                    v-for="zona in zonas"
+                    :key="zona.idoperative_zones"
                     class="container"
                   >
-                    <div class="card" @click="viewCoord(coord)">
+                    <div class="card" @click="viewZone(zona)">
                       <div class="card-content">
                         <div class="container">
                           <div class="columns">
                             <div class="column has-text-centered">
                               <p>
-                                <b-icon icon="briefcase" custom-size="default" />
-                                {{ coord.description }}
+                                <b-icon icon="account" custom-size="default" />
+                                {{ zona.description }}
                               </p>
                             </div>
                           </div>
@@ -44,7 +44,7 @@
               class="column is-8 is-flex is-justify-content-center has-text-centered"
             >
               <div
-                v-if="selectCoord && !hasEdit"
+                v-if="selectZone && !hasEdit"
                 id="info-vehicle"
                 class="card"
               >
@@ -53,7 +53,7 @@
                     <div class="level-left">
                       <div class="level-item">
                         <p class="card-header-title">
-                          ID: {{ coordination.idcoordination }}
+                          ID: {{ zone.idoperative_zones }}
                         </p>
                       </div>
                     </div>
@@ -71,7 +71,7 @@
                           size="is-small"
                           type="is-danger is-light"
                           icon-right="delete"
-                          @click="deleteCoord(coordination)"
+                          @click="deleteZone(zone)"
                         />
                       </div>
                     </div>
@@ -82,12 +82,12 @@
                     Descripción:
                   </p>
                   <p class="is-size-3">
-                    {{ coordination.description }}
+                    {{ zone.description }}
                   </p>
                 </div>
               </div>
               <div
-                v-else-if="selectCoord && hasEdit"
+                v-else-if="selectZone && hasEdit"
                 id="info-vehicle"
                 class="card"
               >
@@ -96,7 +96,7 @@
                     <div class="level-left">
                       <div class="level-item">
                         <p class="card-header-title">
-                          ID: {{ coordination.idcoordination }}
+                          ID: {{ zone.idoperative_zones }}
                         </p>
                       </div>
                     </div>
@@ -123,10 +123,10 @@
                 <div class="card-content">
                   <div class="content">
                     <form @submit.prevent="submit">
-                      <b-field horizontal label="Descripción breve">
+                      <b-field horizontal label="Nombre">
                         <b-input
-                          v-model="coordination.description"
-                          name="Descripcion de la dependencia"
+                          v-model="zone.description"
+                          name="Nombre de la zona"
                           type="text"
                           required
                         />
@@ -138,10 +138,10 @@
               <div v-else class="card">
                 <div class="card-content">
                   <h1 class="is-size-3">
-                    Selecciona una dependencia
+                    Selecciona una zona operativa
                   </h1>
                   <p class="is-size-5">
-                    Si deseas ver la información de una dependencia haz click
+                    Si deseas ver la información de una zona operativa haz click
                     sobre su tarjeta
                   </p>
                 </div>
@@ -151,7 +151,7 @@
         </div>
       </div>
     </div>
-    <new-coordination
+    <new-op-zone
       :active-modal="isActive"
       @close="isActive = false"
       @create="updateView"
@@ -161,44 +161,47 @@
 
 <script>
 export default {
-  name: 'Coordinations',
+  name: 'Zones',
   data () {
     return {
-      selectCoord: false,
+      selectZone: false,
       isActive: false,
-      coordinaciones: [],
-      coordination: {},
+      zonas: [],
+      zone: {},
       hasEdit: false,
       params: {
         _t: Date.now()
       }
     }
   },
+  created () {
+    this.getData()
+  },
   mounted () {
     this.getData()
   },
   methods: {
-    viewCoord (coordination) {
-      this.coordination = coordination
-      this.selectCoord = true
+    viewZone (zone) {
+      this.zone = zone
+      this.selectZone = true
     },
     cancelEdit () {
-      this.coordination = {}
-      this.selectCoord = false
+      this.zone = {}
+      this.selectZone = false
       this.hasEdit = false
     },
     async saveEdit () {
       try {
         this.isLoading = true
         await this.$store.dispatch(
-          'modules/coordinations/createOrUpdateCoordination',
-          this.coordination
+          'modules/operativeZones/createOrUpdateZone',
+          this.zone
         )
-        this.coordination = {}
-        this.selectCoord = false
+        this.zone = {}
+        this.selectZone = false
         this.hasEdit = false
         this.$buefy.toast.open({
-          message: 'Dependencia guardada!',
+          message: 'Zona guardada!',
           type: 'is-success'
         })
       } catch (error) {
@@ -209,27 +212,27 @@ export default {
         console.log(error)
       }
     },
-    deleteCoord (coordination) {
+    deleteZone (zone) {
+      const deleteZone = {
+        idoperative_zones: zone.idoperative_zones
+      }
       this.$swal({
-        title: '¿Deseas borrar esta vegetación?',
+        title: '¿Deseas borrar esta zona?',
         showDenyButton: true,
         confirmButtonText: 'Borrar',
         denyButtonText: 'Cancelar'
       }).then(async (result) => {
         if (result.isConfirmed) {
-          const temporalObj = {
-            idcoordination: coordination.idcoordination
-          }
           try {
             await this.$store.dispatch(
-              'modules/coordinations/deleteCoordination',
-              temporalObj
+              'modules/operativeZones/deleteZone',
+              deleteZone
             )
             this.getData()
-            this.coordination = {}
-            this.selectCoord = false
+            this.zone = {}
+            this.selectZone = false
             this.$buefy.toast.open({
-              message: 'Dependencia eliminada!',
+              message: 'Zona eliminada!',
               type: 'is-success'
             })
           } catch (error) {
@@ -250,11 +253,11 @@ export default {
     },
     async getData () {
       try {
-        this.coordinaciones = []
+        this.zonas = []
         const res = await this.$store.dispatch(
-          'modules/coordinations/getCoordinations'
+          'modules/operativeZones/getZones'
         )
-        this.coordinaciones = res
+        this.zonas = res
       } catch (error) {
         console.log(error)
       }

@@ -8,7 +8,7 @@
             <div class="level-right">
               <p class="level-item">
                 <b-button type="is-primary" outlined @click="isActive = true">
-                  Nuevo departamento
+                  Nueva coordinación
                 </b-button>
               </p>
             </div>
@@ -138,10 +138,10 @@
               <div v-else class="card">
                 <div class="card-content">
                   <h1 class="is-size-3">
-                    Selecciona un departamento
+                    Selecciona una coordinación
                   </h1>
                   <p class="is-size-5">
-                    Si deseas ver la información de un departamento haz click
+                    Si deseas ver la información de una coordinación haz click
                     sobre su tarjeta
                   </p>
                 </div>
