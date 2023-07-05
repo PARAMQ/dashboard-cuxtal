@@ -8,7 +8,7 @@
       />
       <div class="card-header">
         <p class="card-header-title">
-          Nueva bitácora {{ isExtraordinary ? ' - Extraordinaria' : '' }}
+          Editar bitácora
         </p>
       </div>
       <div class="card-content">
@@ -35,12 +35,6 @@
                     </option>
                   </b-select>
                 </b-field>
-              </div>
-              <div class="column">
-                <!---
-                <b-field label="Responsable de la bitácora">
-                </b-fied>
-                -->
               </div>
             </div>
             <div class="divider">
@@ -85,9 +79,7 @@
                       :data="filteredVehicles"
                       field="number"
                       autocomplete
-                      :open-on-focus="true"
                       @typing="filterVehicles"
-                      @remove="deleteVehicles"
                     >
                       <template v-slot="props">
                         <strong>{{ props.option.number }} -
@@ -108,7 +100,6 @@
                       :data="filteredParticipants"
                       field="name"
                       autocomplete
-                      :open-on-focus="true"
                       @typing="filterData"
                     >
                       <template slot-scope="props">
@@ -130,98 +121,38 @@
                       </template>
                     </b-taginput>
                   </b-field>
-                  <b-field label="Persona que realizó el recorrido">
-                    <b-autocomplete
-                      v-model="participant"
-                      :data="options"
-                      icon="magnify"
-                      clearable
-                      field="name"
-                      @typing="filterPersonRecorrido"
-                      @select="
-                        (option) => (form.idparticipant = option.idparticipant)
-                      "
-                    >
-                      <template #empty>
-                        No hay resultados
-                      </template>
-                    </b-autocomplete>
-                  </b-field>
                 </div>
               </div>
             </div>
             <div class="divider">
-              <strong>Zonas y vegetación</strong>
+              <strong>Zona y vegetación</strong>
             </div>
             <div class="columns">
               <div class="column">
-                <b-field label="Zonas operativas">
+                <b-field label="Zona involucrada">
                   <b-taginput
-                    v-model="form.list_operative_zones"
-                    :data="filteredOpZones"
+                    v-model="form.participants"
+                    :data="filteredParticipants"
+                    field="name"
                     autocomplete
-                    field="description"
-                    :open-on-focus="true"
-                    @typing="filterOpZone"
+                    @typing="filterData"
                   >
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                  </b-taginput>
-                </b-field>
-              </div>
-            </div>
-            <div class="columns">
-              <div class="column">
-                <b-field label="Zonas legales">
-                  <b-taginput
-                    v-model="form.legal_zones"
-                    :data="filteredLegalZones"
-                    field="description"
-                    autocomplete
-                    :open-on-focus="true"
-                    @typing="filterZones"
-                  >
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                  </b-taginput>
-                </b-field>
-              </div>
-            </div>
-            <div class="columns">
-              <div class="column">
-                <b-field label="Subzonas">
-                  <b-taginput
-                    v-model="form.list_subzoning"
-                    :data="filteredSubZones"
-                    field="description"
-                    autocomplete
-                    :open-on-focus="true"
-                    @typing="filterSubZones"
-                  >
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                  </b-taginput>
-                </b-field>
-              </div>
-            </div>
-            <div class="columns">
-              <div class="column">
-                <b-field label="Vegetación">
-                  <b-taginput
-                    v-model="list_vegetable_affected"
-                    :data="filteredVegetation"
-                    field="description"
-                    autocomplete
-                    @typing="filterVegetation"
-                  >
-                    <template v-slot="props">
-                      <strong>{{ props.option.description }}</strong>
+                    <template slot-scope="props">
+                      <strong>{{ props.option.name }}
+                        {{ props.option.lastname }}</strong>
                     </template>
                     <template #empty>
                       Sin resultados
+                    </template>
+                    <template #selected>
+                      <b-tag
+                        v-for="(tag, index) in form.participants"
+                        :key="index"
+                        closable
+                        @close="removeParticipant(index)"
+                      >
+                        {{ tag.name }} {{ tag.lastname }}
+                      </b-tag>
                     </template>
                   </b-taginput>
                 </b-field>
@@ -353,7 +284,7 @@
             <b-button
               type="is-success"
               :disabled="buttonDisabled"
-              @click="createOrUpdateBinnacle"
+              @click="createBinnacle"
             >
               Guardar
             </b-button>
@@ -368,7 +299,7 @@
 import { mapState } from 'vuex'
 import KML from 'ol/format/KML'
 export default {
-  name: 'NewBinnacle',
+  name: 'EditBinnacle',
   props: {
     activeModal: {
       default: false,
@@ -379,14 +310,6 @@ export default {
       type: String
     },
     idBinnacle: {
-      default: null,
-      type: Number
-    },
-    isExtraordinary: {
-      default: false,
-      type: Boolean
-    },
-    type: {
       default: '',
       type: String
     }
@@ -401,19 +324,8 @@ export default {
       isLoading: false,
       filteredParticipants: [],
       filteredVehicles: [],
-      filteredVegetation: [],
-      filteredLegalZones: [],
-      filteredOpZones: [],
-      filteredSubZones: [],
       participants: [],
-      options: [],
-      participant: '',
       vehicles: [],
-      vegetation: [],
-      legalZones: [],
-      subZones: [],
-      opZones: [],
-      list_vegetable_affected: [],
       plan: {},
       binnacles: [],
       zoom: 12,
@@ -433,125 +345,77 @@ export default {
       imageUrl: require('@/assets/cuxtal/RC_V.png')
     }
   },
+  watch: {
+    idBinnacle (newVal, oldVal) {
+      if (newVal) {
+        this.getBinnacle(newVal)
+      } else if (oldVal && !newVal) {
+        this.getBinnacle(oldVal)
+      }
+    },
+    isExtraordinary (newVal, oldVal) {
+      if (newVal) {
+        this.isExtraordinary = newVal
+      }
+    }
+  },
   computed: {
     ...mapState(['user'])
   },
-  created () {},
+  created () {
+    console.log(this.idBinnacle)
+  },
   mounted () {
     this.center = this.point ? this.point : [0, 0]
     this.form.idusers = this.user.idusers
     this.form.idplanification = this.idPlan
-    if (!this.isExtraordinary) {
-      this.getPlan()
-    } else {
-      this.form.isextraordinary = true
-      this.form.type = this.type
-    }
     this.getVehicles()
     this.getParticipants()
-    this.getVeg()
-    this.getLegalZones()
-    this.getSubZones()
-    this.getOpZones()
     this.filteredParticipants = this.participants
   },
   methods: {
     kmlFormatFactory () {
       return new KML()
     },
-    async getPlan () {
+    async getBinnacle (id) {
       try {
         const res = await this.$store.dispatch(
-          'modules/plans/readPlan',
-          this.idPlan
+          'modules/binnacles/getBinnacle',
+          id
         )
-        this.plan = res
-        this.binnacles = res.binnacles ? res.binnacles : []
+        console.log(res)
+        res.date = new Date(res.date)
+        res.hour_end = new Date(res.hour_end)
+        res.hour_init = new Date(res.hour_init)
+        this.form = res
       } catch (error) {
-        // console.log(error)
+        console.log(error)
       }
     },
-    async createOrUpdateBinnacle () {
+    async createBinnacle () {
       this.isLoading = true
       this.buttonDisabled = true
       const temporalForm = JSON.parse(JSON.stringify(this.form))
-      console.log(temporalForm)
-      if (temporalForm.status === 'revisado') {
-        this.$swal.fire({
-          title: '¿Qué tipo de bitácora es?',
-          text: 'Selecciona una opción',
-          showDenyButton: true,
-          showCancelButton: true,
-          showConfirmButton: true,
-          confirmButtonText: 'Opinión técnica',
-          denyButtonText: 'Denuncia',
-          cancelButtonText: 'Programada'
-        }).then(async (result) => {
-          // console.log(result)
-          if (result.isConfirmed) {
-            // eslint-disable-next-line no-unused-expressions
-            temporalForm.type = 'techOp'
-            await this.createOrUpdate(temporalForm)
-            // // console.log('Opinion tecnica')
-            this.isLoading = false
-            this.buttonDisabled = false
-            // this.$router.push('/tracking/technicalOp/')
-          } else if (result.isDenied) {
-            temporalForm.type = 'complaint'
-            await this.createOrUpdate(temporalForm)
-            // // console.log('Denuncia')
-            this.isLoading = false
-            this.buttonDisabled = false
-            // this.$router.push('/tracking/complaint/')
-          } else if (result.isDismissed) {
-            temporalForm.type = 'programmed'
-            await this.createOrUpdate(temporalForm)
-            // // console.log('programada')
-            this.isLoading = false
-            this.buttonDisabled = false
-            // this.$router.push('/tracking/programmed/')
-          }
-        })
-      } else {
-        await this.createOrUpdate(temporalForm)
-        this.isLoading = false
-        this.buttonDisabled = false
-        this.$emit('update')
-      }
-    },
-    async createOrUpdate (temporalForm) {
       try {
-        let binnacle
-        let idBinnacle
-        if (this.idBinnacle) {
-          idBinnacle = this.idBinnacle
-          await this.updateBinnacle(temporalForm)
-          binnacle = await this.getBinnacle(idBinnacle)
-        } else {
-          idBinnacle = await this.$store.dispatch(
-            'modules/binnacles/createOrUpdateBinnacle',
-            temporalForm
-          )
-          binnacle = await this.getBinnacle(idBinnacle)
-        }
-        if (this.list_vegetable_affected.length > 0) {
-          binnacle.list_vegetable_affected = this.list_vegetable_affected.map(
-            (x) => {
-              x.idbinnacle = idBinnacle
-              return x
-            }
-          )
-          await this.updateBinnacle(binnacle)
-        }
+        console.log(temporalForm)
+        /*
+        // Cambiar esta parte por el this.updateBinnacle()
+        const idBinnacle = await this.$store.dispatch(
+          'modules/binnacles/createOrUpdateBinnacle',
+          temporalForm
+        )
+        const binnacle = await this.getBinnacle(idBinnacle)
+        */
+        await this.updateBinnacle(temporalForm)
         if (this.points.length > 0) {
           this.points.map((point) => {
             const coord = point
-            coord.idbinnacle = idBinnacle
+            coord.idbinnacle = this.idBinnacle
             return coord
           })
-          await this.createPoints(this.points, idBinnacle)
-          binnacle.list_coordinates = this.idPoints
-          await this.updateBinnacle(binnacle)
+          await this.createPoints(this.points, this.idBinnacle)
+          temporalForm.list_coordinates = this.idPoints
+          await this.updateBinnacle(temporalForm)
         }
         if (this.files.length > 0) {
           const formData = new FormData()
@@ -561,12 +425,12 @@ export default {
           this.files.forEach((files, index) => {
             this.temporalFiles.push({
               description: 'evidencia ' + (index + 1),
-              idbinnacle: idBinnacle,
+              idbinnacle: this.idBinnacle,
               position: index + 1
             })
           })
-          binnacle.list_image = this.temporalFiles
-          const positionsRelation = await this.updateBinnacle(binnacle)
+          temporalForm.list_image = this.temporalFiles
+          const positionsRelation = await this.updateBinnacle(temporalForm)
           this.temporalFiles.forEach((x, index) => {
             formData.append('idimages[' + index + ']', positionsRelation[index])
           })
@@ -576,17 +440,20 @@ export default {
         this.temporalFiles = []
         this.files = []
         this.idPoints = []
-        this.points = []
+        this.points = [-89.60984537598705, 20.85610769792424]
         this.pointsMap = [[-89.60984537598705, 20.85610769792424]]
         this.$buefy.toast.open({
           message: '¡Bitácora guardada!',
           type: 'is-success'
         })
-        // this.buttonDisabled = false
-        // this.isLoading = false
-        // this.$emit('update')
+        this.buttonDisabled = false
+        this.isLoading = false
+        if (temporalForm.status === 'revisado') {
+          console.log('revisado')
+        }
+        this.$emit('update')
       } catch (error) {
-        // console.log(error)
+        console.log(error)
       } finally {
         this.buttonDisabled = false
         this.isLoading = false
@@ -594,7 +461,7 @@ export default {
     },
     readFile () {
       this.temporalFile = this.$refs.file.files[0]
-      // console.log(this.temporalFile)
+      console.log(this.temporalFile)
     },
     closeModal () {
       this.form = {}
@@ -656,43 +523,7 @@ export default {
         const res = await this.$store.dispatch('modules/vehicles/getVehicles')
         this.vehicles = res
       } catch (error) {
-        // console.log(error)
-      }
-    },
-    async getVeg () {
-      try {
-        const res = await this.$store.dispatch(
-          'modules/vegetation/getVegetations'
-        )
-        this.vegetation = res
-      } catch (error) {
-        // console.log(error)
-      }
-    },
-    async getLegalZones () {
-      try {
-        this.legalZones = await this.$store.dispatch('modules/zones/getZones')
-        this.filteredLegalZones = this.legalZones
-      } catch (error) {
-        // console.log(error)
-      }
-    },
-    async getSubZones () {
-      try {
-        this.subZones = await this.$store.dispatch('modules/zones/getSubZones')
-        this.filteredSubZones = this.subZones
-      } catch (error) {
-        // console.log(error)
-      }
-    },
-    async getOpZones () {
-      try {
-        this.opZones = await this.$store.dispatch(
-          'modules/operativeZones/getZones'
-        )
-        this.filteredOpZones = this.opZones
-      } catch (error) {
-        // console.log(error)
+        console.log(error)
       }
     },
     async getParticipants () {
@@ -700,10 +531,9 @@ export default {
         const res = await this.$store.dispatch(
           'modules/participants/getParticipants'
         )
-        this.options = res
         this.participants = res
       } catch (error) {
-        // console.log(error)
+        console.log(error)
       }
     },
     filterData (text) {
@@ -742,17 +572,6 @@ export default {
         })
       }
     },
-    async getBinnacle (id) {
-      try {
-        const res = await this.$store.dispatch(
-          'modules/binnacles/getBinnacle',
-          id
-        )
-        return res
-      } catch (error) {
-        // console.log(error)
-      }
-    },
     viewPoint (point) {
       this.formCoord.name = point.name
       this.point[0] = point.x
@@ -781,7 +600,7 @@ export default {
           this.formCoord
         )
       } catch (error) {
-        // console.log(error)
+        console.log(error)
       }
     },
     filterVehicles (text) {
@@ -798,83 +617,6 @@ export default {
           return option
         }
       })
-    },
-    filterVegetation (text) {
-      this.filteredVegetation = this.vegetation.filter((option) => {
-        if (
-          option.description &&
-          option.description
-            .toString()
-            .toLowerCase()
-            .includes(text.toLowerCase())
-        ) {
-          return option
-        }
-      })
-    },
-    filterPart (text) {
-      this.filteredVegetation = this.vegetation.filter((option) => {
-        if (
-          option.description &&
-          option.description
-            .toString()
-            .toLowerCase()
-            .includes(text.toLowerCase())
-        ) {
-          return option
-        }
-      })
-    },
-    filterZones (text) {
-      this.filteredLegalZones = this.legalZones.filter((option) => {
-        if (
-          option.description &&
-          option.description
-            .toString()
-            .toLowerCase()
-            .includes(text.toLowerCase())
-        ) {
-          return option
-        }
-      })
-    },
-    filterSubZones (text) {
-      this.filteredSubZones = this.subZones.filter((option) => {
-        if (
-          option.description &&
-          option.description
-            .toString()
-            .toLowerCase()
-            .includes(text.toLowerCase())
-        ) {
-          return option
-        }
-      })
-    },
-    filterOpZone (text) {
-      this.filteredOpZones = this.opZones.filter((option) => {
-        if (
-          option.description &&
-          option.description
-            .toString()
-            .toLowerCase()
-            .includes(text.toLowerCase())
-        ) {
-          return option
-        }
-      })
-    },
-    filterPersonRecorrido () {
-      // console.log(this.participant)
-      this.options = this.participants.filter((option) => {
-        return option.name
-          .toString()
-          .toLowerCase()
-          .includes(this.participant.toLowerCase())
-      })
-    },
-    deleteVehicles (object) {
-      console.log(object)
     }
   }
 }
