@@ -21,10 +21,11 @@
             <b-field horizontal label="Zona legal relacionada">
               <b-autocomplete
                 v-model="text"
-                rounded
-                :data="filteredDataArray"
+                :data="options"
                 icon="magnify"
                 clearable
+                field="description"
+                @typing="filteredDataArray"
                 @select="(option) => form.idzoning = option.idzoning"
               >
                 <template #empty>
@@ -65,7 +66,8 @@ export default {
       isLoading: false,
       form: {},
       legalZones: [],
-      text: ''
+      text: '',
+      options: []
     }
   },
   mounted () {
@@ -77,7 +79,7 @@ export default {
       try {
         this.isLoading = true
         await this.$store.dispatch(
-          'modules/zones/createOrUpdateZone',
+          'modules/zones/createOrUpdateSubZone',
           this.form
         )
         this.form = {}
@@ -99,12 +101,14 @@ export default {
       try {
         const res = await this.$store.dispatch('modules/zones/getZones')
         this.legalZones = res
+        console.log(this.legalZones)
       } catch (error) {
         console.log(error)
       }
     },
     filteredDataArray () {
-      return this.legalZones.filter((option) => {
+      // console.log(this.text)
+      this.options = this.legalZones.filter((option) => {
         return option.description.toString().toLowerCase().includes(this.text.toLowerCase())
       })
     }

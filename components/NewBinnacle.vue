@@ -85,6 +85,7 @@
                       :data="filteredVehicles"
                       field="number"
                       autocomplete
+                      :open-on-focus="true"
                       @typing="filterVehicles"
                     >
                       <template v-slot="props">
@@ -106,6 +107,7 @@
                       :data="filteredParticipants"
                       field="name"
                       autocomplete
+                      :open-on-focus="true"
                       @typing="filterData"
                     >
                       <template slot-scope="props">
@@ -129,15 +131,18 @@
                   </b-field>
                   <b-field label="Persona que realizó el recorrido">
                     <b-autocomplete
-                      v-model="form.idparticipant"
-                      rounded
-                      :data="filterParticipantData"
+                      v-model="participant"
+                      :data="options"
                       icon="magnify"
                       clearable
-                      @select="(option) => (selected = option.id)"
+                      field="name"
+                      @typing="filterPersonRecorrido"
+                      @select="
+                        (option) => (form.idparticipant = option.idparticipant)
+                      "
                     >
                       <template #empty>
-                        No results found
+                        No hay resultados
                       </template>
                     </b-autocomplete>
                   </b-field>
@@ -145,33 +150,21 @@
               </div>
             </div>
             <div class="divider">
-              <strong>Zona y vegetación</strong>
+              <strong>Zonas y vegetación</strong>
             </div>
             <div class="columns">
               <div class="column">
-                <b-field label="Zona(s) operativa(s)">
+                <b-field label="Zonas operativas">
                   <b-taginput
-                    v-model="form.operative_zones"
+                    v-model="form.list_operative_zones"
                     :data="filteredOpZones"
-                    field="name"
                     autocomplete
-                    @typing="filterZone"
+                    field="description"
+                    :open-on-focus="true"
+                    @typing="filterOpZone"
                   >
-                    <template slot-scope="props">
-                      <strong>{{ props.option.description }}</strong>
-                    </template>
                     <template #empty>
                       Sin resultados
-                    </template>
-                    <template #selected>
-                      <b-tag
-                        v-for="(tag, index) in form.legalZones"
-                        :key="index"
-                        closable
-                        @close="removeLegalZone(index)"
-                      >
-                        {{ tag.description }}
-                      </b-tag>
                     </template>
                   </b-taginput>
                 </b-field>
@@ -179,29 +172,35 @@
             </div>
             <div class="columns">
               <div class="column">
-                <b-field label="Zona(s) legal(es)">
+                <b-field label="Zonas legales">
                   <b-taginput
-                    v-model="form.legalZones"
+                    v-model="form.legal_zones"
                     :data="filteredLegalZones"
-                    field="name"
+                    field="description"
                     autocomplete
-                    @typing="filterZone"
+                    :open-on-focus="true"
+                    @typing="filterZones"
                   >
-                    <template slot-scope="props">
-                      <strong>{{ props.option.description }}</strong>
-                    </template>
                     <template #empty>
                       Sin resultados
                     </template>
-                    <template #selected>
-                      <b-tag
-                        v-for="(tag, index) in form.legalZones"
-                        :key="index"
-                        closable
-                        @close="removeLegalZone(index)"
-                      >
-                        {{ tag.description }}
-                      </b-tag>
+                  </b-taginput>
+                </b-field>
+              </div>
+            </div>
+            <div class="columns">
+              <div class="column">
+                <b-field label="Subzonas">
+                  <b-taginput
+                    v-model="form.list_subzoning"
+                    :data="filteredSubZones"
+                    field="description"
+                    autocomplete
+                    :open-on-focus="true"
+                    @typing="filterSubZones"
+                  >
+                    <template #empty>
+                      Sin resultados
                     </template>
                   </b-taginput>
                 </b-field>
@@ -403,12 +402,16 @@ export default {
       filteredVehicles: [],
       filteredVegetation: [],
       filteredLegalZones: [],
-      filteredSubZone: [],
+      filteredOpZones: [],
+      filteredSubZones: [],
       participants: [],
+      options: [],
+      participant: '',
       vehicles: [],
       vegetation: [],
       legalZones: [],
       subZones: [],
+      opZones: [],
       list_vegetable_affected: [],
       plan: {},
       binnacles: [],
@@ -447,6 +450,8 @@ export default {
     this.getParticipants()
     this.getVeg()
     this.getLegalZones()
+    this.getSubZones()
+    this.getOpZones()
     this.filteredParticipants = this.participants
   },
   methods: {
@@ -466,9 +471,11 @@ export default {
       }
     },
     createOrUpdateBinnacle () {
-      this.isLoading = true
-      this.buttonDisabled = true
+      // this.isLoading = true
+      // this.buttonDisabled = true
       const temporalForm = JSON.parse(JSON.stringify(this.form))
+      console.log(temporalForm)
+      /*
       if (temporalForm.status === 'revisado') {
         this.$swal.fire({
           title: '¿Qué tipo de bitácora es?',
@@ -500,6 +507,7 @@ export default {
           }
         })
       }
+      */
     },
     async createOrUpdate (temporalForm) {
       try {
@@ -517,10 +525,12 @@ export default {
           binnacle = await this.getBinnacle(idBinnacle)
         }
         if (this.list_vegetable_affected.length > 0) {
-          binnacle.list_vegetable_affected = this.list_vegetable_affected.map((x) => {
-            x.idbinnacle = idBinnacle
-            return x
-          })
+          binnacle.list_vegetable_affected = this.list_vegetable_affected.map(
+            (x) => {
+              x.idbinnacle = idBinnacle
+              return x
+            }
+          )
           await this.updateBinnacle(binnacle)
         }
         if (this.points.length > 0) {
@@ -652,6 +662,7 @@ export default {
     async getLegalZones () {
       try {
         this.legalZones = await this.$store.dispatch('modules/zones/getZones')
+        this.filteredLegalZones = this.legalZones
       } catch (error) {
         console.log(error)
       }
@@ -659,6 +670,17 @@ export default {
     async getSubZones () {
       try {
         this.subZones = await this.$store.dispatch('modules/zones/getSubZones')
+        this.filteredSubZones = this.subZones
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getOpZones () {
+      try {
+        this.opZones = await this.$store.dispatch(
+          'modules/operativeZones/getZones'
+        )
+        this.filteredOpZones = this.opZones
       } catch (error) {
         console.log(error)
       }
@@ -668,6 +690,7 @@ export default {
         const res = await this.$store.dispatch(
           'modules/participants/getParticipants'
         )
+        this.options = res
         this.participants = res
       } catch (error) {
         console.log(error)
@@ -792,7 +815,7 @@ export default {
         }
       })
     },
-    filterZone (text) {
+    filterZones (text) {
       this.filteredLegalZones = this.legalZones.filter((option) => {
         if (
           option.description &&
@@ -805,8 +828,8 @@ export default {
         }
       })
     },
-    filterSubZone (text) {
-      this.filteredSubZone = this.subZones.filter((option) => {
+    filterSubZones (text) {
+      this.filteredSubZones = this.subZones.filter((option) => {
         if (
           option.description &&
           option.description
@@ -816,6 +839,30 @@ export default {
         ) {
           return option
         }
+      })
+    },
+    filterOpZone (text) {
+      console.log(text)
+      this.filteredOpZones = this.opZones.filter((option) => {
+        if (
+          option.description &&
+          option.description
+            .toString()
+            .toLowerCase()
+            .includes(text.toLowerCase())
+        ) {
+          return option
+        }
+      })
+      console.log(this.filteredOpZone)
+    },
+    filterPersonRecorrido () {
+      console.log(this.participant)
+      this.options = this.participants.filter((option) => {
+        return option.name
+          .toString()
+          .toLowerCase()
+          .includes(this.participant.toLowerCase())
       })
     }
   }

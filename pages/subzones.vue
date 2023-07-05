@@ -151,7 +151,7 @@
         </div>
       </div>
     </div>
-    <new-subzone
+    <new-sub-zone
       :active-modal="isActive"
       @close="isActive = false"
       @create="updateView"
