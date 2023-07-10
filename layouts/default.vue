@@ -277,7 +277,4 @@ export default {
   max-height: 250px;
   overflow-y: scroll;
 }
-#app {
-  max-height: 90%;
-}
 </style>

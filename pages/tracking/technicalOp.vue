@@ -37,6 +37,11 @@
             <div class="level-right">
               <div class="level-item">
                 <b-button @click="isActive = true">
+                  Nueva bitácora extraordinaria
+                </b-button>
+              </div>
+              <div class="level-item">
+                <b-button @click="isActiveOT = true">
                   Nueva opinión técnica
                 </b-button>
               </div>
@@ -296,7 +301,6 @@
           </div>
         </div>
         <div class="card-content">
-          <!--
               <div class="columns has-text-centered">
                 <div class="column">
                   <b-field label="Fecha">
@@ -370,6 +374,11 @@
       @update="refresh"
       @close="isActiveEdit = false"
     />
+    <new-OT
+      :active-modal="isActiveOT"
+      @close="isActiveOT = false"
+      @create="refresh"
+    />
   </section>
 </template>
 
@@ -379,6 +388,7 @@ export default {
   data () {
     return {
       idPlanification: this.$route.query.id,
+      isActiveOT: false,
       hasEdit: false,
       idBinnacle: '',
       isActiveEdit: false,

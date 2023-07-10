@@ -211,7 +211,7 @@ export default {
     },
     deleteCoord (coordination) {
       this.$swal({
-        title: '¿Deseas borrar esta vegetación?',
+        title: '¿Deseas borrar esta dependencia?',
         showDenyButton: true,
         confirmButtonText: 'Borrar',
         denyButtonText: 'Cancelar'

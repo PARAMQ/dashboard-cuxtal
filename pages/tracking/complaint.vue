@@ -37,6 +37,11 @@
             <div class="level-right">
               <div class="level-item">
                 <b-button @click="isActive = true">
+                  Nueva bitácora extraordinaria
+                </b-button>
+              </div>
+              <div class="level-item">
+                <b-button @click="isActiveIncident = true">
                   Nueva denuncia
                 </b-button>
               </div>
@@ -370,6 +375,11 @@
       @update="refresh"
       @close="isActiveEdit = false"
     />
+    <new-incident
+      :active-modal="isActiveIncident"
+      @close="isActiveIncident = false"
+      @create="refresh"
+    />
   </section>
 </template>
 
@@ -382,6 +392,7 @@ export default {
       hasEdit: false,
       idBinnacle: '',
       isActiveEdit: false,
+      isActiveIncident: false,
       hasSelect: false,
       binnacleSelect: {},
       vehicles: [],
@@ -434,6 +445,7 @@ export default {
     refresh () {
       this.isActive = false
       this.isActiveEdit = false
+      this.isActiveIncident = false
       this.idBinnacle = ''
       this.binnacleSelect = {}
       this.getData()

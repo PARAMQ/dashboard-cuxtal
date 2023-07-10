@@ -1,108 +1,42 @@
 <template>
-  <section class="hero is-cuxtal">
-    <b-modal v-model="activeModal">
-      <div class="card">
-        <div class="card-header">
-          <p class="card-header-title">
-            Programado para el día {{ dateSelect | getDay }}
-          </p>
-        </div>
-        <div class="card-content">
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
-            reiciendis sunt consectetur iure perferendis accusantium assumenda
-            neque, quis sint, eum fugit nihil magni ipsum ad. Doloremque autem
-            cupiditate accusamus molestiae.
-          </p>
-        </div>
-      </div>
-    </b-modal>
-    <div class="container mt-4">
-      <div class="card p-2">
-        <div class="card-content">
-          <nav class="level">
-            <div class="level-left" />
-            <div class="level-right">
-              <p class="level-item">
-                <b-button type="is-primary" outlined @click="openModal">
-                  Nuevo registro
-                </b-button>
-              </p>
-            </div>
-          </nav>
-          <div class="columns">
-            <div class="column">
-              <div class="card">
-                <div class="card-header">
-                  <div class="card-header-title">
-                    <p class="subtitle">
-                      Bitácoras creadas el
-                      {{ dateSelect | getDay }}
-                    </p>
-                  </div>
-                </div>
-                <b-loading
-                  v-model="isLoadingPlans"
-                  :is-full-page="false"
-                  :can-cancel="false"
-                />
-                <div class="card-content scroll">
-                  <div
-                    v-for="binnacle in binnacles"
-                    :key="binnacle"
-                    class="container"
-                  >
-                    <div class="card">
-                      <div class="card-content">
-                        <div class="container">
-                          <div class="columns">
-                            <div class="column">
-                              <p>
-                                <b-icon
-                                  icon="account-group"
-                                  custom-size="default"
-                                />
-                                {{ binnacle.participants }}
-                              </p>
-                            </div>
-                            <div class="column">
-                              <p>
-                                <b-icon
-                                  icon="calendar-today"
-                                  custom-size="default"
-                                />
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              class="column is-flex is-flex-direction-row is-justify-content-center"
-            >
-              <div class="card">
-                <div class="card-header">
-                  <div class="card-header-title">
-                    <p class="subtitle">
-                      Calendario
-                    </p>
-                  </div>
-                </div>
-                <div class="card-content">
-                  <b-datepicker v-model="dateSelect" inline @input="getData" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <div id="map" class="columns">
+    <div class="column is-4">
+      <p>Bitacoras</p>
     </div>
-    <new-plan :active-modal="isActive" @close="isActive = false" />
-  </section>
+    <div class="column is-8">
+      <vl-map
+        :load-tiles-while-animating="true"
+        :load-tiles-while-interacting="true"
+        data-projection="EPSG:4326"
+        style="height: 100%"
+      >
+        <vl-view
+          :zoom.sync="zoom"
+          :center.sync="center"
+          :rotation.sync="rotation"
+        />
+
+        <vl-geoloc @update:position="geolocPosition = $event">
+          <template #default="geoloc">
+            <vl-feature v-if="geoloc.position" id="position-feature">
+              <vl-geom-point :coordinates="geoloc.position" />
+              <vl-style-box>
+                <vl-style-icon
+                  src="_media/marker.png"
+                  :scale="0.4"
+                  :anchor="[0.5, 1]"
+                />
+              </vl-style-box>
+            </vl-feature>
+          </template>
+        </vl-geoloc>
+
+        <vl-layer-tile id="osm">
+          <vl-source-osm />
+        </vl-layer-tile>
+      </vl-map>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -112,9 +46,13 @@ export default {
     return {
       activeModal: false,
       isActive: false,
-      isLoadingPlans: false,
+      isLoadingBinnacles: false,
       binnacles: [],
-      dateSelect: new Date()
+      dateSelect: new Date(),
+      zoom: 2,
+      center: [0, 0],
+      rotation: 0,
+      geolocPosition: undefined
     }
   },
   created () {
@@ -126,44 +64,23 @@ export default {
     },
     async getData () {
       try {
-        this.isLoadingPlans = true
-        const plans = await this.$store.dispatch('modules/plans/getPlans')
-        this.binnacles = this.filterByDate(plans)
-        this.isLoadingPlans = false
+        this.isLoadingBinnacles = true
+        this.binnacles = await this.$store.dispatch(
+          'modules/binnacles/getBinnacles'
+        )
+        this.isLoadingBinnacles = false
       } catch (error) {
         console.log(error)
       }
-    },
-    filterByDate (plans) {
-      const binnacle = []
-      console.log(plans)
-      plans.forEach((x) => {
-        const now = new Date(this.dateSelect)
-        const startDate = new Date(x.start_date)
-        const endDate = new Date(x.end_date)
-        if (
-          startDate.getDay() + 1 === now.getDay() &&
-          startDate.getMonth() === now.getMonth() &&
-          startDate.getFullYear() === now.getFullYear()
-        ) {
-          binnacle.push(x.binnacles)
-        } else if (
-          endDate.getDay() === now.getDay() &&
-          endDate.getMonth() === now.getMonth() &&
-          endDate.getFullYear() === now.getFullYear()
-        ) {
-          binnacle.push(x.binnacles)
-        } else if (((startDate.getDay() + 1) !== now.getDay() && endDate.getDay() !== now.getDay()) && (now.getDate() > startDate.getDate() + 1 && now.getDate() < endDate.getDate())) {
-          binnacle.push(x.binnacles)
-        }
-      })
-      return binnacle
     }
   }
 }
 </script>
 
 <style>
+#map {
+  min-height: 75vh;
+}
 .scroll {
   height: 400px;
   overflow-y: scroll;
