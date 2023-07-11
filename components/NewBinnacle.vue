@@ -81,7 +81,7 @@
                 <div class="container m-2">
                   <b-field label="Vehículos">
                     <b-taginput
-                      v-model="form.vehicles"
+                      v-model="form.list_vehicle"
                       :data="filteredVehicles"
                       field="number"
                       autocomplete
@@ -138,9 +138,7 @@
                       clearable
                       field="name"
                       @typing="filterPersonRecorrido"
-                      @select="
-                        (option) => (form.idparticipant = option.idparticipant)
-                      "
+                      @select="selectParticipant"
                     >
                       <template #empty>
                         No hay resultados
@@ -333,12 +331,15 @@
                   </div>
                 </section>
               </div>
-              <div class="column is-6">
+              <div v-if="imageUrl" class="column is-6">
                 <b-image
                   :src="imageUrl"
                   alt="The Buefy Logo"
                   ratio="601by235"
                 />
+              </div>
+              <div class="column is-6 has-text-centered">
+                <h1><strong>Selecciona una imáxgen.</strong></h1>
               </div>
             </div>
           </form>
@@ -430,7 +431,7 @@ export default {
       typeBinnacle: null,
       temporalFile: null,
       buttonDisabled: false,
-      imageUrl: require('@/assets/cuxtal/RC_V.png')
+      imageUrl: null
     }
   },
   computed: {
@@ -471,11 +472,12 @@ export default {
         // console.log(error)
       }
     },
-    async createOrUpdateBinnacle () {
-      this.isLoading = true
-      this.buttonDisabled = true
+    createOrUpdateBinnacle () {
+      // this.isLoading = true
+      // this.buttonDisabled = true
       const temporalForm = JSON.parse(JSON.stringify(this.form))
       console.log(temporalForm)
+      /*
       if (temporalForm.status === 'revisado') {
         this.$swal.fire({
           title: '¿Qué tipo de bitácora es?',
@@ -518,6 +520,7 @@ export default {
         this.buttonDisabled = false
         this.$emit('update')
       }
+      */
     },
     async createOrUpdate (temporalForm) {
       try {
@@ -602,6 +605,9 @@ export default {
       this.files = []
       this.points = []
       this.$emit('close')
+    },
+    selectParticipant (option) {
+      (option) ? this.form.idparticipant = option.idparticipants : this.form.idparticipant = null
     },
     createPoints (points, binnacle) {
       const coordenadas = points
