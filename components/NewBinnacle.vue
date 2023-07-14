@@ -339,7 +339,7 @@
                 />
               </div>
               <div class="column is-6 has-text-centered">
-                <h1><strong>Selecciona una imáxgen.</strong></h1>
+                <h1><strong>Selecciona una imágen.</strong></h1>
               </div>
             </div>
           </form>
