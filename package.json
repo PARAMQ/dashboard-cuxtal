@@ -25,6 +25,7 @@
     "cookie": "^0.4.1",
     "dayjs": "^1.8.28",
     "generate-password": "^1.7.0",
+    "gmap-vue": "^3.5.4",
     "js-cookie": "^2.2.1",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.15",
