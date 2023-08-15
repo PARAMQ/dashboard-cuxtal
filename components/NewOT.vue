@@ -31,9 +31,9 @@
                     placeholder="Seleccione una opción"
                   >
                     <option
-                      v-for="option in personasMorales"
-                      :key="option.id"
-                      :value="option.id"
+                      v-for="option in dependences"
+                      :key="option.idcoordination"
+                      :value="option.idcoordination"
                     >
                       {{ option.description }}
                     </option>
@@ -289,6 +289,7 @@
                 </div>
               </div>
               <div class="column is-8">
+                <!--
                 <GmapMap
                   :center="{ lat: 10, lng: 10 }"
                   :zoom="7"
@@ -302,7 +303,6 @@
                     :preserve-viewport="true"
                   />
                 </GmapMap>
-                <!--
                 <vl-map
                   :load-tiles-while-animating="true"
                   :load-tiles-while-interacting="true"
@@ -470,16 +470,8 @@ export default {
       ],
       isLoading: false,
       form: {},
-      tenenciaPredio: [
-        {
-          id: 1,
-          description: 'Privado'
-        },
-        {
-          id: 2,
-          description: 'Publico'
-        }
-      ],
+      tenenciaPredio: [],
+      dependences: [],
       fileOficio: {},
       fileRespuesta: {},
       vegetation: [],
@@ -498,6 +490,7 @@ export default {
   },
   mounted () {
     this.getVegetation()
+    this.getDependences()
   },
   methods: {
     async createIncident () {
@@ -532,6 +525,13 @@ export default {
         )
         // console.log(this.vegetation)
         this.filterVegetable = this.vegetation
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getDependences () {
+      try {
+        this.dependences = await this.$store.dispatch('modules/coordinations/getCoordinations')
       } catch (error) {
         console.log(error)
       }

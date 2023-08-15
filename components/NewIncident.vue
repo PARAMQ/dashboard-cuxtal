@@ -62,7 +62,7 @@
                       placeholder="Selecciona una opción"
                     >
                       <option
-                        v-for="option in tenenciaPredio"
+                        v-for="option in tenures"
                         :key="option.idtenure"
                         :value="option.idtenure"
                       >
@@ -73,7 +73,7 @@
                 </div>
               </div>
               <b-field horizontal label="Denuncia presentada ante">
-                <b-select v-model="form.dependence" placeholder="Seleccione una opción">
+                <b-select v-model="form.iddepto" placeholder="Seleccione una opción">
                   <option
                     v-for="option in dependences"
                     :key="option.idcoordination"
@@ -84,11 +84,11 @@
                 </b-select>
               </b-field>
               <b-field horizontal label="Nivel de gobierno">
-                <b-select v-model="form.levelGob" placeholder="Seleccione una opción">
+                <b-select v-model="form.idgov_level" placeholder="Seleccione una opción">
                   <option
-                    v-for="option in dependences"
-                    :key="option.idcoordination"
-                    :value="option.idcoordination"
+                    v-for="option in govLevels"
+                    :key="option.idgov_level"
+                    :value="option.idgov_level"
                   >
                     {{ option.description }}
                   </option>
@@ -97,9 +97,9 @@
               <b-field horizontal label="Ilícito ambiental denunciado">
                 <b-select v-model="form.idilicit_denounced" placeholder="Seleccione una opción">
                   <option
-                    v-for="option in dependences"
-                    :key="option.idcoordination"
-                    :value="option.idcoordination"
+                    v-for="option in ilicits"
+                    :key="option.idilicit_denounced"
+                    :value="option.idilicit_denounced"
                   >
                     {{ option.description }}
                   </option>
@@ -112,7 +112,7 @@
             <div>
               <b-field label="Vegetación afectada">
                 <b-taginput
-                  v-model="form.vegetable"
+                  v-model="form.complaint_va"
                   :data="filterVegetable"
                   field="description"
                   autocomplete
@@ -128,9 +128,11 @@
                 </b-taginput>
               </b-field>
             </div>
+            <!--
             <div class="divider">
               <strong>Alcances</strong>
             </div>
+            -->
             <div class="divider">
               <strong>Zonas</strong>
             </div>
@@ -190,8 +192,76 @@
             <div class="divider">
               <strong>Coordenadas</strong>
             </div>
-            <div>
-              <p>Aqui va los mapas con sus puntos</p>
+            <div class="columns">
+              <div class="column is-4">
+                <div class="container">
+                  <b-field label="Descripción breve de la coordenada">
+                    <b-input v-model="formCoord.description" />
+                  </b-field>
+                  <b-field label="Coordenada X">
+                    <b-numberinput
+                      v-model="point[0]"
+                      step="0.000000000000000001"
+                      :controls="false"
+                    />
+                  </b-field>
+                  <b-field label="Coordenada Y">
+                    <b-numberinput
+                      v-model="point[1]"
+                      step="0.000000000000000001"
+                      :controls="false"
+                    />
+                  </b-field>
+                </div>
+                <div class="container m-3 has-text-centered">
+                  <b-button type="is-success is-light" @click="addPoint">
+                    Agregar coordenada
+                  </b-button>
+                </div>
+                <div
+                  v-for="pointCoord in points"
+                  :key="pointCoord.description"
+                  class="container m-3"
+                >
+                  <div class="control">
+                    <b-tag
+                      type="is-primary"
+                      attached
+                      aria-close-label="Close tag"
+                      closable
+                      @close="deletePoint"
+                      @click="viewPoint(pointCoord)"
+                    >
+                      {{ pointCoord.description }}
+                    </b-tag>
+                  </div>
+                </div>
+              </div>
+              <div class="column is-8">
+                <vl-map
+                  :load-tiles-while-animating="true"
+                  :load-tiles-while-interacting="true"
+                  data-projection="EPSG:4326"
+                  style="height: 400px"
+                >
+                  <vl-view
+                    :zoom.sync="zoom"
+                    :center.sync="point"
+                    :rotation.sync="rotation"
+                  />
+
+                  <vl-layer-tile>
+                    <vl-source-osm />
+                  </vl-layer-tile>
+
+                  <vl-feature>
+                    <vl-geom-point :coordinates="point" />
+                  </vl-feature>
+                  <vl-feature>
+                    <vl-geom-multi-point :coordinates="pointsMap" />
+                  </vl-feature>
+                </vl-map>
+              </div>
             </div>
             <div class="divider">
               <strong>Seguimiento</strong>
@@ -354,7 +424,19 @@ export default {
       opZones: [],
       filteredOpZone: [],
       filteredLegalZones: [],
-      filteredSubZones: []
+      filteredSubZones: [],
+      ilicits: [],
+      govLevels: [],
+      tenures: [],
+      formCoord: {
+        description: ''
+      },
+      zoom: 12,
+      center: [0, 0],
+      rotation: 0,
+      point: [-89.60984537598705, 20.85610769792424],
+      pointsMap: [[-89.60984537598705, 20.85610769792424]],
+      points: []
     }
   },
   mounted () {
@@ -363,11 +445,15 @@ export default {
     this.getLegalZones()
     this.getSubZones()
     this.getOpZones()
+    this.getTenures()
+    this.getGovLevels()
+    this.getIlicitsDenounced()
   },
   methods: {
     async createIncident () {
       try {
         this.isLoading = true
+        this.form.complaint_coordinates = this.points
         const res = await this.$store.dispatch(
           'modules/complaint/createOrUpdateComplaint',
           this.form
@@ -424,6 +510,70 @@ export default {
           'modules/coordinations/getCoordinations'
         )
         // console.log(this.dependences)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    addPoint () {
+      if (this.formCoord.description && this.formCoord.description !== '') {
+        const temporalPoint = this.point
+        if (this.points.length === 0) {
+          const temporalPoints = []
+          temporalPoints.push(temporalPoint)
+          this.pointsMap = temporalPoints
+        } else {
+          this.pointsMap.push([temporalPoint[0], temporalPoint[1]])
+        }
+        this.formCoord.x = temporalPoint[0]
+        this.formCoord.y = temporalPoint[1]
+        this.points.push(this.formCoord)
+        this.formCoord = {
+          description: '',
+          x: 0,
+          y: 0
+        }
+        this.point = [-89.60984537598705, 20.85610769792424]
+      } else {
+        this.$buefy.toast.open({
+          duration: 4000,
+          message: 'Es necesario asignar un nombre a las coordenadas',
+          position: 'is-bottom',
+          type: 'is-danger'
+        })
+      }
+    },
+    viewPoint (point) {
+      this.formCoord.description = point.description
+      this.point[0] = point.x
+      this.point[1] = point.y
+      this.center = this.point
+    },
+    deletePoint (index) {
+      if (this.points.length === 1) {
+        this.points = []
+        this.pointsMap = [[-89.60984537598705, 20.85610769792424]]
+      } else {
+        this.points.splice(index, 1)
+        this.pointsMap.splice(index, 1)
+      }
+    },
+    async getTenures () {
+      try {
+        this.tenures = await this.$store.dispatch('modules/tenure/getTenures')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getGovLevels () {
+      try {
+        this.govLevels = await this.$store.dispatch('modules/gobLevel/getGobLevels')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getIlicitsDenounced () {
+      try {
+        this.ilicits = await this.$store.dispatch('modules/ilicitDenounced/getIlicitDenounceds')
       } catch (error) {
         console.log(error)
       }

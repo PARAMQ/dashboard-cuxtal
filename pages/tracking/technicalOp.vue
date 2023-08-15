@@ -35,11 +35,13 @@
                 -->
             </div>
             <div class="level-right">
+              <!--
               <div class="level-item">
                 <b-button @click="isActive = true">
                   Nueva bitácora extraordinaria
                 </b-button>
               </div>
+              -->
               <div class="level-item">
                 <b-button @click="isActiveOT = true">
                   Nueva opinión técnica
