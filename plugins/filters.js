@@ -4,13 +4,16 @@ const date = datetime => {
   return new Date(datetime).toLocaleString('es-MX', config)
 }
 const shortDate = datetime => {
-  const config = { hour12: true, dateStyle: 'short', timeStyle: 'short' }
-  return new Date(datetime).toLocaleString('es-MX', config)
+  if (datetime) {
+    const temporalDate = new Date(datetime)
+    return temporalDate.getDate() + '/' + (temporalDate.getMonth() + 1) + '/' + temporalDate.getFullYear()
+  } else {
+    return 'Fecha no registrada'
+  }
 }
 const getTime = datetime => {
   if (datetime) {
     const date = new Date(datetime)
-    console.log(date)
     return date.getHours() + ':' + date.getMinutes()
   } else {
     return 'Hora no registrada'

@@ -65,7 +65,8 @@ export default {
     { src: '~/plugins/pop-up-window.js', mode: 'client' },
     { src: '~/plugins/sweetalerts.js', mode: 'client' },
     { src: '~/plugins/vuelayers.js', mode: 'client' },
-    { src: '~/plugins/vue-charts.js', mode: 'client' }
+    { src: '~/plugins/vue-charts.js', mode: 'client' },
+    { src: '~/plugins/gmap.js', mode: 'client' }
   ],
   /*
    ** Nuxt.js dev-modules

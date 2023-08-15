@@ -11,7 +11,7 @@
         <div class="content">
           <form @submit.prevent="submit">
             <div class="divider">
-              <strong>Datos generales</strong>
+              <strong>Datos generales del solicitante</strong>
             </div>
             <div class="columns">
               <div class="column is-6">
@@ -31,9 +31,9 @@
                     placeholder="Seleccione una opción"
                   >
                     <option
-                      v-for="option in personasMorales"
-                      :key="option.id"
-                      :value="option.id"
+                      v-for="option in dependences"
+                      :key="option.idcoordination"
+                      :value="option.idcoordination"
                     >
                       {{ option.description }}
                     </option>
@@ -219,6 +219,124 @@
               </div>
             </div>
             <div class="divider">
+              <strong>Vegetación</strong>
+            </div>
+            <div>
+              <b-field label="Vegetación">
+                <b-taginput
+                  v-model="form.vegetable"
+                  :data="filterVegetable"
+                  field="description"
+                  autocomplete
+                  :open-on-focus="true"
+                  @typing="filterVegetableFun"
+                >
+                  <template v-slot="props">
+                    <strong>{{ props.option.description }}</strong>
+                  </template>
+                  <template #empty>
+                    Sin resultados
+                  </template>
+                </b-taginput>
+              </b-field>
+            </div>
+            <div class="divider">
+              <strong>Coordenadas</strong>
+            </div>
+            <div class="columns">
+              <div class="column is-4">
+                <div class="container">
+                  <b-field label="Descripción breve de la coordenada">
+                    <b-input v-model="coordinate.name" />
+                  </b-field>
+                  <b-field label="Coordenada X">
+                    <b-numberinput
+                      v-model="point[0]"
+                      step="0.000000000000000001"
+                      :controls="false"
+                    />
+                  </b-field>
+                  <b-field label="Coordenada Y">
+                    <b-numberinput
+                      v-model="point[1]"
+                      step="0.000000000000000001"
+                      :controls="false"
+                    />
+                  </b-field>
+                </div>
+                <div class="container m-3 has-text-centered">
+                  <b-button type="is-success is-light" @click="addPoint">
+                    Agregar coordenada
+                  </b-button>
+                </div>
+                <div
+                  v-for="point in points"
+                  :key="point.name"
+                  class="container m-3"
+                >
+                  <div class="control">
+                    <b-tag
+                      type="is-primary"
+                      attached
+                      aria-close-label="Close tag"
+                      closable
+                      @close="deletePoint"
+                      @click="viewPoint(point)"
+                    >
+                      {{ point.name }}
+                    </b-tag>
+                  </div>
+                </div>
+              </div>
+              <div class="column is-8">
+                <!--
+                <GmapMap
+                  :center="{ lat: 10, lng: 10 }"
+                  :zoom="7"
+                  style="width: 100%; height: 300px"
+                >
+                  <google-kml-layer
+                    v-for="l in kmlLayers"
+                    :key="l.id"
+                    :url="l.url"
+                    :clickable="true"
+                    :preserve-viewport="true"
+                  />
+                </GmapMap>
+                <vl-map
+                  :load-tiles-while-animating="true"
+                  :load-tiles-while-interacting="true"
+                  data-projection="EPSG:4326"
+                  style="height: 400px"
+                >
+                  <vl-view
+                    :zoom.sync="zoom"
+                    :center.sync="point"
+                    :rotation.sync="rotation"
+                  />
+
+                  <vl-layer-tile>
+                    <vl-source-osm />
+                  </vl-layer-tile>
+
+                  <vl-feature>
+                    <vl-geom-point :coordinates="point" />
+                    <vl-style>
+                      <vl-style-circle :radius="5">
+                        <vl-style-fill color="red" />
+                        <vl-style-stroke color="red" />
+                      </vl-style-circle>
+                    </vl-style>
+                  </vl-feature>
+
+                  <vl-feature>
+                    <vl-geom-multi-point v-if="pointsMap.length > 0" :coordinates="pointsMap" />
+                  </vl-feature>
+                </vl-map>
+                -->
+              </div>
+            </div>
+            <div class="divider">
               <strong>Respuesta</strong>
             </div>
             <div>
@@ -299,7 +417,11 @@
                     class="file is-primary"
                     :class="{ 'has-name': !!fileRespuesta }"
                   >
-                    <b-upload v-model="fileRespuesta" class="file-label" rounded>
+                    <b-upload
+                      v-model="fileRespuesta"
+                      class="file-label"
+                      rounded
+                    >
                       <span class="file-cta">
                         <b-icon class="file-icon" icon="upload" />
                         <span class="file-label">{{
@@ -341,21 +463,34 @@ export default {
   },
   data () {
     return {
-      isLoading: false,
-      form: {},
-      tenenciaPredio: [
+      kmlLayers: [
         {
-          id: 1,
-          description: 'Privado'
-        },
-        {
-          id: 2,
-          description: 'Publico'
+          url: 'https://developers.google.com/maps/documentation/javascript/examples/kml/westcampus.kml'
         }
       ],
+      isLoading: false,
+      form: {},
+      tenenciaPredio: [],
+      dependences: [],
       fileOficio: {},
-      fileRespuesta: {}
+      fileRespuesta: {},
+      vegetation: [],
+      filterVegetable: [],
+      zoom: 12,
+      center: [0, 0],
+      point: [-89.60984537598705, 20.85610769792424],
+      coordinate: {
+        name: '',
+        x: 0,
+        y: 0
+      },
+      pointsMap: [],
+      points: []
     }
+  },
+  mounted () {
+    this.getVegetation()
+    this.getDependences()
   },
   methods: {
     async createIncident () {
@@ -381,6 +516,63 @@ export default {
         console.log(error)
       } finally {
         this.isLoading = false
+      }
+    },
+    async getVegetation () {
+      try {
+        this.vegetation = await this.$store.dispatch(
+          'modules/vegetation/getVegetations'
+        )
+        // console.log(this.vegetation)
+        this.filterVegetable = this.vegetation
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getDependences () {
+      try {
+        this.dependences = await this.$store.dispatch('modules/coordinations/getCoordinations')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    filterVegetableFun (text) {
+      this.filterVegetable = this.vegetation.filter((option) => {
+        if (
+          option.description &&
+          option.description
+            .toString()
+            .toLowerCase()
+            .includes(text.toLowerCase())
+        ) {
+          return option
+        }
+      })
+    },
+    addPoint () {
+      if (this.coordinate.name && this.coordinate.name !== '') {
+        if (this.pointsMap.length === 0) {
+          const tempArrayPoints = [[this.point[0], this.point[1]]]
+          this.pointsMap = tempArrayPoints
+        } else {
+          this.pointsMap.push([this.point[0], this.point[1]])
+        }
+        this.coordinate.x = this.point[0]
+        this.coordinate.y = this.point[1]
+        this.points.push(this.coordinate)
+        this.coordinate = {
+          name: '',
+          x: 0,
+          y: 0
+        }
+        this.point = [-89.60984537598705, 20.85610769792424]
+      } else {
+        this.$buefy.toast.open({
+          duration: 4000,
+          message: 'Es necesario asignar un nombre a las coordenadas',
+          position: 'is-bottom',
+          type: 'is-danger'
+        })
       }
     }
   }

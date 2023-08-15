@@ -35,11 +35,13 @@
                   -->
             </div>
             <div class="level-right">
+              <!--
               <div class="level-item">
                 <b-button @click="isActive = true">
                   Nueva bitácora extraordinaria
                 </b-button>
               </div>
+              -->
               <div class="level-item">
                 <b-button @click="isActiveIncident = true">
                   Nueva denuncia
@@ -65,7 +67,7 @@
                   >
                     <div class="card" @click="viewBinnacle(binnacle, index)">
                       <div class="card-content">
-                        <p><strong>Folio:</strong> {{ binnacle.number }}</p>
+                        <p><strong>Oficio:</strong> {{ binnacle.code }}</p>
                       </div>
                     </div>
                   </div>
@@ -83,7 +85,7 @@
                         </p>
                       </div>
                     </div>
-                    <div class="level-right">
+                    <div class="level-right m-2">
                       <div class="level-item">
                         <b-button
                           size="is-small"
@@ -104,161 +106,81 @@
                   </div>
                 </div>
                 <div class="card-content">
+                  <b-loading v-model="isLoadingCard" :is-full-page="false" :can-cancel="false" />
                   <div>
                     <div class="divider">
-                      <p>Datos generales</p>
+                      <strong>Datos generales</strong>
                     </div>
-                    <p>
-                      <strong>Estado actual de la bitácora:</strong>
-                      {{ binaccleSelect.status | statusBinnacle }}
-                    </p>
-                    <p><strong>Fecha:</strong> {{ binaccleSelect.date }}</p>
-                    <p>
-                      <strong>Hora de inicio:</strong>
-                      {{ binaccleSelect.hour_init | getTime }}
-                    </p>
-                    <p>
-                      <strong>Hora de finalización</strong>
-                      {{ binaccleSelect.hour_end | getTime }}
-                    </p>
-                  </div>
-                  <div class="divider">
-                    <p>Vehículos</p>
+                    <div class="m-1">
+                      <strong>Código de oficio: </strong>{{ binaccleSelect.code }}
+                    </div>
+                    <div class="columns">
+                      <div class="column">
+                        <strong>Fecha de oficio de denuncia: </strong>{{ binaccleSelect.date | shortDate }}
+                      </div>
+                      <div class="column">
+                        <strong>Fecha de recepción de denuncia: </strong>{{ binaccleSelect.date_reception | shortDate }}
+                      </div>
+                    </div>
+                    <div class="columns">
+                      <div class="column">
+                        <strong>Dirección de predio: </strong>{{ binaccleSelect.address }}
+                      </div>
+                      <div class="column">
+                        <strong>Tipo de predio: </strong>{{ binaccleSelect.tenure }}
+                      </div>
+                    </div>
                   </div>
                   <div>
-                    <div
-                      v-if="
-                        binaccleSelect.list_vehicle &&
-                          binaccleSelect.list_vehicle.length > 0
-                      "
-                    >
-                      <p class="subtitle">
-                        Vehículos:
-                      </p>
-                      <div
-                        v-for="vehicle in binaccleSelect.list_vehicle"
-                        :key="vehicle.idvehicle"
-                      >
-                        <b-taglist attached class="m-2">
-                          <b-tag type="is-light">
-                            {{ vehicle.number }}
-                          </b-tag>
-                          <b-tag type="is-info">
-                            {{ vehicle.model }} - {{ vehicle.brand }}
-                          </b-tag>
-                        </b-taglist>
+                    <div class="divider">
+                      <strong>Ilícito denunciado</strong>
+                    </div>
+                    <div class="m-1">
+                      <strong>Ilícito ambiental denunciado: </strong>{{ binaccleSelect.ilicito }}
+                    </div>
+                    <div class="columns">
+                      <div class="column">
+                        <strong>Denuncia presentada ante: </strong>{{ binaccleSelect.dependencia }}
+                      </div>
+                      <div class="column">
+                        <strong>Nivel de gobierno: </strong>{{ binaccleSelect.gobierno }}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="divider">
+                      <strong>Vegetación afectada</strong>
+                    </div>
+                    <div v-if="binaccleSelect.vegetacion">
+                      <div v-for="element in binaccleSelect.vegetacion" :key="element.idva" class="m-1">
+                        - {{ element.description }}
                       </div>
                     </div>
                     <div v-else>
-                      No hay vehiculos asociados
+                      <div>
+                        <p>No hay vegetación relacionada</p>
+                      </div>
                     </div>
                   </div>
-                  <div class="divider">
-                    <p>Participantes</p>
-                  </div>
                   <div>
-                    <div
-                      v-if="
-                        binaccleSelect.participants &&
-                          binaccleSelect.participants.length > 0
-                      "
-                    >
-                      <p class="subtitle">
-                        Participantes:
-                      </p>
-                      <div
-                        v-for="participant in binaccleSelect.participants"
-                        :key="participant.idparticipant"
-                        class="has-text-centered"
-                      >
-                        <p>{{ participant.name }} {{ participant.lastname }}</p>
+                    <div class="divider">
+                      <strong>Zonas</strong>
+                    </div>
+                    <div v-if="binaccleSelect.vegetacion">
+                      <div v-for="element in binaccleSelect.vegetacion" :key="element.idva" class="m-1">
+                        - {{ element.description }}
                       </div>
                     </div>
                     <div v-else>
-                      No hay participantes asociados
-                    </div>
-                  </div>
-                  <div class="divider">
-                    <p>Coordenadas</p>
-                  </div>
-                  <div>
-                    <div v-if="binaccleSelect.coordinates_binnacle">
-                      <div class="columns">
-                        <div class="column is-3">
-                          <div
-                            v-for="coordinate in binaccleSelect.coordinates_binnacle"
-                            :key="coordinate.idcoordinates"
-                          >
-                            <b-tag class="m-2" @click="viewPoint(coordinate)">
-                              {{ coordinate.name }}
-                            </b-tag>
-                          </div>
-                        </div>
-                        <div class="column is-9">
-                          <vl-map
-                            :load-tiles-while-animating="true"
-                            :load-tiles-while-interacting="true"
-                            data-projection="EPSG:4326"
-                            style="height: 400px"
-                          >
-                            <vl-view
-                              :zoom="zoom"
-                              :center.sync="point"
-                              :rotation="rotation"
-                            />
-
-                            <vl-layer-tile id="osm">
-                              <vl-source-osm />
-                            </vl-layer-tile>
-
-                            <vl-feature
-                              id="point"
-                              :properties="{ prop: 'value', prop2: 'value' }"
-                            >
-                              <vl-geom-point :coordinates="point" />
-                            </vl-feature>
-                          </vl-map>
-                        </div>
+                      <div>
+                        <p>No hay vegetación relacionada</p>
                       </div>
-                    </div>
-                    <div v-else>
-                      sd No hay coordenadas asociadas
-                    </div>
-                  </div>
-                  <div class="divider">
-                    <p>Evidencias</p>
-                  </div>
-                  <div>
-                    <div
-                      v-if="
-                        binaccleSelect.list_image &&
-                          binaccleSelect.list_image.length > 0
-                      "
-                    >
-                      <b-carousel :indicator-inside="false">
-                        <b-carousel-item
-                          v-for="item in binaccleSelect.list_image"
-                          :key="item.idimage"
-                        >
-                          <b-image class="image" :src="item.path" />
-                        </b-carousel-item>
-                        <template #indicators="props">
-                          <b-image
-                            class="al image"
-                            :src="props.path"
-                            :title="props.description"
-                          />
-                        </template>
-                      </b-carousel>
-                    </div>
-                    <div v-else>
-                      No hay evidencias
                     </div>
                   </div>
                 </div>
               </div>
               <div v-else>
-                <p>Selecciona una bitácora</p>
+                <p>Selecciona un registro</p>
               </div>
             </div>
           </div>
@@ -399,6 +321,8 @@ export default {
       participants: [],
       filteredParticipants: [],
       binnacles: [],
+      tenures: [],
+      isLoadingCard: false,
       isActive: false,
       zoom: 12,
       center: [0, 0],
@@ -433,11 +357,7 @@ export default {
   methods: {
     async getData () {
       try {
-        const res = await this.$store.dispatch('modules/binnacles/getBinnacles')
-        const filterBinnacles = res.filter(
-          (x) => x.isextraordinary && x.type === 'complaint'
-        )
-        this.binnacles = filterBinnacles
+        this.binnacles = await this.$store.dispatch('modules/complaint/getComplaints')
       } catch (error) {
         console.log(error)
       }
@@ -483,14 +403,32 @@ export default {
         console.log(error)
       }
     },
-    viewBinnacle (binnacle, index) {
+    async viewBinnacle (binnacle, index) {
+      console.log(binnacle)
+      this.isLoadingCard = true
+      const tenure = await this.getTenure(binnacle.idtenure)
+      const ilicit = await this.getIlicit(binnacle.idilicit_denounced)
+      const gobLevel = await this.getGobLevel(binnacle.idgov_level)
+      const operativeZone = await this.getOperativeZone(binnacle.idoperative_zones)
+      const zone = await this.getZoning(binnacle.idzoning)
+      const subZone = await this.getSubZoning(binnacle.idsubzonning)
+      const dependencia = await this.getDependencia(binnacle.iddepto)
+      const vegetacion = await this.getVegetable(binnacle.complaint_va)
+      binnacle.ilicito = ilicit
+      binnacle.tenure = tenure
+      binnacle.gobierno = gobLevel
+      binnacle.opZone = operativeZone
+      binnacle.zone = zone
+      binnacle.subZone = subZone
+      binnacle.dependencia = dependencia
+      binnacle.vegetacion = vegetacion
       this.hasSelect = false
       this.binnacleSelect = {}
       this.hasSelect = true
       this.binaccleSelect = binnacle
       this.idBinnacle = binnacle.idbinnacle
-      console.log(this.binaccleSelect)
       this.indexBinnacle = index
+      this.isLoadingCard = false
     },
     async getVehicles () {
       try {
@@ -498,6 +436,103 @@ export default {
         this.vehicles = res
       } catch (error) {
         console.log(error)
+      }
+    },
+    async getVegetable (array) {
+      if (array) {
+        const vegetableA = []
+        for (const element in array) {
+          try {
+            const res = await this.$store.dispacth('modules/vegetation/getInfoVegetation', element.idva)
+            vegetableA.push(res)
+          } catch (error) {
+            console.log(error)
+          }
+        }
+        return vegetableA
+      } else {
+        return null
+      }
+    },
+    async getDependencia (id) {
+      console.log(id)
+      if (id) {
+        try {
+          const res = await this.$store.dispatch('modules/coordinations/getInfoCoordination', id)
+          return res.description
+        } catch (error) {
+          console.log(error)
+        }
+      } else {
+        return 'Sin descripción'
+      }
+    },
+    async getGobLevel (id) {
+      if (id) {
+        try {
+          const res = await this.$store.dispatch('modules/gobLevel/getInfoGobLevel', id)
+          return res.description
+        } catch (error) {
+          console.log(error)
+        }
+      } else {
+        return 'Sin descripción'
+      }
+    },
+    async getZoning (id) {
+      if (id) {
+        try {
+          const res = await this.$store.dispatch('modules/zones/getInfoZone', id)
+          return res.description
+        } catch (error) {
+          console.log(error)
+        }
+      } else {
+        return 'Sin descripción'
+      }
+    },
+    async getSubZoning (id) {
+      if (id) {
+        try {
+          const res = await this.$store.dispatch('modules/zones/getInfoSubZone', id)
+          return res.description
+        } catch (error) {
+          console.log(error)
+        }
+      }
+    },
+    async getOperativeZone (id) {
+      if (id) {
+        try {
+          const res = await this.$store.dispatch('modules/zones/getInfoZone', id)
+          return res.description
+        } catch (error) {
+          console.log(error)
+        }
+      }
+    },
+    async getIlicit (id) {
+      if (id) {
+        try {
+          const res = await this.$store.dispatch('modules/ilicitDenounced/getInfoIlicitDenounced', id)
+          return res.description
+        } catch (error) {
+          console.log(error)
+        }
+      } else {
+        return 'Sin descripción'
+      }
+    },
+    async getTenure (id) {
+      if (id) {
+        try {
+          const res = await this.$store.dispatch('modules/tenure/getInfoTenure', id)
+          return res.description
+        } catch (error) {
+          console.log(error)
+        }
+      } else {
+        return 'Sin descripción'
       }
     },
     async updateStatus () {

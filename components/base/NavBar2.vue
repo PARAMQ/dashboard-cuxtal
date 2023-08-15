@@ -36,6 +36,18 @@
         <b-navbar-item tag="router-link" :to="{ path: '/vegetationAffected' }">
           Vegetación
         </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/subZones' }">
+          Sub-zonas
+        </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/tenure' }">
+          Tipos de tenencias
+        </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/ilicits' }">
+          Tipos de ilícitos denunciables
+        </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/gobLevels' }">
+          Niveles de gobierno
+        </b-navbar-item>
       </b-navbar-dropdown>
       <b-navbar-dropdown label="Administrativo">
         <b-navbar-item tag="router-link" :to="{ path: '/participants' }">
@@ -53,7 +65,7 @@
       </b-navbar-dropdown>
       <b-navbar-dropdown label="Seguimiento">
         <b-navbar-item tag="router-link" :to="{ path: '/tracking/technicalOp' }">
-          Opinión técnica
+          Opiniones técnicas
         </b-navbar-item>
         <!--
         <b-navbar-item tag="router-link" :to="{ path: '/tracking/programmed' }">
@@ -71,9 +83,11 @@
         <b-navbar-item tag="router-link" :to="{ path: '/binnacle' }">
           Bitácoras programadas
         </b-navbar-item>
+        <!--
         <b-navbar-item tag="router-link" :to="{ path: '/coordinates' }">
           Coordenadas registradas
         </b-navbar-item>
+        -->
       </b-navbar-dropdown>
       <b-navbar-item tag="div">
         <div class="buttons">
