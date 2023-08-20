@@ -8,7 +8,7 @@
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
-          Nueva respuesta de opión técnica
+          Nueva tipo de entidad legal
         </p>
       </div>
       <div class="card-content">
@@ -43,7 +43,7 @@
 
 <script>
 export default {
-  name: 'NewResponse',
+  name: 'NewTypeLegalEntity',
   props: {
     activeModal: {
       default: false,
@@ -60,7 +60,7 @@ export default {
     async createZone () {
       try {
         this.isLoading = true
-        await this.$store.dispatch('modules/responseOp/createOrUpdateResponseOp', this.form)
+        await this.$store.dispatch('modules/legalEntity/createOrUpdateTypeLegalEntity', this.form)
         this.form = {}
         this.isLoading = false
         this.$buefy.toast.open({
