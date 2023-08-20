@@ -94,7 +94,7 @@
                 class="card"
               >
                 <div class="card-header">
-                  <div class="level">
+                  <div class="level full-w">
                     <div class="level-left">
                       <div class="level-item">
                         <p class="card-header-title">

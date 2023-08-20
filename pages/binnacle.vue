@@ -1,7 +1,85 @@
 <template>
   <div id="map" class="columns">
+    <b-loading v-model="isLoadingBinnacles" :is-full-page="true" :can-cancel="false" />
     <div class="column is-4">
-      <p>Bitacoras</p>
+      <section class="m-2 has-text-centered">
+        <b-tooltip
+          label="Crea una nueva bitácora sin la necesidad de un recorrido"
+          position="is-right"
+        >
+          <b-button label="Nueva bitácora extraordinaria" type="is-light" />
+        </b-tooltip>
+      </section>
+      <div class="columns m-2 binnalces">
+        <div class="column">
+          <div v-for="bitacora in binnacles" :key="bitacora.id">
+            <div class="card">
+              <div class="card-header">
+                <div class="level m-1 full-w">
+                  <div class="level-left">
+                    <div class="level-item">
+                      <p>{{ bitacora.number }}</p>
+                    </div>
+                  </div>
+                  <div class="level-right">
+                    <div class="level-item">
+                      <b-tooltip
+                        v-if="bitacora.status === 'revisado'"
+                        label="Revisado"
+                        position="is-left"
+                      >
+                        <b-icon
+                          icon="check-circle"
+                          size="is-small"
+                          type="is-success"
+                        />
+                      </b-tooltip>
+                      <b-tooltip
+                        v-else-if="bitacora.status === 'en-revision'"
+                        label="En revisión"
+                        position="is-left"
+                      >
+                        <b-icon
+                          icon="clock"
+                          size="is-small"
+                          type="is-warning"
+                        />
+                      </b-tooltip>
+                      <b-tooltip
+                        v-else-if="bitacora.status === 'sin-revisar'"
+                        label="En revisión"
+                        position="is-left"
+                      >
+                        <b-icon
+                          icon="clock"
+                          size="is-small"
+                          type="is-light"
+                        />
+                      </b-tooltip>
+                      <b-tooltip
+                        v-else
+                        label="Sin estado"
+                        position="is-left"
+                      >
+                        <b-icon
+                          icon="alert"
+                          size="is-small"
+                          type="is-danger"
+                        />
+                      </b-tooltip>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-content">
+                <p><strong>Fecha: </strong> {{ bitacora.date ? bitacora.date : 'No hay fecha registrada' }}</p>
+                <br>
+                <p><strong>Relatoría: </strong> {{ bitacora.rapporteur ? bitacora.rapporteur : 'No hay relatoría' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="column is-8">
       <vl-map
@@ -36,6 +114,12 @@
         </vl-layer-tile>
       </vl-map>
     </div>
+    <new-binnacle
+      :active-modal="false"
+      :id-plan="1"
+      :id-binnacle="1"
+      :is-extraordinary="true"
+    />
   </div>
 </template>
 
@@ -52,7 +136,8 @@ export default {
       zoom: 2,
       center: [0, 0],
       rotation: 0,
-      geolocPosition: undefined
+      geolocPosition: undefined,
+      arrayCoordinates: []
     }
   },
   created () {
@@ -68,26 +153,39 @@ export default {
         this.binnacles = await this.$store.dispatch(
           'modules/binnacles/getBinnacles'
         )
+        this.getCoordinates(this.binnacles)
         this.isLoadingBinnacles = false
       } catch (error) {
         console.log(error)
       }
+    },
+    getCoordinates (binnacles) {
+      binnacles.map((x) => {
+        console.log(x.coordinates_binnacle)
+      })
     }
   }
 }
 </script>
 
 <style>
+.full-w {
+  width: 100% !important;
+}
+
+.binnalces {
+  height: 650px;
+  overflow-y: scroll;
+}
+
 #map {
   min-height: 75vh;
 }
-.scroll {
-  height: 400px;
-  overflow-y: scroll;
-}
+
 .card {
   background-color: white !important;
 }
+
 .hero.is-cuxtal {
   background-color: #0403039a;
   background-image: url('assets/cuxtal/background.jpg');

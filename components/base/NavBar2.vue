@@ -81,7 +81,7 @@
           Recorridos programados
         </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/binnacle' }">
-          Bitácoras programadas
+          Bitácoras
         </b-navbar-item>
         <!--
         <b-navbar-item tag="router-link" :to="{ path: '/coordinates' }">
