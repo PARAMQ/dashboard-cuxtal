@@ -62,7 +62,7 @@
                 <div class="card-content scroll">
                   <div
                     v-for="(binnacle, index) in binnacles"
-                    :key="binnacle.idbinnacle"
+                    :key="binnacle.idcomplaint"
                     class="container"
                   >
                     <div class="card" @click="viewBinnacle(binnacle, index)">
@@ -180,7 +180,7 @@
                 </div>
               </div>
               <div v-else>
-                <p>Selecciona un registro</p>
+                <p>Selecciona un registro para ver su información</p>
               </div>
             </div>
           </div>
@@ -374,27 +374,19 @@ export default {
       this.isActiveEdit = true
     },
     async deleteBinnacle () {
+      console.log(this.binaccleSelect.idcomplaint)
       try {
-        if (this.plan.binnacles_deleted) {
-          this.plan.binnacles_deleted.push(
-            this.plan.binnacles[this.indexBinnacle]
-          )
-        } else {
-          this.plan.binnacles_deleted = [
-            this.plan.binnacles[this.indexBinnacle]
-          ]
-        }
         await this.$store.dispatch(
-          'modules/plans/createOrUpdatePlan',
-          this.plan
+          'modules/complaint/deleteComplaint',
+          this.binaccleSelect
         )
         this.$buefy.toast.open({
-          message: '¡Bitácora eliminada!',
+          message: '¡Registros eliminado!',
           type: 'is-success'
         })
         this.hasSelect = false
         this.binnacleSelect = {}
-        this.refresh()
+        this.getData()
       } catch (error) {
         this.$buefy.toast.open({
           message: 'Ocurrió un error, intente más tarde',
@@ -455,7 +447,6 @@ export default {
       }
     },
     async getDependencia (id) {
-      console.log(id)
       if (id) {
         try {
           const res = await this.$store.dispatch('modules/coordinations/getInfoCoordination', id)

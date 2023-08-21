@@ -12,7 +12,7 @@
         <div class="card-content">
           <div class="level">
             <div class="level-left">
-            <!--
+              <!--
               <div class="level-item">
                 <b-select v-model="plan.estatus">
                   <option
@@ -260,7 +260,7 @@
                 </div>
               </div>
               <div v-else>
-                <p>Selecciona una bitácora</p>
+                <p>Selecciona un registro para ver su información</p>
               </div>
             </div>
           </div>
@@ -303,79 +303,63 @@
           </div>
         </div>
         <div class="card-content">
-              <div class="columns has-text-centered">
-                <div class="column">
-                  <b-field label="Fecha">
-                    <b-datepicker v-model="binnacleSelect.date" inline />
-                  </b-field>
-                </div>
-                <div class="column">
-                  <div class="container m-2">
-                    <div class="columns">
-                      <div class="column">
-                        <b-field label="Hora de inicio">
-                          <b-timepicker v-model="binnacleSelect.hour_init" inline />
-                        </b-field>
-                      </div>
-                      <div class="column">
-                        <b-field label="Hora de finalización">
-                          <b-timepicker v-model="binnacleSelect.hour_end" inline />
-                        </b-field>
-                      </div>
-                    </div>
-                  </div>
-                  <br>
-                  <div class="container m-2">
-                    <b-field label="Vehículo">
-                      <b-select v-model="binnacleSelect.idvehicle">
-                        <option
-                          v-for="vehicle in vehicles"
-                          :key="vehicle.idvehicle"
-                          :value="vehicle.idvehicle"
-                        >
-                          {{ vehicle.number }} - {{ vehicle.subbrand }}
-                        </option>
-                      </b-select>
+          <div class="columns has-text-centered">
+            <div class="column">
+              <b-field label="Fecha">
+                <b-datepicker v-model="binnacleSelect.date" inline />
+              </b-field>
+            </div>
+            <div class="column">
+              <div class="container m-2">
+                <div class="columns">
+                  <div class="column">
+                    <b-field label="Hora de inicio">
+                      <b-timepicker v-model="binnacleSelect.hour_init" inline />
                     </b-field>
-                    <b-field label="Participantes">
-                      <b-taginput
-                        v-model="binnacleSelect.participants"
-                        :data="filteredParticipants"
-                        field="name"
-                        autocomplete
-                        @typing="filterData"
-                      >
-                        <template v-slot="props">
-                          <strong>{{ props.option.name }}
-                            {{ props.option.lastname }}</strong>
-                        </template>
-                        <template #empty>
-                          Sin resultados
-                        </template>
-                      </b-taginput>
+                  </div>
+                  <div class="column">
+                    <b-field label="Hora de finalización">
+                      <b-timepicker v-model="binnacleSelect.hour_end" inline />
                     </b-field>
                   </div>
                 </div>
               </div>
-              -->
+              <br>
+              <div class="container m-2">
+                <b-field label="Vehículo">
+                  <b-select v-model="binnacleSelect.idvehicle">
+                    <option
+                      v-for="vehicle in vehicles"
+                      :key="vehicle.idvehicle"
+                      :value="vehicle.idvehicle"
+                    >
+                      {{ vehicle.number }} - {{ vehicle.subbrand }}
+                    </option>
+                  </b-select>
+                </b-field>
+                <b-field label="Participantes">
+                  <b-taginput
+                    v-model="binnacleSelect.participants"
+                    :data="filteredParticipants"
+                    field="name"
+                    autocomplete
+                    @typing="filterData"
+                  >
+                    <template v-slot="props">
+                      <strong>{{ props.option.name }}
+                        {{ props.option.lastname }}</strong>
+                    </template>
+                    <template #empty>
+                      Sin resultados
+                    </template>
+                  </b-taginput>
+                </b-field>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <new-binnacle
-      :active-modal="isActive"
-      :is-extraordinary="true"
-      :type="'techOp'"
-      @update="refresh"
-      @close="isActive = false"
-    />
-    <edit-binnacle
-      :active-modal="isActiveEdit"
-      :id-binnacle="idBinnacle"
-      :is-extraordinary="true"
-      :type="'techOp'"
-      @update="refresh"
-      @close="isActiveEdit = false"
-    />
     <new-OT
       :active-modal="isActiveOT"
       @close="isActiveOT = false"
@@ -434,9 +418,7 @@ export default {
   methods: {
     async getData () {
       try {
-        const res = await this.$store.dispatch(
-          'modules/binnacles/getBinnacles'
-        )
+        const res = await this.$store.dispatch('modules/binnacles/getBinnacles')
         console.log(res)
         const filterBinnacles = res.filter((x) => x.type === 'techOp')
         this.binnacles = filterBinnacles
