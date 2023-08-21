@@ -497,13 +497,13 @@ export default {
       try {
         this.isLoading = true
         await this.$store.dispatch(
-          'modules/vegetation/createOrUpdateVegetation',
+          'modules/technicalOp/createOrUpdateTechnicalOp',
           this.form
         )
         this.form = {}
         this.isLoading = false
         this.$buefy.toast.open({
-          message: 'Denuncia guardada!',
+          message: 'Guardado!',
           type: 'is-success'
         })
         this.$emit('create')
@@ -521,7 +521,7 @@ export default {
     async getVegetation () {
       try {
         this.vegetation = await this.$store.dispatch(
-          'modules/vegetation/getVegetations'
+          'modules/technicalOp/getTechnicalOps'
         )
         // console.log(this.vegetation)
         this.filterVegetable = this.vegetation

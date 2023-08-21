@@ -28,6 +28,15 @@
         <b-navbar-item tag="router-link" :to="{ path: '/subZones' }">
           Sub-zonas
         </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/applicantType' }">
+          Tipos de solicitantes
+        </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/applicationMethod' }">
+          Métodos de aplicación
+        </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/requestMotive' }">
+          Motivos de solicitud
+        </b-navbar-item>
         <!--
         <b-navbar-item tag="router-link" :to="{ path: '/adscriptionsAreas' }">
           Áreas
