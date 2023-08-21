@@ -7,7 +7,7 @@
           label="Crea una nueva bitácora sin la necesidad de un recorrido"
           position="is-right"
         >
-          <b-button label="Nueva bitácora extraordinaria" type="is-light" />
+          <b-button label="Nueva bitácora extraordinaria" type="is-light" @click="activeModal = true" />
         </b-tooltip>
       </section>
       <div class="columns m-2 binnalces">
@@ -22,6 +22,13 @@
                     </div>
                   </div>
                   <div class="level-right">
+                    <div class="level-item">
+                      <b-button
+                        type="is-info"
+                        icon-right="eye-outline"
+                        @click="openBinnacle(bitacora)"
+                      />
+                    </div>
                     <div class="level-item">
                       <b-tooltip
                         v-if="bitacora.status === 'revisado'"
@@ -115,10 +122,18 @@
       </vl-map>
     </div>
     <new-binnacle
-      :active-modal="false"
-      :id-plan="1"
-      :id-binnacle="1"
+      :active-modal="activeModal"
+      :id-plan="null"
+      :id-binnacle="null"
       :is-extraordinary="true"
+      @close="activeModal = false"
+      @update="updateView"
+    />
+    <view-binnacle
+      :active-modal="activeViewModal"
+      :id-binnacle="idBinnacle"
+      :disable-form="true"
+      @close="activeViewModal=false"
     />
   </div>
 </template>
@@ -129,6 +144,8 @@ export default {
   data () {
     return {
       activeModal: false,
+      activeViewModal: false,
+      idBinnacle: 0,
       isActive: false,
       isLoadingBinnacles: false,
       binnacles: [],
@@ -147,6 +164,10 @@ export default {
     openModal () {
       this.isActive = true
     },
+    openBinnacle (binnacle) {
+      this.idBinnacle = binnacle.idbinnacle
+      this.activeViewModal = true
+    },
     async getData () {
       try {
         this.isLoadingBinnacles = true
@@ -159,10 +180,22 @@ export default {
         console.log(error)
       }
     },
+    updateView () {
+      this.activeModal = false
+      this.getData()
+    },
     getCoordinates (binnacles) {
-      binnacles.map((x) => {
-        console.log(x.coordinates_binnacle)
+      console.log(binnacles)
+      // binnacles.map(x => { x.coordinates_binnacle.length > 0 ? console.log(x.idbinnacle) : console.log('no hay') })
+      const coordinates = binnacles.map((x) => {
+        if (x.coordinates_binnacle && x.coordinates_binnacle.length > 0) {
+          for (const coordinate in x.coordinates_binnacle) {
+            print(coordinate)
+            return [coordinate.x, coordinate.y]
+          }
+        }
       })
+      console.log(coordinates)
     }
   }
 }
