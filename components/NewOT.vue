@@ -17,7 +17,7 @@
               <div class="column is-6">
                 <b-field label="Nombre de la persona física">
                   <b-input
-                    v-model="form.namePersonFisic"
+                    v-model="form.individual"
                     name="persona física"
                     type="text"
                     required
@@ -27,13 +27,13 @@
               <div class="column is-flex is-justify-content-center">
                 <b-field label="Nombre de la persona moral">
                   <b-select
-                    v-model="form.personMoral"
+                    v-model="form.idlegal_entity"
                     placeholder="Seleccione una opción"
                   >
                     <option
-                      v-for="option in dependences"
-                      :key="option.idcoordination"
-                      :value="option.idcoordination"
+                      v-for="option in legalEntity"
+                      :key="option.idlegal_entity"
+                      :value="option.idlegal_entity"
                     >
                       {{ option.description }}
                     </option>
@@ -43,13 +43,13 @@
               <div class="column is-flex is-justify-content-center">
                 <b-field label="Tipo de persona moral">
                   <b-select
-                    v-model="form.typePersonMoral"
+                    v-model="form.idtype_legal_entity"
                     placeholder="Seleccione una opción"
                   >
                     <option
-                      v-for="option in tiposPersonasMorales"
-                      :key="option.id"
-                      :value="option.id"
+                      v-for="option in typeLegalEntity"
+                      :key="option.idtype_legal_entity"
+                      :value="option.idtype_legal_entity"
                     >
                       {{ option.description }}
                     </option>
@@ -64,7 +64,7 @@
                     label="Nombre del titular/representante de la persona moral"
                   >
                     <b-input
-                      v-model="form.representanteMoral"
+                      v-model="form.holder_name"
                       name="titular/representante de la persona moral"
                       type="text"
                       required
@@ -78,7 +78,7 @@
                 <div class="column">
                   <b-field label="Número de oficio">
                     <b-input
-                      v-model="form.numberOficio"
+                      v-model="form.folium"
                       name="predio"
                       type="text"
                       required
@@ -88,13 +88,13 @@
                 <div class="column">
                   <b-field label="Medio de solicitud">
                     <b-select
-                      v-model="form.typeSolicitud"
+                      v-model="form.idapplication_method"
                       placeholder="Seleccione una opción"
                     >
                       <option
-                        v-for="option in tiposSolicitudes"
-                        :key="option.id"
-                        :value="option.id"
+                        v-for="option in appMethod"
+                        :key="option.idapplication_method"
+                        :value="option.idapplication_method"
                       >
                         {{ option.description }}
                       </option>
@@ -104,7 +104,7 @@
                 <div class="column">
                   <b-field label="Fecha de solicitud">
                     <b-datepicker
-                      v-model="form.dateSolicitud"
+                      v-model="form.application_date"
                       placeholder="Selecciona una fecha"
                       icon="calendar-today"
                     />
@@ -113,7 +113,7 @@
                 <div class="column">
                   <b-field label="Fecha de recepción de solicitud">
                     <b-datepicker
-                      v-model="form.dateRecSolicitud"
+                      v-model="form.reception_date"
                       placeholder="Selecciona una fecha"
                       icon="calendar-today"
                     />
@@ -128,8 +128,8 @@
               <div class="column is-9">
                 <b-field label="Nombre del promovente">
                   <b-input
-                    v-model="form.namePromovente"
-                    name="predio"
+                    v-model="form.applicant_name"
+                    name="Nombre"
                     type="text"
                     required
                   />
@@ -138,13 +138,13 @@
               <div class="column">
                 <b-field label="Tipo de promovente">
                   <b-select
-                    v-model="form.typePromovente"
+                    v-model="form.idapplicant_type"
                     placeholder="Seleccione una opción"
                   >
                     <option
-                      v-for="option in tiposPromovente"
-                      :key="option.id"
-                      :value="option.id"
+                      v-for="option in appType"
+                      :key="option.idapplicant_type"
+                      :value="option.idapplicant_type"
                     >
                       {{ option.description }}
                     </option>
@@ -153,26 +153,32 @@
               </div>
             </div>
             <div class="columns">
-              <div class="column is-6">
-                <b-field label="Descripción del motivo">
-                  <b-input
-                    v-model="form.descripcionMotivo"
-                    name="predio"
-                    type="text"
-                    required
-                  />
-                </b-field>
-              </div>
               <div class="column">
                 <b-field label="Motivo de la solicitud">
                   <b-select
-                    v-model="form.motivoSolicitud"
+                    v-model="form.idrequest_motive"
                     placeholder="Seleccione una opción"
                   >
                     <option
-                      v-for="option in motivosSolicitud"
-                      :key="option.id"
-                      :value="option.id"
+                      v-for="option in requestMotive"
+                      :key="option.idrequest_motive"
+                      :value="option.idrequest_motive"
+                    >
+                      {{ option.description }}
+                    </option>
+                  </b-select>
+                </b-field>
+              </div>
+              <div class="column">
+                <b-field label="Descripción del motivo">
+                  <b-select
+                    v-model="form.idmotive_description"
+                    placeholder="Seleccione una opción"
+                  >
+                    <option
+                      v-for="option in motiveDescription"
+                      :key="option.idmotive_description"
+                      :value="option.idmotive_description"
                     >
                       {{ option.description }}
                     </option>
@@ -182,7 +188,7 @@
               <div class="column">
                 <b-field label="Superficie solicitada(Ha)">
                   <b-input
-                    v-model="form.descripcionMotivo"
+                    v-model="form.surface_affected"
                     name="predio"
                     type="text"
                     required
@@ -194,7 +200,7 @@
               <div class="column is-9">
                 <b-field label="Dirección del predio">
                   <b-input
-                    v-model="form.direccPredio"
+                    v-model="form.address"
                     name="predio"
                     type="text"
                     required
@@ -204,13 +210,13 @@
               <div class="column">
                 <b-field label="Tenencia del predio">
                   <b-select
-                    v-model="form.typePredio"
+                    v-model="form.idtenure"
                     placeholder="Seleccione una opción"
                   >
                     <option
-                      v-for="option in tiposPredios"
-                      :key="option.id"
-                      :value="option.id"
+                      v-for="option in tenure"
+                      :key="option.idtenure"
+                      :value="option.idtenure"
                     >
                       {{ option.description }}
                     </option>
@@ -303,6 +309,7 @@
                     :preserve-viewport="true"
                   />
                 </GmapMap>
+                -->
                 <vl-map
                   :load-tiles-while-animating="true"
                   :load-tiles-while-interacting="true"
@@ -333,7 +340,6 @@
                     <vl-geom-multi-point v-if="pointsMap.length > 0" :coordinates="pointsMap" />
                   </vl-feature>
                 </vl-map>
-                -->
               </div>
             </div>
             <div class="divider">
@@ -341,26 +347,28 @@
             </div>
             <div>
               <div class="columns">
+                <!--
                 <div class="column">
                   <b-field label="Oficio de respuesta">
                     <b-input
-                      v-model="form.ofRespuesta"
+                      v-model="form.other"
                       name="nivel"
                       type="text"
                       required
                     />
                   </b-field>
                 </div>
+                -->
                 <div class="column">
                   <b-field label="Respuesta">
                     <b-select
-                      v-model="form.respuesta"
+                      v-model="form.idresponse_op"
                       placeholder="Seleccione una opción"
                     >
                       <option
-                        v-for="option in tiposRespuesta"
-                        :key="option.id"
-                        :value="option.id"
+                        v-for="option in responseOp"
+                        :key="option.idresponse_op"
+                        :value="option.idresponse_op"
                       >
                         {{ option.description }}
                       </option>
@@ -370,7 +378,7 @@
                 <div class="column">
                   <b-field label="Fecha de respuesta">
                     <b-datepicker
-                      v-model="form.dateRespuesta"
+                      v-model="form.response_date"
                       placeholder="Selecciona una fecha"
                       icon="calendar-today"
                     />
@@ -381,7 +389,7 @@
                 <div class="column">
                   <b-field label="Otro">
                     <b-input
-                      v-model="form.otro"
+                      v-model="form.other"
                       name="nivel"
                       type="text"
                       required
@@ -476,6 +484,14 @@ export default {
       fileRespuesta: {},
       vegetation: [],
       filterVegetable: [],
+      legalEntity: [],
+      typeLegalEntity: [],
+      appMethod: [],
+      appType: [],
+      requestMotive: [],
+      motiveDescription: [],
+      responseOp: [],
+      tenure: [],
       zoom: 12,
       center: [0, 0],
       point: [-89.60984537598705, 20.85610769792424],
@@ -489,21 +505,29 @@ export default {
     }
   },
   mounted () {
-    this.getVegetation()
-    this.getDependences()
+    // this.getVegetation()
+    // this.getDependences()
+    this.getLegalEntity()
+    this.getTypeLegalEntity()
+    this.getAppMethod()
+    this.getAppType()
+    this.getRequestMotive()
+    this.getMotiveDescription()
+    this.getTenure()
+    this.getResponseOp()
   },
   methods: {
     async createIncident () {
       try {
         this.isLoading = true
-        await this.$store.dispatch(
-          'modules/vegetation/createOrUpdateVegetation',
-          this.form
-        )
+        const id = await this.$store.dispatch('modules/technicalOp/createOrUpdateTechnicalOp', this.form)
+        if (this.fileOficio.name || this.fileRespuesta.name) {
+          await this.uploadFiles(id)
+        }
         this.form = {}
         this.isLoading = false
         this.$buefy.toast.open({
-          message: 'Denuncia guardada!',
+          message: 'Guardado!',
           type: 'is-success'
         })
         this.$emit('create')
@@ -521,7 +545,7 @@ export default {
     async getVegetation () {
       try {
         this.vegetation = await this.$store.dispatch(
-          'modules/vegetation/getVegetations'
+          'modules/technicalOp/getTechnicalOps'
         )
         // console.log(this.vegetation)
         this.filterVegetable = this.vegetation
@@ -548,6 +572,77 @@ export default {
           return option
         }
       })
+    },
+    async uploadFiles (id) {
+      const formData = new FormData()
+      formData.append('idtechnical_opinion', id)
+      if (this.fileOificio) {
+        formData.append('request_doc', this.fileOficio)
+      }
+      if (this.fileRespuesta) {
+        formData.append('response_doc', this.fileRespuesta)
+      }
+      try {
+        await this.$store.dispatch('modules/technicalOp/uploadFiles', formData)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getLegalEntity () {
+      try {
+        this.legalEntity = await this.$store.dispatch('modules/legalEntity/getLegalEntitys')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getTypeLegalEntity () {
+      try {
+        this.typeLegalEntity = await this.$store.dispatch('modules/legalEntity/getTypeLegalEntitys')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getAppMethod () {
+      try {
+        this.appMethod = await this.$store.dispatch('modules/apMethod/getApplicationMethods')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getAppType () {
+      try {
+        this.appType = await this.$store.dispatch('modules/apType/getApplicantTypes')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getRequestMotive () {
+      try {
+        this.requestMotive = await this.$store.dispatch('modules/requestMotive/getRequestMotives')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getMotiveDescription () {
+      try {
+        this.motiveDescription = await this.$store.dispatch('modules/motiveDescription/getMotiveDescriptions')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getTenure () {
+      try {
+        this.tenure = await this.$store.dispatch('modules/tenure/getTenures')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getResponseOp () {
+      try {
+        this.responseOp = await this.$store.dispatch('modules/responseOp/getResponseOps')
+      } catch (error) {
+        console.log(error)
+      }
     },
     addPoint () {
       if (this.coordinate.name && this.coordinate.name !== '') {

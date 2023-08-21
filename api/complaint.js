@@ -19,6 +19,7 @@ export const updateFilesComplaint = (files) => {
   return request({
     url: '/apiComplaint.php/upload_doc',
     method: 'POST',
+    headers: { 'Content-Type': 'multipart/form-data' },
     data: files
   })
 }

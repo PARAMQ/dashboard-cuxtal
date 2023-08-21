@@ -67,7 +67,7 @@ export default {
     this.getInfoDonnut()
   },
   async mounted () {
-    await this.getData()
+    await this.getComplaints()
     this.getInfoDonnut()
   },
   data () {
@@ -77,21 +77,8 @@ export default {
         labels: ['Opiniones técnicas', 'Denuncias', 'Programadas']
       },
       techOp: [],
-      complaint: [],
+      complaints: [],
       programmed: []
-    }
-  },
-  computed: {
-    getList () {
-      const l = this.list.filter(
-        el =>
-          this.firstPaymentValidation(el) !== el &&
-          this.firstPaymentValidation(el) === el.payments[0]
-      )
-      return l
-    },
-    titleStack () {
-      return ['Admin', 'Dashboard']
     }
   },
   methods: {
@@ -100,7 +87,6 @@ export default {
         const res = await this.$store.dispatch(
           'modules/binnacles/getBinnacles'
         )
-        console.log(res)
         this.techOp = res.filter((x) => x.type === 'techOp')
         this.complaint = res.filter((x) => x.type === 'complaint')
         this.programmed = res.filter((x) => x.type === 'programmed')
@@ -108,8 +94,16 @@ export default {
         console.log(error)
       }
     },
+    async getComplaints () {
+      try {
+        const res = await this.$store.dispatch('modules/complaint/getComplaints')
+        this.complaints = res
+      } catch (error) {
+        console.log(error)
+      }
+    },
     getInfoDonnut () {
-      this.series = [Number(this.techOp.length), Number(this.complaint.length), Number(this.programmed.length)]
+      this.series = [Number(this.techOp.length), Number(this.complaints.length), Number(this.programmed.length)]
     }
   },
   head () {

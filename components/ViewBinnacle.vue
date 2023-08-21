@@ -23,6 +23,7 @@
                   <b-select
                     v-model="form.status"
                     placeholder="Selecciona una opción"
+                    :disabled="disableForm"
                   >
                     <option value="sin-revisar">
                       Sin revisar
@@ -49,7 +50,11 @@
             <div class="columns">
               <div class="column">
                 <b-field label="Escriba aquí la relatoría">
-                  <b-input v-model="form.rapporteur" type="textarea" />
+                  <b-input
+                    v-model="form.rapporteur"
+                    type="textarea"
+                    :disabled="disableForm"
+                  />
                 </b-field>
               </div>
             </div>
@@ -59,7 +64,10 @@
             <div class="columns has-text-centered">
               <div class="column">
                 <b-field label="Fecha">
-                  <b-datepicker v-model="form.date" inline />
+                  <b-datepicker
+                    v-model="form.date"
+                    inline
+                  />
                 </b-field>
               </div>
               <div class="column">
@@ -67,12 +75,20 @@
                   <div class="columns">
                     <div class="column">
                       <b-field label="Hora de inicio">
-                        <b-timepicker v-model="form.hour_init" inline />
+                        <b-timepicker
+                          v-model="form.hour_init"
+                          inline
+                          :editable="disableForm"
+                        />
                       </b-field>
                     </div>
                     <div class="column">
                       <b-field label="Hora de finalización">
-                        <b-timepicker v-model="form.hour_end" inline />
+                        <b-timepicker
+                          v-model="form.hour_end"
+                          inline
+                          :editable="disableForm"
+                        />
                       </b-field>
                     </div>
                   </div>
@@ -86,6 +102,7 @@
                       field="number"
                       autocomplete
                       :open-on-focus="true"
+                      :readonly="disableForm"
                       @typing="filterVehicles"
                       @remove="deleteVehicles"
                     >
@@ -109,6 +126,7 @@
                       field="name"
                       autocomplete
                       :open-on-focus="true"
+                      :readonly="disableForm"
                       @typing="filterData"
                     >
                       <template slot-scope="props">
@@ -160,6 +178,7 @@
                     autocomplete
                     field="description"
                     :open-on-focus="true"
+                    :readonly="disableForm"
                     @typing="filterOpZone"
                   >
                     <template #empty>
@@ -178,6 +197,7 @@
                     field="description"
                     autocomplete
                     :open-on-focus="true"
+                    :readonly="disableForm"
                     @typing="filterZones"
                   >
                     <template #empty>
@@ -196,6 +216,7 @@
                     field="description"
                     autocomplete
                     :open-on-focus="true"
+                    :readonly="disableForm"
                     @typing="filterSubZones"
                   >
                     <template #empty>
@@ -212,6 +233,7 @@
                     v-model="list_vegetable_affected"
                     :data="filteredVegetation"
                     field="description"
+                    :readonly="disableForm"
                     autocomplete
                     @typing="filterVegetation"
                   >
@@ -250,7 +272,11 @@
                   </b-field>
                 </div>
                 <div class="container m-3 has-text-centered">
-                  <b-button type="is-success is-light" @click="addPoint">
+                  <b-button
+                    type="is-success is-light"
+                    :disable="disableForm"
+                    @click="addPoint"
+                  >
                     Agregar coordenada
                   </b-button>
                 </div>
@@ -264,7 +290,7 @@
                       type="is-primary"
                       attached
                       aria-close-label="Close tag"
-                      closable
+                      :closable="!disableForm"
                       @close="deletePoint"
                       @click="viewPoint(pointCoord)"
                     >
@@ -303,7 +329,12 @@
               <div class="column is-6">
                 <section>
                   <b-field>
-                    <b-upload v-model="files" multiple drag-drop>
+                    <b-upload
+                      v-model="files"
+                      :disabled="disableForm"
+                      multiple
+                      drag-drop
+                    >
                       <section class="section">
                         <div class="content has-text-centered">
                           <p>
@@ -369,9 +400,13 @@
 import { mapState } from 'vuex'
 import KML from 'ol/format/KML'
 export default {
-  name: 'NewBinnacle',
+  name: 'ViewBinnacle',
   props: {
     activeModal: {
+      default: false,
+      type: Boolean
+    },
+    disableForm: {
       default: false,
       type: Boolean
     },
@@ -380,8 +415,8 @@ export default {
       type: String
     },
     idBinnacle: {
-      default: null,
-      type: Number
+      default: '',
+      type: String
     },
     isExtraordinary: {
       default: false,
@@ -436,6 +471,17 @@ export default {
   },
   computed: {
     ...mapState(['user'])
+  },
+  watch: {
+    activeModal: {
+      handler: (newVal, oldVal) => {
+        console.log(newVal, oldVal)
+        if (newVal === true) {
+          console.log(this)
+          this.getBinnacle()
+        }
+      }
+    }
   },
   created () {},
   mounted () {
@@ -750,14 +796,26 @@ export default {
       }
     },
     async getBinnacle (id) {
-      try {
-        const res = await this.$store.dispatch(
-          'modules/binnacles/getBinnacle',
-          id
-        )
-        return res
-      } catch (error) {
-        // console.log(error)
+      if (id) {
+        try {
+          const res = await this.$store.dispatch(
+            'modules/binnacles/getBinnacle',
+            id
+          )
+          return res
+        } catch (error) {
+          // console.log(error)
+        }
+      } else {
+        try {
+          const res = await this.$store.dispatch(
+            'modules/binnacles/getBinnacle',
+            this.idBinnacle
+          )
+          return res
+        } catch (error) {
+          // console.log(error)
+        }
       }
     },
     viewPoint (point) {

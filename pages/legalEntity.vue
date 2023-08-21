@@ -8,7 +8,7 @@
             <div class="level-right">
               <p class="level-item">
                 <b-button type="is-primary" outlined @click="isActive = true">
-                  Nuevo nivel de gobierno
+                  Nueva entidad legal
                 </b-button>
               </p>
             </div>
@@ -19,7 +19,7 @@
                 <div class="card-content scroll">
                   <div
                     v-for="veg in vegetacion"
-                    :key="veg.idgov_level"
+                    :key="veg.idlegal_entity"
                     class="container"
                   >
                     <div class="card" @click="viewVeg(veg)">
@@ -53,7 +53,7 @@
                     <div class="level-left">
                       <div class="level-item">
                         <p class="card-header-title">
-                          ID: {{ vegetation.idgov_level }}
+                          ID: {{ vegetation.idlegal_entity }}
                         </p>
                       </div>
                     </div>
@@ -98,7 +98,7 @@
                     <div class="level-left">
                       <div class="level-item">
                         <p class="card-header-title">
-                          ID: {{ vegetation.idgov_level }}
+                          ID: {{ vegetation.idlegal_entity }}
                         </p>
                       </div>
                     </div>
@@ -128,7 +128,7 @@
                       <b-field horizontal label="Descripción breve">
                         <b-input
                           v-model="vegetation.description"
-                          name="Descripcion de la vegetación"
+                          name="Descripción"
                           type="text"
                           required
                         />
@@ -153,7 +153,7 @@
         </div>
       </div>
     </div>
-    <new-gob-level
+    <new-legal-entity
       :active-modal="isActive"
       @close="isActive = false"
       @create="updateView"
@@ -163,7 +163,7 @@
 
 <script>
 export default {
-  name: 'GobLevels',
+  name: 'LegalEntity',
   data () {
     return {
       selectVeg: false,
@@ -193,7 +193,7 @@ export default {
       try {
         this.isLoading = true
         await this.$store.dispatch(
-          'modules/gobLevel/createOrUpdateGobLevel',
+          'modules/legalEntity/createOrUpdateLegalEntity',
           this.vegetation
         )
         this.vegetation = {}
@@ -221,7 +221,7 @@ export default {
         if (result.isConfirmed) {
           try {
             await this.$store.dispatch(
-              'modules/gobLevel/deleteGobLevel',
+              'modules/legalEntity/deleteLegalEntity',
               vegetation
             )
             this.getData()
@@ -251,7 +251,7 @@ export default {
       try {
         this.vegetacion = []
         const res = await this.$store.dispatch(
-          'modules/gobLevel/getGobLevels'
+          'modules/legalEntity/getLegalEntitys'
         )
         this.vegetacion = res
       } catch (error) {
