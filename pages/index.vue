@@ -2,6 +2,7 @@
   <section class="hero is-fullheight">
     <div class="hero-body">
       <div class="columns">
+        <!--
         <div class="column">
           <div class="card">
             <div class="card-content has-text-centered">
@@ -9,6 +10,7 @@
             </div>
           </div>
         </div>
+      -->
         <div class="column">
           <div class="card">
             <div v-if="series.length > 0" class="card-content is-flex is-justify-content-center">
