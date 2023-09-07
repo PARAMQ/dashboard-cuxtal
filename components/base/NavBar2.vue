@@ -57,6 +57,12 @@
         <b-navbar-item tag="router-link" :to="{ path: '/gobLevels' }">
           Niveles de gobierno
         </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/legalEntity' }">
+          Entidades legales
+        </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/typeLegalEntity' }">
+          Tipos de entidades legales
+        </b-navbar-item>
       </b-navbar-dropdown>
       <b-navbar-dropdown label="Administrativo">
         <b-navbar-item tag="router-link" :to="{ path: '/participants' }">
