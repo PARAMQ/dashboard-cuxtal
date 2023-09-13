@@ -143,7 +143,7 @@
                       </b-field>
                       <b-field horizontal label="Nombre científico">
                         <b-input
-                          v-model="form.cientificName"
+                          v-model="vegetation.cientificName"
                           name="nombre científico"
                           type="text"
                           required

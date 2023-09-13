@@ -81,7 +81,7 @@
                         </p>
                       </div>
                     </div>
-                    <div class="level-right">
+                    <div class="level-right m-1">
                       <div class="level-item">
                         <b-button
                           size="is-small"
@@ -96,6 +96,14 @@
                           type="is-danger is-light"
                           icon-right="delete"
                           @click="deleteBinnacle"
+                        />
+                      </div>
+                      <div class="level-item">
+                        <b-button
+                          size="is-small"
+                          type="is-info is-light"
+                          icon-right="file-word"
+                          @click="getWord"
                         />
                       </div>
                     </div>
@@ -547,6 +555,21 @@ export default {
           message: 'Ocurrió un error, intente más tarde',
           type: 'is-danger'
         })
+      }
+    },
+    async getWord () {
+      try {
+        const res = await this.$store.dispatch('modules/binnacles/getWordBinnacle', this.idBinnacle)
+        const blobURL = window.URL.createObjectURL(new Blob([res]), {
+          type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        })
+        const link = document.createElement('a')
+        const filename = 'archivo' + '.docx'
+        link.href = blobURL
+        link.setAttribute('download', filename)
+        document.body.appendChild(link)
+      } catch (error) {
+        console.log(error)
       }
     }
   }

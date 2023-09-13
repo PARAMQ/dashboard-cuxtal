@@ -30,3 +30,11 @@ export const getBinnacles = () => {
     method: 'GET'
   })
 }
+
+export const getWordBinnacle = (id) => {
+  return request({
+    url: '/Bitacora.php/bitacora/' + id,
+    responseType: 'blob',
+    method: 'GET'
+  })
+}
