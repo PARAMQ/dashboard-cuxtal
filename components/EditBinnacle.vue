@@ -81,7 +81,7 @@
                 <div class="container m-2">
                   <b-field label="Vehículos">
                     <b-taginput
-                      v-model="form.list_vehicles"
+                      v-model="form.list_vehicle"
                       :data="filteredVehicles"
                       field="number"
                       autocomplete
@@ -615,6 +615,7 @@ export default {
       this.temporalFile = this.$refs.file.files[0]
       // console.log(this.temporalFile)
     },
+    convertCoordinates () {},
     closeModal () {
       this.form = {}
       this.temporalFiles = []
