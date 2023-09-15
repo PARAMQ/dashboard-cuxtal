@@ -8,7 +8,7 @@
             <div class="level-right">
               <p class="level-item">
                 <b-button type="is-primary" outlined @click="isActive = true">
-                  Nuevo metodo de aplicación
+                  Nuevo método de aplicación
                 </b-button>
               </p>
             </div>

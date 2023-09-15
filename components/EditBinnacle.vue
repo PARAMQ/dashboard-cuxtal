@@ -81,7 +81,7 @@
                 <div class="container m-2">
                   <b-field label="Vehículos">
                     <b-taginput
-                      v-model="form.vehicles"
+                      v-model="form.list_vehicles"
                       :data="filteredVehicles"
                       field="number"
                       autocomplete
@@ -433,7 +433,26 @@ export default {
       imageUrl: require('@/assets/cuxtal/RC_V.png')
     }
   },
+  watch: {
+    async idBinnacle (newValue, oldValue) {
+      const binnacle = await this.getBinnacle(newValue)
+      binnacle.date = new Date(binnacle.date)
+      if (binnacle.hour_init) {
+        binnacle.hour_init = new Date(binnacle.hour_init)
+      } else {
+        delete binnacle.hour_init
+      }
+      if (binnacle.hour_end) {
+        binnacle.hour_end = new Date(binnacle.hour_end)
+      } else {
+        delete binnacle.hour_end
+      }
+      this.form = binnacle
+    }
+  },
+  // eslint-disable-next-line vue/order-in-components
   computed: {
+    // eslint-disable-next-line no-undef
     ...mapState(['user'])
   },
   created () {},
