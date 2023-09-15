@@ -560,14 +560,21 @@ export default {
     async getWord () {
       try {
         const res = await this.$store.dispatch('modules/binnacles/getWordBinnacle', this.idBinnacle)
-        const blobURL = window.URL.createObjectURL(new Blob([res]), {
-          type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        })
+
+        // Ensure the response is an ArrayBuffer
+        const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })
+        const blobURL = window.URL.createObjectURL(blob)
+
         const link = document.createElement('a')
-        const filename = 'archivo' + '.docx'
+        const filename = 'archivo.docx'
         link.href = blobURL
         link.setAttribute('download', filename)
-        document.body.appendChild(link)
+
+        // Trigger the download
+        link.click()
+
+        // Clean up
+        window.URL.revokeObjectURL(blobURL)
       } catch (error) {
         console.log(error)
       }
