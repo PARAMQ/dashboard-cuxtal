@@ -357,6 +357,7 @@ export default {
           'modules/participants/getParticipants',
           this.params
         )
+        console.log(res)
         this.participantes = res
       } catch (error) {
         console.log(error)

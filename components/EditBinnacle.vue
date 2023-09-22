@@ -139,7 +139,7 @@
                       field="name"
                       @typing="filterPersonRecorrido"
                       @select="
-                        (option) => (form.idparticipant = option.idparticipant)
+                        (option) => (form.idparticipants = option.idparticipants)
                       "
                     >
                       <template #empty>
@@ -171,6 +171,7 @@
                 </b-field>
               </div>
             </div>
+            <!--
             <div class="columns">
               <div class="column">
                 <b-field label="Zonas legales">
@@ -189,6 +190,7 @@
                 </b-field>
               </div>
             </div>
+            -->
             <div class="columns">
               <div class="column">
                 <b-field label="Subzonas">
@@ -236,14 +238,14 @@
                   <b-field label="Descripción breve de la coordenada">
                     <b-input v-model="formCoord.name" />
                   </b-field>
-                  <b-field label="Coordenada X">
+                  <b-field label="Latitud">
                     <b-numberinput
                       v-model="point[0]"
                       step="0.000000000000000001"
                       :controls="false"
                     />
                   </b-field>
-                  <b-field label="Coordenada Y">
+                  <b-field label="Longitud">
                     <b-numberinput
                       v-model="point[1]"
                       step="0.000000000000000001"
@@ -257,7 +259,7 @@
                   </b-button>
                 </div>
                 <div
-                  v-for="pointCoord in points"
+                  v-for="pointCoord in form.list_coordinates"
                   :key="pointCoord.name"
                   class="container m-3"
                 >
@@ -367,6 +369,8 @@
 <script>
 import { mapState } from 'vuex'
 import KML from 'ol/format/KML'
+// eslint-disable-next-line
+const utmObj = require('utm-latlng')
 export default {
   name: 'EditBinnacle',
   props: {
@@ -396,7 +400,8 @@ export default {
       form: {
         status: 'sin-revisar',
         date: new Date(),
-        hour_init: new Date()
+        hour_init: new Date(),
+        list_vehicles_deleted: []
       },
       isLoading: false,
       filteredParticipants: [],
@@ -435,19 +440,31 @@ export default {
   },
   watch: {
     async idBinnacle (newValue, oldValue) {
-      const binnacle = await this.getBinnacle(newValue)
-      binnacle.date = new Date(binnacle.date)
-      if (binnacle.hour_init) {
-        binnacle.hour_init = new Date(binnacle.hour_init)
-      } else {
-        delete binnacle.hour_init
+      if (newValue) {
+        const binnacle = await this.getBinnacle(newValue)
+        console.log(binnacle)
+        binnacle.date = new Date(binnacle.date)
+        if (binnacle.hour_init) {
+          binnacle.hour_init = new Date(binnacle.hour_init)
+        } else {
+          delete binnacle.hour_init
+        }
+        if (binnacle.hour_end) {
+          binnacle.hour_end = new Date(binnacle.hour_end)
+        } else {
+          delete binnacle.hour_end
+        }
+        this.form = binnacle
       }
-      if (binnacle.hour_end) {
-        binnacle.hour_end = new Date(binnacle.hour_end)
-      } else {
-        delete binnacle.hour_end
+    },
+    form (newValue, oldValue) {
+      console.log(newValue)
+    },
+    point (newValue, oldValue) {
+      // console.log(newValue)
+      if (newValue) {
+        this.convertCoordinatesToUtm(newValue)
       }
-      this.form = binnacle
     }
   },
   // eslint-disable-next-line vue/order-in-components
@@ -615,7 +632,14 @@ export default {
       this.temporalFile = this.$refs.file.files[0]
       // console.log(this.temporalFile)
     },
-    convertCoordinates () {},
+    convertCoordinatesToUtm (coords) {
+      console.log(coords)
+      // eslint-disable-next-line
+      const utm = new utmObj()
+      const utmCoords = utm.convertLatLngToUtm(coords[0], coords[1], 1)
+      console.log(utmCoords)
+    },
+    convertCoordinatesFromUtm (coords) {},
     closeModal () {
       this.form = {}
       this.temporalFiles = []
@@ -780,8 +804,10 @@ export default {
       this.center = this.point
     },
     deletePoint (index) {
+      console.log(index)
       this.points.splice(index, 1)
       this.pointsMap.splice(index, 1)
+      // this.form.list_coordinates_deleted.push(object)
     },
     removeParticipant (index) {
       this.form.participants.splice(index, 1)
@@ -894,7 +920,17 @@ export default {
       })
     },
     deleteVehicles (object) {
-      console.log(object)
+      this.form.list_vehicles_deleted.push(object)
+      // console.log(object)
+    },
+    deleteOpZone (object) {
+      this.form.list_operative_zones_deleted.push(object)
+    },
+    deleteSubzoning (object) {
+      this.form.list_subzoning_deleted.push(object)
+    },
+    deleteVa (object) {
+      this.form.list_va_deleted.push(object)
     }
   }
 }

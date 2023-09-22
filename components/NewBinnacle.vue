@@ -169,6 +169,7 @@
                 </b-field>
               </div>
             </div>
+            <!--
             <div class="columns">
               <div class="column">
                 <b-field label="Zonas legales">
@@ -187,6 +188,7 @@
                 </b-field>
               </div>
             </div>
+            -->
             <div class="columns">
               <div class="column">
                 <b-field label="Subzonas">
@@ -523,6 +525,7 @@ export default {
       */
     },
     async createOrUpdate (temporalForm) {
+      console.log(JSON.stringify(temporalForm))
       try {
         let binnacle
         let idBinnacle

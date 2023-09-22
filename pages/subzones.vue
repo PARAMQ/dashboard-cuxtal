@@ -84,6 +84,13 @@
                   <p class="is-size-3">
                     {{ subzone.description }}
                   </p>
+                  <br>
+                  <p class="is-size-2">
+                    Zona legal:
+                  </p>
+                  <p class="is-size-3">
+                    {{ subzone.legalZone ? subzone.legalZone.description : 'No tiene relacionado una zona legal' }}
+                  </p>
                 </div>
               </div>
               <div
@@ -96,7 +103,7 @@
                     <div class="level-left">
                       <div class="level-item">
                         <p class="card-header-title">
-                          ID: {{ subzone.idzoning }}
+                          ID: {{ subzone.idsubzoning }}
                         </p>
                       </div>
                     </div>
@@ -131,6 +138,21 @@
                           required
                         />
                       </b-field>
+                      <b-field horizontal label="Zona legal relacionada">
+                        <b-autocomplete
+                          v-model="text"
+                          :data="options"
+                          icon="magnify"
+                          clearable
+                          field="description"
+                          @typing="filteredDataArray"
+                          @select="(option) => subzone.idzoning = option ? option.idzoning : null"
+                        >
+                          <template #empty>
+                            No hay resultados
+                          </template>
+                        </b-autocomplete>
+                      </b-field>
                     </form>
                   </div>
                 </div>
@@ -164,6 +186,9 @@ export default {
   name: 'SubZone',
   data () {
     return {
+      text: '',
+      legalZones: [],
+      options: [],
       selectSub: false,
       isActive: false,
       subzonas: [],
@@ -176,16 +201,27 @@ export default {
   },
   mounted () {
     this.getData()
+    this.getZones()
   },
   methods: {
-    viewSubZone (subzone) {
+    async viewSubZone (subzone) {
+      console.log(subzone)
       this.subzone = subzone
+      this.subzone.legalZone = await this.getLegalZone(subzone.idzoning)
       this.selectSub = true
     },
     cancelEdit () {
       this.subzone = {}
       this.selectSub = false
       this.hasEdit = false
+    },
+    async getLegalZone (id) {
+      try {
+        const res = await this.$store.dispatch('modules/zones/getInfoZone', id)
+        return res
+      } catch (error) {
+        console.log(error)
+      }
     },
     async saveEdit () {
       try {
@@ -251,10 +287,26 @@ export default {
         const res = await this.$store.dispatch(
           'modules/zones/getSubZones'
         )
+        console.log(res)
         this.subzonas = res
       } catch (error) {
         console.log(error)
       }
+    },
+    async getZones () {
+      try {
+        const res = await this.$store.dispatch('modules/zones/getZones')
+        this.legalZones = res
+        // console.log(this.legalZones)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    filteredDataArray () {
+      // console.log(this.text)
+      this.options = this.legalZones.filter((option) => {
+        return option.description.toString().toLowerCase().includes(this.text.toLowerCase())
+      })
     }
   }
 }
