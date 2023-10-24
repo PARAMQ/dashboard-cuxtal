@@ -366,15 +366,15 @@
     </div>
     <new-binnacle
       :active-modal="isActive"
-      :id-plan="idPlanification"
-      @update="refresh"
-      @close="isActive = false"
+      :plannification="idPlanification"
+      :is-extraordinary="false"
+      @save="refresh"
+      @close="refresh"
     />
     <edit-binnacle
       :active-modal="isActiveEdit"
-      :id-binnacle="idBinnacle"
-      @update="refresh"
-      @close="isActiveEdit = false"
+      :binnacle-object="binaccleSelect"
+      @save="refresh"
     />
   </section>
 </template>
@@ -391,7 +391,7 @@ export default {
       idBinnacle: '',
       isActiveEdit: false,
       hasSelect: false,
-      binnacleSelect: {},
+      binaccleSelect: {},
       vehicles: [],
       participants: [],
       filteredParticipants: [],
@@ -434,6 +434,7 @@ export default {
           'modules/plans/readPlan',
           this.idPlanification
         )
+        console.log(res)
         this.plan = res
       } catch (error) {
         console.log(error)
@@ -442,8 +443,10 @@ export default {
     refresh () {
       this.isActive = false
       this.isActiveEdit = false
+      this.hasSelect = false
       this.idBinnacle = ''
       this.binnacleSelect = {}
+      this.plan = {}
       this.getPlan()
     },
     editBinnacle () {
@@ -497,7 +500,6 @@ export default {
       }
     },
     async updateStatus () {
-      console.log(this.plan)
       try {
         await this.$store.dispatch(
           'modules/plans/createOrUpdatePlan',

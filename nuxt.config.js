@@ -96,7 +96,8 @@ export default {
       '~/components/base',
       '~/components/forms',
       '~/components/cards',
-      '~/components/calendar'
+      '~/components/calendar',
+      '~/components/binnacles'
     ]
   },
   devtools: true,

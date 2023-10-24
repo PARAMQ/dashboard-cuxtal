@@ -8,7 +8,7 @@
       />
       <div class="card-header">
         <p class="card-header-title">
-          Editar bitácora {{ isExtraordinary ? ' - Extraordinaria' : '' }}
+          Nueva bitácora {{ isExtraordinary ? ' - Extraordinaria' : '' }}
         </p>
       </div>
       <div class="card-content">
@@ -138,9 +138,7 @@
                       clearable
                       field="name"
                       @typing="filterPersonRecorrido"
-                      @select="
-                        (option) => (form.idparticipants = option.idparticipants)
-                      "
+                      @select="selectParticipant"
                     >
                       <template #empty>
                         No hay resultados
@@ -213,7 +211,7 @@
               <div class="column">
                 <b-field label="Vegetación">
                   <b-taginput
-                    v-model="list_vegetable_affected"
+                    v-model="form.list_vegetable_affected"
                     :data="filteredVegetation"
                     field="description"
                     autocomplete
@@ -238,14 +236,14 @@
                   <b-field label="Descripción breve de la coordenada">
                     <b-input v-model="formCoord.name" />
                   </b-field>
-                  <b-field label="Latitud">
+                  <b-field label="Coordenada X">
                     <b-numberinput
                       v-model="point[0]"
                       step="0.000000000000000001"
                       :controls="false"
                     />
                   </b-field>
-                  <b-field label="Longitud">
+                  <b-field label="Coordenada Y">
                     <b-numberinput
                       v-model="point[1]"
                       step="0.000000000000000001"
@@ -259,7 +257,7 @@
                   </b-button>
                 </div>
                 <div
-                  v-for="pointCoord in form.list_coordinates"
+                  v-for="pointCoord in points"
                   :key="pointCoord.name"
                   class="container m-3"
                 >
@@ -335,12 +333,15 @@
                   </div>
                 </section>
               </div>
-              <div class="column is-6">
+              <div v-if="imageUrl" class="column is-6">
                 <b-image
                   :src="imageUrl"
                   alt="The Buefy Logo"
                   ratio="601by235"
                 />
+              </div>
+              <div class="column is-6 has-text-centered">
+                <h1><strong>Selecciona una imágen.</strong></h1>
               </div>
             </div>
           </form>
@@ -369,10 +370,8 @@
 <script>
 import { mapState } from 'vuex'
 import KML from 'ol/format/KML'
-// eslint-disable-next-line
-const utmObj = require('utm-latlng')
 export default {
-  name: 'EditBinnacle',
+  name: 'NewBinnacleOldVersion',
   props: {
     activeModal: {
       default: false,
@@ -383,8 +382,8 @@ export default {
       type: String
     },
     idBinnacle: {
-      default: '',
-      type: String
+      default: null,
+      type: Number
     },
     isExtraordinary: {
       default: false,
@@ -400,8 +399,7 @@ export default {
       form: {
         status: 'sin-revisar',
         date: new Date(),
-        hour_init: new Date(),
-        list_vehicles_deleted: []
+        hour_init: new Date()
       },
       isLoading: false,
       filteredParticipants: [],
@@ -435,41 +433,10 @@ export default {
       typeBinnacle: null,
       temporalFile: null,
       buttonDisabled: false,
-      imageUrl: require('@/assets/cuxtal/RC_V.png')
+      imageUrl: null
     }
   },
-  watch: {
-    async idBinnacle (newValue, oldValue) {
-      if (newValue) {
-        const binnacle = await this.getBinnacle(newValue)
-        console.log(binnacle)
-        binnacle.date = new Date(binnacle.date)
-        if (binnacle.hour_init) {
-          binnacle.hour_init = new Date(binnacle.hour_init)
-        } else {
-          delete binnacle.hour_init
-        }
-        if (binnacle.hour_end) {
-          binnacle.hour_end = new Date(binnacle.hour_end)
-        } else {
-          delete binnacle.hour_end
-        }
-        this.form = binnacle
-      }
-    },
-    form (newValue, oldValue) {
-      console.log(newValue)
-    },
-    point (newValue, oldValue) {
-      // console.log(newValue)
-      if (newValue) {
-        this.convertCoordinatesToUtm(newValue)
-      }
-    }
-  },
-  // eslint-disable-next-line vue/order-in-components
   computed: {
-    // eslint-disable-next-line no-undef
     ...mapState(['user'])
   },
   created () {},
@@ -511,7 +478,8 @@ export default {
       this.isLoading = true
       this.buttonDisabled = true
       const temporalForm = JSON.parse(JSON.stringify(this.form))
-      console.log(temporalForm)
+      await this.createOrUpdate(temporalForm)
+      /*
       if (temporalForm.status === 'revisado') {
         this.$swal.fire({
           title: '¿Qué tipo de bitácora es?',
@@ -554,8 +522,10 @@ export default {
         this.buttonDisabled = false
         this.$emit('update')
       }
+      */
     },
     async createOrUpdate (temporalForm) {
+      console.log(JSON.stringify(temporalForm))
       try {
         let binnacle
         let idBinnacle
@@ -610,7 +580,7 @@ export default {
         }
         this.form = {}
         this.temporalFiles = []
-        this.files = []
+        this.x = []
         this.idPoints = []
         this.points = []
         this.pointsMap = [[-89.60984537598705, 20.85610769792424]]
@@ -618,9 +588,9 @@ export default {
           message: '¡Bitácora guardada!',
           type: 'is-success'
         })
-        // this.buttonDisabled = false
-        // this.isLoading = false
-        // this.$emit('update')
+        this.buttonDisabled = false
+        this.isLoading = false
+        this.$emit('update')
       } catch (error) {
         // console.log(error)
       } finally {
@@ -630,22 +600,16 @@ export default {
     },
     readFile () {
       this.temporalFile = this.$refs.file.files[0]
-      // console.log(this.temporalFile)
     },
-    convertCoordinatesToUtm (coords) {
-      console.log(coords)
-      // eslint-disable-next-line
-      const utm = new utmObj()
-      const utmCoords = utm.convertLatLngToUtm(coords[0], coords[1], 1)
-      console.log(utmCoords)
-    },
-    convertCoordinatesFromUtm (coords) {},
     closeModal () {
       this.form = {}
       this.temporalFiles = []
       this.files = []
       this.points = []
       this.$emit('close')
+    },
+    selectParticipant (option) {
+      (option) ? this.form.idparticipant = option.idparticipants : this.form.idparticipant = null
     },
     createPoints (points, binnacle) {
       const coordenadas = points
@@ -699,6 +663,7 @@ export default {
       try {
         const res = await this.$store.dispatch('modules/vehicles/getVehicles')
         this.vehicles = res
+        this.filteredVehicles = this.vehicles
       } catch (error) {
         // console.log(error)
       }
@@ -746,6 +711,7 @@ export default {
         )
         this.options = res
         this.participants = res
+        this.filteredParticipants = res
       } catch (error) {
         // console.log(error)
       }
@@ -804,10 +770,8 @@ export default {
       this.center = this.point
     },
     deletePoint (index) {
-      console.log(index)
       this.points.splice(index, 1)
       this.pointsMap.splice(index, 1)
-      // this.form.list_coordinates_deleted.push(object)
     },
     removeParticipant (index) {
       this.form.participants.splice(index, 1)
@@ -920,17 +884,7 @@ export default {
       })
     },
     deleteVehicles (object) {
-      this.form.list_vehicles_deleted.push(object)
-      // console.log(object)
-    },
-    deleteOpZone (object) {
-      this.form.list_operative_zones_deleted.push(object)
-    },
-    deleteSubzoning (object) {
-      this.form.list_subzoning_deleted.push(object)
-    },
-    deleteVa (object) {
-      this.form.list_va_deleted.push(object)
+      console.log(object)
     }
   }
 }

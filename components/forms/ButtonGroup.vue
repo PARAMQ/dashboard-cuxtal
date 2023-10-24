@@ -3,7 +3,6 @@
     <div class="column buttons">
       <b-field v-if="saving" position="is-right">
         <b-button
-          v-if="cancel"
           type="is-danger"
           native-type="submit"
           outlined
