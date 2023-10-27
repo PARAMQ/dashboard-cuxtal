@@ -545,7 +545,7 @@ export default {
     async getVegetation () {
       try {
         this.vegetation = await this.$store.dispatch(
-          'modules/technicalOp/getTechnicalOps'
+          'modules/vegetation/getVegetations'
         )
         // console.log(this.vegetation)
         this.filterVegetable = this.vegetation

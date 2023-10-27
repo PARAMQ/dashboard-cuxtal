@@ -153,7 +153,7 @@
                 </b-field>
               </div>
               <div class="column">
-                <b-field label="Subzonas">
+                <b-field label="Subzonificación PM">
                   <b-taginput
                     v-model="form.list_subzoning"
                     :data="subZonesFilter"
@@ -212,6 +212,9 @@
                   <b-button type="is-info is-light" @click="viewPoint">
                     Ver punto
                   </b-button>
+                </div>
+                <div class="container m-3 hast-text-centered">
+                  {{ points }}
                 </div>
               </div>
               <div class="column is-8">
@@ -285,7 +288,7 @@
               :handle-submit="handleSubmit"
               saving
               @save="createOrUpdate"
-              @cancel="emit('close')"
+              @cancel="close"
             />
           </form>
         </ValidationObserver>
@@ -326,7 +329,6 @@ export default {
       isSwitched: true,
       validateHours: false,
       formCoord: {},
-      vehicles: [],
       temporalPoint: [-89.60984537598705, 20.85610769792424],
       ViewPoint: [-89.60984537598705, 20.85610769792424],
       pointsMap: [[-89.60984537598705, 20.85610769792424]],
@@ -334,6 +336,7 @@ export default {
       zoom: 12,
       center: [-87, 41.999997974538374],
       rotation: 0,
+      vehicles: [],
       vehiclesFilter: [],
       vegetation: [],
       vegetationFilter: [],
@@ -380,6 +383,28 @@ export default {
     this.getSubZones()
   },
   methods: {
+    // Funciones generales
+    close () {
+      this.form = {
+        date: new Date()
+      }
+      this.files = []
+      this.vegetableAffected = []
+      this.stemporalPoint = [-89.60984537598705, 20.85610769792424]
+      this.ViewPoint = [-89.60984537598705, 20.85610769792424]
+      this.pointsMap = [[-89.60984537598705, 20.85610769792424]]
+      this.points = []
+      this.vehiclesFilter = this.vehicles
+      this.vegetationFilter = this.vegetation
+      this.legalZonesFilter = this.legalZones
+      this.subZonesFilter = this.subZones
+      this.opZones = this.opZonesFilter
+      this.participantsFilter = this.participants
+      this.files = []
+      this.vegetableAffected = []
+      this.temporalFiles = []
+      this.$emit('close')
+    },
     // Crear bitacora
     async createOrUpdate () {
       console.log(this.form)
@@ -658,12 +683,7 @@ export default {
       }
     },
     convertCoordinatesToUtm (coords) {
-      // eslint-disable-next-line new-cap
-      // const utm = new utmObj()
-      // const utmCoords = utm.convertLatLngToUtm(coords[0], coords[1], 16)
-      // console.log(coords)
       const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')
-      // console.log(latLng)
       return [latLng.longitude, latLng.latitude]
     },
     convertCoordinatesFromUtm (coords) {},

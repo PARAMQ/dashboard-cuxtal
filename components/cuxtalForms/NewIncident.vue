@@ -137,7 +137,7 @@
               <strong>Zonas</strong>
             </div>
             <div>
-              <b-field horizontal label="Zonas operativas">
+              <b-field horizontal label="Zonas de vigilancia">
                 <b-taginput
                   v-model="form.idoperative_zone"
                   :data="filteredOpZone"
@@ -154,7 +154,7 @@
                   </template>
                 </b-taginput>
               </b-field>
-              <b-field horizontal label="Zonas legales">
+              <b-field horizontal label="Zonificación PM">
                 <b-taginput
                   v-model="form.idzoning"
                   :data="filteredLegalZones"

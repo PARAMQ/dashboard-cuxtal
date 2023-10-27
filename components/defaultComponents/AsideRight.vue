@@ -9,7 +9,7 @@
 <script>
 import { mapState } from 'vuex'
 import PerfectScrollbar from 'perfect-scrollbar'
-import AsideUpdates from '@/components/AsideUpdates'
+import AsideUpdates from '@/components/defaultComponents/AsideUpdates'
 
 export default {
   name: 'AsideRight',

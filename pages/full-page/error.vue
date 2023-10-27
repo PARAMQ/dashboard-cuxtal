@@ -13,8 +13,8 @@
 </template>
 
 <script>
-import ErrorContent from '@/components/ErrorContent'
-import CardComponent from '@/components/CardComponent'
+import ErrorContent from '@/components/defaultComponents/ErrorContent'
+import CardComponent from '@/components/defaultComponents/CardComponent'
 
 export default {
   name: 'Error',

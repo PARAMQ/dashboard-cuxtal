@@ -8,7 +8,7 @@
             <div class="level-right">
               <p class="level-item">
                 <b-button type="is-primary" outlined @click="isActive = true">
-                  Nueva subzona
+                  Nueva subzonificación PM
                 </b-button>
               </p>
             </div>
@@ -160,11 +160,11 @@
               <div v-else class="card">
                 <div class="card-content">
                   <h1 class="is-size-3">
-                    Selecciona una subzona
+                    Selecciona un registro
                   </h1>
                   <p class="is-size-5">
-                    Si deseas ver la información de una subzona haz click
-                    sobre su tarjeta
+                    Si deseas ver la información de un registro haz click
+                    sobre su tarjeta.
                   </p>
                 </div>
               </div>

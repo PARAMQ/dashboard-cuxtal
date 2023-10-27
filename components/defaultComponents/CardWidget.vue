@@ -28,8 +28,8 @@
 
 <script>
 import numeral from 'numeral'
-import CardComponent from '@/components/CardComponent'
-import GrowingNumber from '@/components/GrowingNumber'
+import CardComponent from '@/components/defaultComponents/CardComponent'
+import GrowingNumber from '@/components/defaultComponents/GrowingNumber'
 export default {
   name: 'CardWidget',
   components: { GrowingNumber, CardComponent },

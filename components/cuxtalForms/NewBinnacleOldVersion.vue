@@ -153,7 +153,7 @@
             </div>
             <div class="columns">
               <div class="column">
-                <b-field label="Zonas operativas">
+                <b-field label="Zonas de vigilancia">
                   <b-taginput
                     v-model="form.list_operative_zones"
                     :data="filteredOpZones"
@@ -172,7 +172,7 @@
             <!--
             <div class="columns">
               <div class="column">
-                <b-field label="Zonas legales">
+                <b-field label="Zonificación PM">
                   <b-taginput
                     v-model="form.legal_zones"
                     :data="filteredLegalZones"

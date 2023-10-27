@@ -26,7 +26,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import UserAvatar from '@/components/UserAvatar'
+import UserAvatar from '@/components/defaultComponents/UserAvatar'
 
 export default {
   name: 'LockScreen',

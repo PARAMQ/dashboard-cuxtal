@@ -29,7 +29,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'AsideMenuItem',
   components: {
-    AsideMenuList: () => import('@/components/AsideMenuList')
+    AsideMenuList: () => import('@/components/defaultComponents/AsideMenuList')
   },
   props: {
     item: {

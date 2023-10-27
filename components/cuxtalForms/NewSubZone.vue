@@ -1,14 +1,10 @@
 <template>
   <b-modal v-model="activeModal" :destroy-on-hide="false">
-    <b-loading
-      v-model="isLoading"
-      :is-full-page="true"
-      :can-cancel="false"
-    />
+    <b-loading v-model="isLoading" :is-full-page="true" :can-cancel="false" />
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
-          Nueva opión técnica
+          Nueva subzonificación PM
         </p>
       </div>
       <div class="card-content">
@@ -21,6 +17,21 @@
                 type="text"
                 required
               />
+            </b-field>
+            <b-field horizontal label="Zona legal relacionada">
+              <b-autocomplete
+                v-model="text"
+                :data="options"
+                icon="magnify"
+                clearable
+                field="description"
+                @typing="filteredDataArray"
+                @select="(option) => form.idzoning = option.idzoning"
+              >
+                <template #empty>
+                  No hay resultados
+                </template>
+              </b-autocomplete>
             </b-field>
           </form>
         </div>
@@ -43,7 +54,7 @@
 
 <script>
 export default {
-  name: 'NewResponse',
+  name: 'NewSubZone',
   props: {
     activeModal: {
       default: false,
@@ -53,14 +64,24 @@ export default {
   data () {
     return {
       isLoading: false,
-      form: {}
+      form: {},
+      legalZones: [],
+      text: '',
+      options: []
     }
+  },
+  mounted () {
+    this.getZones()
   },
   methods: {
     async createZone () {
+      console.log(this.form)
       try {
         this.isLoading = true
-        await this.$store.dispatch('modules/technicalOp/createOrUpdateTechnicalOp', this.form)
+        await this.$store.dispatch(
+          'modules/zones/createOrUpdateSubZone',
+          this.form
+        )
         this.form = {}
         this.isLoading = false
         this.$buefy.toast.open({
@@ -75,6 +96,21 @@ export default {
         })
         console.log(error)
       }
+    },
+    async getZones () {
+      try {
+        const res = await this.$store.dispatch('modules/zones/getZones')
+        this.legalZones = res
+        console.log(this.legalZones)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    filteredDataArray () {
+      // console.log(this.text)
+      this.options = this.legalZones.filter((option) => {
+        return option.description.toString().toLowerCase().includes(this.text.toLowerCase())
+      })
     }
   }
 }

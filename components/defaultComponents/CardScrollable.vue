@@ -32,10 +32,10 @@
 
 <script>
 import axios from 'axios'
-import CardComponent from '@/components/CardComponent'
-import CardToolbar from '@/components/CardToolbar'
-import MediaItem from '@/components/MediaItem'
-import RefreshButton from '@/components/RefreshButton'
+import CardComponent from '@/components/defaultComponents/CardComponent'
+import CardToolbar from '@/components/defaultComponents/CardToolbar'
+import MediaItem from '@/components/defaultComponents/MediaItem'
+import RefreshButton from '@/components/defaultComponents/RefreshButton'
 export default {
   name: 'CardScrollable',
   components: { RefreshButton, MediaItem, CardToolbar, CardComponent },

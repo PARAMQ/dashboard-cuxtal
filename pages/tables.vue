@@ -75,13 +75,13 @@
 </template>
 
 <script>
-import Notification from '@/components/Notification'
-import ClientsTableSample from '@/components/ClientsTableSample'
-import CardComponent from '@/components/CardComponent'
-import TitleBar from '@/components/TitleBar'
-import HeroBar from '@/components/HeroBar'
-import RefreshButton from '@/components/RefreshButton'
-import CardToolbar from '@/components/CardToolbar'
+import Notification from '@/components/defaultComponents/Notification'
+import ClientsTableSample from '@/components/defaultComponents/ClientsTableSample'
+import CardComponent from '@/components/defaultComponents/CardComponent'
+import TitleBar from '@/components/defaultComponents/TitleBar'
+import HeroBar from '@/components/defaultComponents/HeroBar'
+import RefreshButton from '@/components/defaultComponents/RefreshButton'
+import CardToolbar from '@/components/defaultComponents/CardToolbar'
 export default {
   name: 'Tables',
   components: { CardToolbar, RefreshButton, HeroBar, TitleBar, CardComponent, ClientsTableSample, Notification },

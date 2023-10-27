@@ -40,8 +40,8 @@
 <script>
 import PerfectScrollbar from 'perfect-scrollbar'
 import { mapState } from 'vuex'
-import AsideTools from '@/components/AsideTools'
-import AsideMenuList from '@/components/AsideMenuList'
+import AsideTools from '@/components/defaultComponents/AsideTools'
+import AsideMenuList from '@/components/defaultComponents/AsideMenuList'
 
 export default {
   name: 'AsideMenu',

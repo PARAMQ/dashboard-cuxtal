@@ -8,7 +8,7 @@
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
-          Nuevo método de solicitud
+          Nueva zonificación PM
         </p>
       </div>
       <div class="card-content">
@@ -17,7 +17,7 @@
             <b-field horizontal label="Descripción breve">
               <b-input
                 v-model="form.description"
-                name="Descripción breve"
+                name="Nombre de indentificación"
                 type="text"
                 required
               />
@@ -43,7 +43,7 @@
 
 <script>
 export default {
-  name: 'NewApMethod',
+  name: 'NewZone',
   props: {
     activeModal: {
       default: false,
@@ -60,11 +60,11 @@ export default {
     async createZone () {
       try {
         this.isLoading = true
-        await this.$store.dispatch('modules/apMethod/createOrUpdateApplicationMethod', this.form)
+        await this.$store.dispatch('modules/zones/createOrUpdateZone', this.form)
         this.form = {}
         this.isLoading = false
         this.$buefy.toast.open({
-          message: 'Guardado!',
+          message: 'Zona guardada!',
           type: 'is-success'
         })
         this.$emit('create')

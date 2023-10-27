@@ -8,7 +8,7 @@
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
-          Nuevo tipo de solicitante
+          Nuevo tipo de promovente
         </p>
       </div>
       <div class="card-content">

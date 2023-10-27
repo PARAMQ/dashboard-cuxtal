@@ -8,7 +8,7 @@
 
 <script>
 import axios from 'axios'
-import AsideUpdatesItem from '@/components/AsideUpdatesItem'
+import AsideUpdatesItem from '@/components/defaultComponents/AsideUpdatesItem'
 
 export default {
   name: 'AsideUpdates',

@@ -8,7 +8,7 @@
             <div class="level-right">
               <p class="level-item">
                 <b-button type="is-primary" outlined @click="isActive = true">
-                  Nuevo tipo de solicitante
+                  Nuevo tipo de promovente
                 </b-button>
               </p>
             </div>

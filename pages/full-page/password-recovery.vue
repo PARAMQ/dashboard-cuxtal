@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import CardComponent from '@/components/CardComponent'
+import CardComponent from '@/components/defaultComponents/CardComponent'
 
 export default {
   name: 'Login',

@@ -8,7 +8,7 @@
             <div class="level-right">
               <p class="level-item">
                 <b-button type="is-primary" outlined @click="isActive = true">
-                  Nuevo método de aplicación
+                  Nuevo tipo de respuesta (para denuncias)
                 </b-button>
               </p>
             </div>
@@ -153,7 +153,7 @@
         </div>
       </div>
     </div>
-    <new-ap-method
+    <new-response
       :active-modal="isActive"
       @close="isActive = false"
       @create="updateView"
@@ -193,7 +193,7 @@ export default {
       try {
         this.isLoading = true
         await this.$store.dispatch(
-          'modules/apMethod/createOrUpdateApplicationMethod',
+          'modules/response/createOrUpdateResponse',
           this.vegetation
         )
         this.vegetation = {}
@@ -221,7 +221,7 @@ export default {
         if (result.isConfirmed) {
           try {
             await this.$store.dispatch(
-              'modules/apMethod/deleteApplicationMethod',
+              'modules/response/deleteResponse',
               vegetation
             )
             this.getData()
@@ -251,7 +251,7 @@ export default {
       try {
         this.vegetacion = []
         const res = await this.$store.dispatch(
-          'modules/apMethod/getApplicationMethods'
+          'modules/response/getResponses'
         )
         this.vegetacion = res
       } catch (error) {
