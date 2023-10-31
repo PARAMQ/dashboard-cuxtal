@@ -54,7 +54,7 @@
           Persona moral
         </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/catalogos/typeLegalEntity' }">
-          Tipo de persona legal
+          Tipo de persona moral
         </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/catalogos/typeResponseOp' }">
           Respuestas (para opiniones técnicas)
