@@ -269,101 +269,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="hasEdit" class="cont">
-      <div class="card is-principal m-2">
-        <div class="card-header">
-          <div class="level">
-            <div class="level-left">
-              <div class="level-item">
-                <p class="card-header-title">
-                  <strong>{{ binnacleSelect.number }}</strong>
-                </p>
-              </div>
-            </div>
-            <div class="level-right">
-              <div class="level-item">
-                <b-button
-                  size="is-small"
-                  type="is-light"
-                  icon-right="keyboard-return"
-                  @click="cancelEdit"
-                >
-                  Regresar
-                </b-button>
-              </div>
-              <div class="level-item">
-                <b-button
-                  size="is-small"
-                  type="is-success is-light"
-                  icon-right="content-save"
-                  @click="saveEdit"
-                >
-                  Guardar
-                </b-button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="card-content">
-          <!--
-          <div class="columns has-text-centered">
-            <div class="column">
-              <b-field label="Fecha">
-                <b-datepicker v-model="binnacleSelect.date" inline />
-              </b-field>
-            </div>
-            <div class="column">
-              <div class="container m-2">
-                <div class="columns">
-                  <div class="column">
-                    <b-field label="Hora de inicio">
-                      <b-timepicker v-model="binnacleSelect.hour_init" inline />
-                    </b-field>
-                  </div>
-                  <div class="column">
-                    <b-field label="Hora de finalización">
-                      <b-timepicker v-model="binnacleSelect.hour_end" inline />
-                    </b-field>
-                  </div>
-                </div>
-              </div>
-              <br>
-              <div class="container m-2">
-                <b-field label="Vehículo">
-                  <b-select v-model="binnacleSelect.idvehicle">
-                    <option
-                      v-for="vehicle in vehicles"
-                      :key="vehicle.idvehicle"
-                      :value="vehicle.idvehicle"
-                    >
-                      {{ vehicle.number }} - {{ vehicle.subbrand }}
-                    </option>
-                  </b-select>
-                </b-field>
-                <b-field label="Participantes">
-                  <b-taginput
-                    v-model="binnacleSelect.participants"
-                    :data="filteredParticipants"
-                    field="name"
-                    autocomplete
-                    @typing="filterData"
-                  >
-                    <template v-slot="props">
-                      <strong>{{ props.option.name }}
-                        {{ props.option.lastname }}</strong>
-                    </template>
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                  </b-taginput>
-                </b-field>
-              </div>
-            </div>
-          </div>
-          -->
-        </div>
-      </div>
-    </div>
+
     <new-binnacle
       :active-modal="isActive"
       :plannification="idPlanification"
@@ -374,7 +280,9 @@
     <edit-binnacle
       :active-modal="isActiveEdit"
       :binnacle-object="binaccleSelect"
+      :is-extraordinary="false"
       @save="refresh"
+      @close="refresh"
     />
   </section>
 </template>
@@ -434,7 +342,7 @@ export default {
           'modules/plans/readPlan',
           this.idPlanification
         )
-        console.log(res)
+        // console.log(res)
         this.plan = res
       } catch (error) {
         console.log(error)
@@ -488,7 +396,6 @@ export default {
       this.hasSelect = true
       this.binaccleSelect = binnacle
       this.idBinnacle = binnacle.idbinnacle
-      console.log(this.binaccleSelect)
       this.indexBinnacle = index
     },
     async getVehicles () {
@@ -531,11 +438,6 @@ export default {
         }
       })
     },
-    cancelEdit () {
-      this.hasEdit = false
-      this.hasSelect = false
-      this.refresh()
-    },
     saveEdit () {
       console.log(this.binnacleSelect)
     },
@@ -544,7 +446,7 @@ export default {
     },
     async deletePlan () {
       try {
-        console.log(this.plan)
+        // console.log(this.plan)
         await this.$store.dispatch('modules/plans/deletePlan', this.plan)
         this.$buefy.toast.open({
           message: '¡Planificación eliminada!',
@@ -562,11 +464,9 @@ export default {
     async getWord () {
       try {
         const res = await this.$store.dispatch('modules/binnacles/getWordBinnacle', this.idBinnacle)
-
         // Ensure the response is an ArrayBuffer
         const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })
         const blobURL = window.URL.createObjectURL(blob)
-
         const link = document.createElement('a')
         const filename = 'archivo.docx'
         link.href = blobURL

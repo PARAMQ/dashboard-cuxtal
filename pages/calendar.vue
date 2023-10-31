@@ -129,7 +129,7 @@
                 </div>
                 <div class="card-footer">
                   <p class="card-footer-item has-text-grey">
-                    Puedes escoger un rango de fechas para ver más recorridos.
+                    Puedes escoger un rango de fechas para ver más recorridos. Al principio verás recorridos programados 30 días antes y después del día de hoy.
                   </p>
                 </div>
               </div>
@@ -160,6 +160,14 @@ export default {
   },
   mounted () {
     this.plans = []
+    const now = new Date()
+    const day1 = new Date(now)
+    day1.setDate(now.getDate() - 30)
+    this.datesSelect.push(day1)
+    const day2 = new Date(now)
+    day2.setDate(now.getDate() + 30)
+    this.datesSelect.push(day2)
+    this.getData()
   },
   methods: {
     editPlan (plan) {

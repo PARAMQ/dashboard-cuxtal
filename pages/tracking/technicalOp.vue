@@ -360,7 +360,7 @@
         </div>
       </div>
     </div>
-    <new-OT
+    <new-opinion
       :active-modal="isActiveOT"
       @close="isActiveOT = false"
       @create="refresh"
@@ -373,7 +373,6 @@ export default {
   name: 'TechnicalOp',
   data () {
     return {
-      idPlanification: this.$route.query.id,
       isActiveOT: false,
       hasEdit: false,
       idBinnacle: '',

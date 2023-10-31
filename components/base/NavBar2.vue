@@ -79,10 +79,10 @@
         </b-navbar-item>
       </b-navbar-dropdown>
       <b-navbar-dropdown label="Seguimiento">
-        <b-navbar-item tag="router-link" :to="{ path: 'tracking/technicalOp' }">
+        <b-navbar-item tag="router-link" :to="{ path: '/tracking/technicalOp' }">
           Opiniones técnicas
         </b-navbar-item>
-        <b-navbar-item tag="router-link" :to="{ path: 'tracking/complaint' }">
+        <b-navbar-item tag="router-link" :to="{ path: '/tracking/complaint' }">
           Denuncias
         </b-navbar-item>
       </b-navbar-dropdown>

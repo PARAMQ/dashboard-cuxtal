@@ -20,8 +20,8 @@
       </section>
       <div class="columns m-2 binnalces">
         <div class="column">
-          <div v-for="bitacora in binnacles" :key="bitacora.id">
-            <div class="card">
+          <div v-for="bitacora in binnacles" :key="bitacora.idbinnacle">
+            <div class="card" @click="viewInMap(bitacora.idbinnacle)">
               <div class="card-header">
                 <div class="level m-1 full-w">
                   <div class="level-left">
@@ -34,7 +34,7 @@
                       <b-button
                         type="is-info"
                         icon-right="eye-outline"
-                        @click="openBinnacle(bitacora)"
+                        @click="openBinnacle(bitacora.idbinnacle)"
                       />
                     </div>
                     <div class="level-item">
@@ -91,6 +91,11 @@
                   }}
                 </p>
               </div>
+              <div class="m-2">
+                <p class="has-text-grey">
+                  {{ bitacora.isextraordinary ? 'Bitácora extraordinaria' : 'Bitácora relacionada a un recorrido programado' }}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -113,6 +118,12 @@
           <vl-source-osm />
         </vl-layer-tile>
 
+        <vl-feature
+          v-if="viewBinnacle"
+        >
+          <vl-geom-multi-point :coordinates="temporalPoints" />
+        </vl-feature>
+
         <vl-layer-vector>
           <vl-source-vector :features.sync="features" />
         </vl-layer-vector>
@@ -120,22 +131,24 @@
     </div>
     <new-binnacle
       :active-modal="activeModal"
-      :id-plan="null"
-      :id-binnacle="null"
+      :plannification="null"
       :is-extraordinary="true"
-      @close="activeModal = false"
-      @update="updateView"
+      @close="updateView"
+      @save="updateView"
     />
     <view-binnacle
       :active-modal="activeViewModal"
       :id-binnacle="idBinnacle"
       :disable-form="true"
-      @close="activeViewModal = false"
+      @close="updateView"
     />
   </div>
 </template>
 
 <script>
+// eslint-disable-next-line
+const utm = require('utm')
+
 export default {
   name: 'Binnacle',
   data () {
@@ -147,8 +160,10 @@ export default {
       isLoadingBinnacles: false,
       binnacles: [],
       dateSelect: new Date(),
-      zoom: 2,
-      center: [0, 0],
+      zoom: 12,
+      center: [-89.60984537598705, 20.85610769792424],
+      viewBinnacle: false,
+      temporalPoints: [[-89.60984537598705, 20.85610769792424]],
       rotation: 0,
       geolocPosition: undefined,
       arrayCoordinates: [],
@@ -169,41 +184,70 @@ export default {
     this.getData()
   },
   methods: {
+    // Metodos generales
     openModal () {
       this.isActive = true
+    },
+    updateView () {
+      this.activeModal = false
+      this.getData()
     },
     openBinnacle (binnacle) {
       this.idBinnacle = binnacle.idbinnacle
       this.activeViewModal = true
     },
+    // Obtener todas las bitacoras
     async getData () {
       try {
         this.isLoadingBinnacles = true
         this.binnacles = await this.$store.dispatch(
           'modules/binnacles/getBinnacles'
         )
-        this.getCoordinates(this.binnacles)
+        // \this.getCoordinates(this.binnacles)
         this.isLoadingBinnacles = false
       } catch (error) {
         console.log(error)
       }
     },
-    updateView () {
-      this.activeModal = false
-      this.getData()
+    // Obtener la información por bitácora
+    async getBinnacle (idBinnacle) {
+      try {
+        const res = await this.$store.dispatch('modules/binnacles/getBinnacle', idBinnacle)
+        return res
+      } catch (error) {
+        console.log(error)
+      }
     },
-    getCoordinates (binnacles) {
-      console.log(binnacles)
-      // binnacles.map(x => { x.coordinates_binnacle.length > 0 ? console.log(x.idbinnacle) : console.log('no hay') })
-      const coordinates = binnacles.map((x) => {
-        if (x.coordinates_binnacle && x.coordinates_binnacle.length > 0) {
-          for (const coordinate in x.coordinates_binnacle) {
-            print(coordinate)
-            return [coordinate.x, coordinate.y]
-          }
-        }
+    // Visualizar una bitácora en el mapa
+    async viewInMap (option) {
+      this.viewBinnacle = false
+      this.temporalPoints = [[-89.60984537598705, 20.85610769792424]]
+      const binnacle = await this.getBinnacle(option)
+      binnacle.points = []
+      const temporalPoints = binnacle.coordinates_binnacle
+      temporalPoints.forEach((object) => {
+        const point = [object.x, object.y]
+        const pointConvert = this.convertCoordinatesToUtm(point)
+        binnacle.points.push(pointConvert)
+        console.log(pointConvert)
       })
-      console.log(coordinates)
+      if (binnacle.points.length > 0) {
+        this.temporalPoints = binnacle.points
+        this.viewBinnacle = true
+      } else {
+        this.$buefy.notification.open({
+          message: 'La bitácora no contiene coordenadas.',
+          duration: 2500,
+          position: 'is-bottom-right',
+          type: 'is-warning',
+          hasIcon: true
+        })
+      }
+    },
+    convertCoordinatesToUtm (coords) {
+      console.log(coords)
+      const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')
+      return [latLng.longitude, latLng.latitude]
     }
   }
 }

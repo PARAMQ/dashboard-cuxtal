@@ -8,6 +8,13 @@ export const createUser = data => {
   })
 }
 
+export const userData = () => {
+  return request({
+    url: '/Login.php/user_data',
+    method: 'POST'
+  })
+}
+
 export const getUsers = () => {
   return request({
     url: '/apiUsers.php/users',

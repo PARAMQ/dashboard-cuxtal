@@ -1,8 +1,12 @@
-import { getUsers, createUser, deleteUser } from '~/api/users'
+import { getUsers, createUser, deleteUser, userData } from '~/api/users'
 
 export const actions = {
   async getUsers ({ commit }) {
     const res = await getUsers()
+    return res
+  },
+  async getData ({ commit }) {
+    const res = await userData()
     return res
   },
   async createUser ({ commit }, data) {

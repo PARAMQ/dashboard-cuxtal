@@ -330,6 +330,10 @@ export default {
     isExtraordinary: {
       type: Boolean,
       default: false
+    },
+    disableForm: {
+      type: Boolean,
+      default: true
     }
   },
   data () {

@@ -1,175 +1,250 @@
 <template>
-  <b-modal v-model="activeModal" has-modal-card :can-cancel="false" full-screen>
-    <b-loading v-model="isLoading" :is-full-page="false" :can-cancel="false" />
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <p class="modal-card-title">
-          {{
-            isExtraordinary ? 'Nueva bitácora extraordinaria' : 'Nueva bitácora'
-          }}
+  <b-modal v-model="activeModal" :full-screen="true" :destroy-on-hide="false" :can-cancel="false">
+    <b-loading v-model="isLoading" :is-full-page="true" :can-cancel="false" />
+    <div class="card">
+      <div class="card-header">
+        <p class="card-header-title">
+          Nueva opinión técnica
         </p>
-      </header>
-      <section class="modal-card-body">
-        <ValidationObserver ref="form" v-slot="{ handleSubmit }">
-          <form @submit.prevent="handleSubmit">
+      </div>
+      <div class="card-content">
+        <div class="content">
+          <form @submit.prevent="submit">
             <div class="divider">
-              <strong>Estado de la bítacora</strong>
-            </div>
-            <div class="columns">
-              <div class="column">
-                <BInputWithValidation
-                  v-model="form.rapporteur"
-                  label="Relatoría"
-                  name="relatoría"
-                  label-position="on-border"
-                  rules="required"
-                  type="textarea"
-                  normal
-                />
-              </div>
-            </div>
-            <div class="divider">
-              <strong>Datos generales</strong>
+              <strong>Datos generales del solicitante</strong>
             </div>
             <div class="columns">
               <div class="column is-4">
-                <b-field label="Fecha">
-                  <b-datepicker v-model="form.date" inline />
+                <b-field label="Nombre de la persona física">
+                  <b-input
+                    v-model="form.individual"
+                    name="persona física"
+                    type="text"
+                    required
+                  />
                 </b-field>
               </div>
-              <div
-                class="column is-3 is-flex is-flex-direction-column is-justify-content-center has-text-centered"
-              >
-                <b-notification
-                  v-model="validateHours"
-                  aria-close-label="Close notification"
-                >
-                  Es necesario que ingreses una hora de inicio y una hora de
-                  fin.
-                </b-notification>
-                <div>
-                  <b-field label="Hora de inicio">
-                    <b-timepicker v-model="hourInit" inline />
+              <div class="column is-flex is-justify-content-center">
+                <b-field label="Nombre de la persona moral">
+                  <b-select
+                    v-model="form.idlegal_entity"
+                    placeholder="Seleccione una opción"
+                  >
+                    <option
+                      v-for="option in legalEntity"
+                      :key="option.idlegal_entity"
+                      :value="option.idlegal_entity"
+                    >
+                      {{ option.description }}
+                    </option>
+                  </b-select>
+                </b-field>
+              </div>
+              <div class="column is-flex is-justify-content-center">
+                <b-field label="Tipo de persona moral">
+                  <b-select
+                    v-model="form.idtype_legal_entity"
+                    placeholder="Seleccione una opción"
+                  >
+                    <option
+                      v-for="option in typeLegalEntity"
+                      :key="option.idtype_legal_entity"
+                      :value="option.idtype_legal_entity"
+                    >
+                      {{ option.description }}
+                    </option>
+                  </b-select>
+                </b-field>
+              </div>
+            </div>
+            <div>
+              <div class="columns">
+                <div class="column">
+                  <b-field
+                    label="Nombre del titular/representante de la persona moral"
+                  >
+                    <b-input
+                      v-model="form.holder_name"
+                      name="titular/representante de la persona moral"
+                      type="text"
+                      required
+                    />
                   </b-field>
                 </div>
-                <br>
-                <div>
-                  <b-field label="Hora de finalización">
-                    <b-timepicker v-model="hourEnd" inline />
+              </div>
+            </div>
+            <div>
+              <div class="columns">
+                <div class="column">
+                  <b-field label="Número de oficio">
+                    <b-input
+                      v-model="form.folium"
+                      name="predio"
+                      type="text"
+                      required
+                    />
                   </b-field>
                 </div>
+                <div class="column">
+                  <b-field label="Medio de solicitud">
+                    <b-select
+                      v-model="form.idapplication_method"
+                      placeholder="Seleccione una opción"
+                    >
+                      <option
+                        v-for="option in appMethod"
+                        :key="option.idapplication_method"
+                        :value="option.idapplication_method"
+                      >
+                        {{ option.description }}
+                      </option>
+                    </b-select>
+                  </b-field>
+                </div>
+                <div class="column">
+                  <b-field label="Fecha de solicitud">
+                    <b-datepicker
+                      v-model="form.application_date"
+                      placeholder="Selecciona una fecha"
+                      icon="calendar-today"
+                    />
+                  </b-field>
+                </div>
+                <div class="column">
+                  <b-field label="Fecha de recepción de solicitud">
+                    <b-datepicker
+                      v-model="form.reception_date"
+                      placeholder="Selecciona una fecha"
+                      icon="calendar-today"
+                    />
+                  </b-field>
+                </div>
+              </div>
+            </div>
+            <div class="divider">
+              <strong>Información extra</strong>
+            </div>
+            <div class="columns">
+              <div class="column is-9">
+                <b-field label="Nombre del promovente">
+                  <b-input
+                    v-model="form.applicant_name"
+                    name="Nombre"
+                    type="text"
+                    required
+                  />
+                </b-field>
               </div>
               <div class="column">
-                <div class="divider">
-                  <strong>Personal y vehiculos</strong>
-                </div>
-                <br>
-                <b-field label="Persona que realizó el recorrido">
-                  <b-autocomplete
-                    :data="participantsFilter"
-                    icon="magnify"
-                    clearable
-                    field="name"
-                    open-on-focus
-                    @typing="filterParticipant"
-                    @select="selectParticipant"
+                <b-field label="Tipo de promovente">
+                  <b-select
+                    v-model="form.idapplicant_type"
+                    placeholder="Seleccione una opción"
                   >
-                    <template #empty>
-                      No hay resultados
-                    </template>
-                  </b-autocomplete>
+                    <option
+                      v-for="option in appType"
+                      :key="option.idapplicant_type"
+                      :value="option.idapplicant_type"
+                    >
+                      {{ option.description }}
+                    </option>
+                  </b-select>
                 </b-field>
-                <b-field label="Vehículos utilizados">
-                  <b-taginput
-                    v-model="form.list_vehicle"
-                    :data="vehiclesFilter"
-                    field="number"
-                    autocomplete
-                    :open-on-focus="true"
-                    @typing="filterVehicles"
+              </div>
+            </div>
+            <div class="columns">
+              <div class="column">
+                <b-field label="Motivo de la solicitud">
+                  <b-select
+                    v-model="form.idrequest_motive"
+                    placeholder="Seleccione una opción"
                   >
-                    <template v-slot="props">
-                      <strong>{{ props.option.number }} -
-                        {{
-                          props.option.plates
-                            ? props.option.plates
-                            : 'sin placas reigstradas'
-                        }}</strong>
-                    </template>
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                  </b-taginput>
+                    <option
+                      v-for="option in requestMotive"
+                      :key="option.idrequest_motive"
+                      :value="option.idrequest_motive"
+                    >
+                      {{ option.description }}
+                    </option>
+                  </b-select>
                 </b-field>
-                <b-field label="Participantes">
-                  <b-taginput
-                    v-model="form.participants"
-                    :data="participantsFilter"
-                    field="name"
-                    autocomplete
-                    :open-on-focus="true"
-                    @typing="filterParticipant"
+              </div>
+              <div class="column">
+                <b-field label="Descripción del motivo">
+                  <b-select
+                    v-model="form.idmotive_description"
+                    placeholder="Seleccione una opción"
                   >
-                    <template slot-scope="props">
-                      <strong>{{ props.option.name }}
-                        {{ props.option.lastname }}</strong>
-                    </template>
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                    <template #selected>
-                      <b-tag
-                        v-for="(tag, index) in form.participants"
-                        :key="index"
-                        closable
-                        @close="removeParticipant(index)"
-                      >
-                        {{ tag.name }} {{ tag.lastname }}
-                      </b-tag>
-                    </template>
-                  </b-taginput>
+                    <option
+                      v-for="option in motiveDescription"
+                      :key="option.idmotive_description"
+                      :value="option.idmotive_description"
+                    >
+                      {{ option.description }}
+                    </option>
+                  </b-select>
+                </b-field>
+              </div>
+              <div class="column">
+                <b-field label="Superficie solicitada(Ha)">
+                  <b-input
+                    v-model="form.surface_affected"
+                    name="predio"
+                    type="text"
+                    required
+                  />
+                </b-field>
+              </div>
+            </div>
+            <div class="columns">
+              <div class="column is-9">
+                <b-field label="Dirección del predio">
+                  <b-input
+                    v-model="form.address"
+                    name="predio"
+                    type="text"
+                    required
+                  />
+                </b-field>
+              </div>
+              <div class="column">
+                <b-field label="Tenencia del predio">
+                  <b-select
+                    v-model="form.idtenure"
+                    placeholder="Seleccione una opción"
+                  >
+                    <option
+                      v-for="option in tenure"
+                      :key="option.idtenure"
+                      :value="option.idtenure"
+                    >
+                      {{ option.description }}
+                    </option>
+                  </b-select>
                 </b-field>
               </div>
             </div>
             <div class="divider">
-              <strong>Vegetación y zonas</strong>
+              <strong>Vegetación</strong>
             </div>
-            <div class="columns">
-              <div class="column">
-                <b-field label="Vegetación">
-                  <b-taginput
-                    v-model="vegetableAffected"
-                    :data="vegetationFilter"
-                    field="description"
-                    autocomplete
-                    :open-on-focus="true"
-                    @typing="filterVegetation"
-                  >
-                    <template v-slot="props">
-                      <strong>{{ props.option.description }}</strong>
-                    </template>
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                  </b-taginput>
-                </b-field>
-              </div>
-              <div class="column">
-                <b-field label="Subzonificación PM">
-                  <b-taginput
-                    v-model="form.list_subzoning"
-                    :data="subZonesFilter"
-                    field="description"
-                    autocomplete
-                    :open-on-focus="true"
-                    @typing="filterSubZones"
-                  >
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                  </b-taginput>
-                </b-field>
-              </div>
+            <div>
+              <b-field label="Vegetación">
+                <b-taginput
+                  v-model="form.vegetable"
+                  :data="filterVegetable"
+                  field="description"
+                  autocomplete
+                  :open-on-focus="true"
+                  @typing="filterVegetableFun"
+                >
+                  <template v-slot="props">
+                    <strong>{{ props.option.description }}</strong>
+                  </template>
+                  <template #empty>
+                    Sin resultados
+                  </template>
+                </b-taginput>
+              </b-field>
             </div>
             <div class="divider">
               <strong>Coordenadas</strong>
@@ -262,50 +337,119 @@
               </div>
             </div>
             <div class="divider">
-              <strong>Evidencias</strong>
+              <strong>Respuesta</strong>
             </div>
-            <div class="columns">
-              <div class="column is-6">
-                <section>
-                  <b-field>
-                    <b-upload v-model="files" multiple drag-drop accept=".png">
-                      <section class="section">
-                        <div class="content has-text-centered">
-                          <p>
-                            <b-icon icon="upload" size="is-large" />
-                          </p>
-                          <p>
-                            Arrastra aquí tus imágenes o has click aquí para
-                            subirlas.
-                          </p>
-                        </div>
-                      </section>
-                    </b-upload>
+            <div>
+              <div class="columns">
+                <!--
+                <div class="column">
+                  <b-field label="Oficio de respuesta">
+                    <b-input
+                      v-model="form.other"
+                      name="nivel"
+                      type="text"
+                      required
+                    />
                   </b-field>
-                  <div v-for="(file, index) in files" :key="file" class="tags">
-                    <b-tag
-                      type="is-primary"
-                      attached
-                      aria-close-label="Borrar elemento"
-                      closable
-                      @close="deleteDropFile(index)"
-                      @click="viewIamge(file)"
+                </div>
+                -->
+                <div class="column">
+                  <b-field label="Respuesta">
+                    <b-select
+                      v-model="form.idresponse_op"
+                      placeholder="Seleccione una opción"
                     >
-                      {{ index + 1 }} - {{ file.name }}
-                    </b-tag>
-                  </div>
-                </section>
+                      <option
+                        v-for="option in responseOp"
+                        :key="option.idresponse_op"
+                        :value="option.idresponse_op"
+                      >
+                        {{ option.description }}
+                      </option>
+                    </b-select>
+                  </b-field>
+                </div>
+                <div class="column">
+                  <b-field label="Fecha de respuesta">
+                    <b-datepicker
+                      v-model="form.response_date"
+                      placeholder="Selecciona una fecha"
+                      icon="calendar-today"
+                    />
+                  </b-field>
+                </div>
+              </div>
+              <div class="columns">
+                <div class="column">
+                  <b-field label="Otro">
+                    <b-input
+                      v-model="form.other"
+                      name="nivel"
+                      type="text"
+                      required
+                    />
+                  </b-field>
+                </div>
               </div>
             </div>
-            <ButtonGroup
-              :handle-submit="handleSubmit"
-              saving
-              @save="createOrUpdate"
-              @cancel="close"
-            />
+            <div class="divider">
+              <strong>Documentos</strong>
+            </div>
+            <div class="columns has-text-centered">
+              <div class="column is-flex is-justify-content-center">
+                <b-field label="Oficio/escrito de solicitud">
+                  <b-field
+                    class="file is-primary"
+                    :class="{ 'has-name': !!fileOficio }"
+                  >
+                    <b-upload v-model="fileOficio" class="file-label" rounded>
+                      <span class="file-cta">
+                        <b-icon class="file-icon" icon="upload" />
+                        <span class="file-label">{{
+                          fileOficio.name || 'Subir archivo'
+                        }}</span>
+                      </span>
+                    </b-upload>
+                  </b-field>
+                </b-field>
+              </div>
+              <div class="column is-flex is-justify-content-center">
+                <b-field label="Oficio de respuesta">
+                  <b-field
+                    class="file is-primary"
+                    :class="{ 'has-name': !!fileRespuesta }"
+                  >
+                    <b-upload
+                      v-model="fileRespuesta"
+                      class="file-label"
+                      rounded
+                    >
+                      <span class="file-cta">
+                        <b-icon class="file-icon" icon="upload" />
+                        <span class="file-label">{{
+                          fileRespuesta.name || 'Subir archivo'
+                        }}</span>
+                      </span>
+                    </b-upload>
+                  </b-field>
+                </b-field>
+              </div>
+            </div>
           </form>
-        </ValidationObserver>
-      </section>
+        </div>
+        <div class="card-footer">
+          <div class="card-footer-item">
+            <b-button @click="$emit('close')">
+              Cancelar
+            </b-button>
+          </div>
+          <div class="card-footer-item">
+            <b-button type="is-success" @click="createIncident">
+              Guardar
+            </b-button>
+          </div>
+        </div>
+      </div>
     </div>
   </b-modal>
 </template>
@@ -317,31 +461,32 @@ const utmObj = require('utm-latlng')
 const utm = require('utm')
 
 export default {
-  name: 'NewBinnacle',
+  name: 'NewOpinion',
   props: {
-    plannification: {
-      type: String,
-      default: null
-    },
     activeModal: {
-      type: Boolean,
-      default: false
-    },
-    isExtraordinary: {
-      type: Boolean,
-      default: false
+      default: false,
+      type: Boolean
     }
   },
   data () {
     return {
-      form: {
-        date: new Date()
-      },
       isLoading: false,
-      hourInit: new Date(),
-      hourEnd: new Date(),
+      form: {},
+      tenenciaPredio: [],
+      dependences: [],
+      fileOficio: {},
+      fileRespuesta: {},
+      vegetation: [],
+      filterVegetable: [],
+      legalEntity: [],
+      typeLegalEntity: [],
+      appMethod: [],
+      appType: [],
+      requestMotive: [],
+      motiveDescription: [],
+      responseOp: [],
+      tenure: [],
       isSwitched: true,
-      validateHours: false,
       formCoord: {},
       temporalPoint: [224190.791, 2311022.379],
       ViewPoint: [-89.60984537598705, 20.85610769792424],
@@ -351,21 +496,6 @@ export default {
       zoom: 12,
       center: [-87, 41.999997974538374],
       rotation: 0,
-      vehicles: [],
-      vehiclesFilter: [],
-      vegetation: [],
-      vegetationFilter: [],
-      legalZones: [],
-      legalZonesFilter: [],
-      subZones: [],
-      subZonesFilter: [],
-      opZones: [],
-      opZonesFilter: [],
-      participants: [],
-      participantsFilter: [],
-      files: [],
-      vegetableAffected: [],
-      temporalFiles: [],
       features: [
         {
           type: 'Feature',
@@ -892,260 +1022,64 @@ export default {
       ]
     }
   },
-  watch: {
-    isActive (newVal, oldVal) {
-      if (newVal && !this.isExtraordinary) {
-        this.form.idplanification = this.plannification
-        console.log(this.form)
-      } else if (this.isExtraordinary) {
-        this.form.isextraordinary = true
-      }
-    }
-  },
   mounted () {
-    this.hourEnd.setHours(this.hourEnd.getHours() + 1)
-    this.center = this.point ? this.point : [0, 0]
-    if (this.plannification) {
-      this.form.idplanification = this.plannification
-    }
-    this.getUser()
-    this.getVehicles()
-    this.getParticipants()
     this.getVegetation()
-    this.getSubZones()
+    // this.getDependences()
+    this.getLegalEntity()
+    this.getTypeLegalEntity()
+    this.getAppMethod()
+    this.getAppType()
+    this.getRequestMotive()
+    this.getMotiveDescription()
+    this.getTenure()
+    this.getResponseOp()
   },
   methods: {
-    // Funciones generales
-    close () {
-      this.form = {
-        date: new Date(),
-        idplanification: this.plannification
-      }
-      this.files = []
-      this.vegetableAffected = []
-      this.temporalPoint = [224190.791, 2311022.379]
-      this.ViewPoint = [-89.60984537598705, 20.85610769792424]
-      this.pointsMap = [[-89.60984537598705, 20.85610769792424]]
-      this.points = []
-      this.idPoints = []
-      this.vehiclesFilter = this.vehicles
-      this.vegetationFilter = this.vegetation
-      this.legalZonesFilter = this.legalZones
-      this.subZonesFilter = this.subZones
-      this.opZones = this.opZonesFilter
-      this.participantsFilter = this.participants
-      this.temporalFiles = []
-      this.$emit('close')
-    },
-    // Información usuario
-    async getUser () {
+    async createIncident () {
       try {
-        const res = await this.$store.dispatch('modules/users/getData')
-        this.form.iduser = res.idusers
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    // Crear bitacora
-    async createOrUpdate () {
-      console.log(this.form)
-      this.isLoading = true
-      this.form.hour_init = this.hourInit
-      this.form.hour_end = this.hourEnd
-      try {
-        const idBinnacle = await this.$store.dispatch(
-          'modules/binnacles/createOrUpdateBinnacle',
-          this.form
-        )
-        const binnacle = await this.getBinnacle(idBinnacle)
-        if (this.vegetableAffected.length > 0) {
-          console.log(this.vegetableAffected)
-          binnacle.list_vegetable_affected = this.vegetableAffected.map((x) => {
-            x.idbinnacle = idBinnacle
-            return x
-          })
-          await this.updateBinnacle(binnacle)
+        this.isLoading = true
+        const id = await this.$store.dispatch('modules/technicalOp/createOrUpdateTechnicalOp', this.form)
+        if (this.fileOficio.name || this.fileRespuesta.name) {
+          await this.uploadFiles(id)
         }
-        if (this.points.length > 0) {
-          this.points.map((point) => {
-            const coord = point
-            coord.idbinnacle = idBinnacle
-            return coord
-          })
-          await this.createPoints(this.points, idBinnacle)
-          binnacle.list_coordinates = this.idPoints
-          await this.updateBinnacle(binnacle)
-        }
-        if (this.files.length > 0) {
-          console.log(this.files)
-          const formData = new FormData()
-          this.files.map((file, index) => {
-            const temporalName = 'evidencia_' + (index + 1) + '_bitácora_' + binnacle.number + '.png'
-            const temporalFile = new File([file], temporalName, { type: 'image/png' })
-            console.log(temporalFile)
-            formData.append('binnacle_photo[]', temporalFile)
-          })
-          this.files.forEach((files, index) => {
-            this.temporalFiles.push({
-              description: 'evidencia_' + (index + 1) + '_' + binnacle.number,
-              idbinnacle: idBinnacle,
-              position: index + 1
-            })
-          })
-          binnacle.list_image = this.temporalFiles
-          console.log(binnacle)
-          const positionsRelation = await this.updateBinnacle(binnacle)
-          this.temporalFiles.forEach((x, index) => {
-            formData.append('idimages[' + index + ']', positionsRelation[index])
-          })
-          await this.uploadEvidences(formData)
-        }
-        this.form = {
-          date: new Date(),
-          idplanification: this.plannification
-        }
-        this.files = []
-        this.vegetableAffected = []
-        this.temporalPoint = [224190.791, 2311022.379]
-        this.ViewPoint = [-89.60984537598705, 20.85610769792424]
-        this.pointsMap = [[-89.60984537598705, 20.85610769792424]]
-        this.points = []
-        this.idPoints = []
-        this.vehiclesFilter = this.vehicles
-        this.vegetationFilter = this.vegetation
-        this.legalZonesFilter = this.legalZones
-        this.subZonesFilter = this.subZones
-        this.opZones = this.opZonesFilter
-        this.participantsFilter = this.participants
-        this.temporalFiles = []
+        this.form = {}
+        this.isLoading = false
         this.$buefy.toast.open({
-          message: '¡Bitácora guardada!',
+          message: 'Guardado!',
           type: 'is-success'
         })
-        this.buttonDisabled = false
-        this.isLoading = false
-        this.$emit('save')
+        this.$emit('create')
       } catch (error) {
         this.isLoading = false
+        this.$buefy.toast.open({
+          message: 'Ocurrió un error, intente nuevamente',
+          type: 'is-danger'
+        })
         console.log(error)
       } finally {
-        this.buttonDisabled = false
         this.isLoading = false
       }
     },
-    async getBinnacle (id) {
-      try {
-        const res = await this.$store.dispatch(
-          'modules/binnacles/getBinnacle',
-          id
-        )
-        return res
-      } catch (error) {
-        // console.log(error)
-      }
-    },
-    // Actualizar bitacora
-    async updateBinnacle (binnacle) {
-      try {
-        const res = await this.$store.dispatch(
-          'modules/binnacles/createOrUpdateBinnacle',
-          binnacle
-        )
-        return res
-      } catch (error) {
-        this.$buefy.toast.open({
-          message: 'Ocurrió un error, intente nuevamente',
-          type: 'is-danger'
-        })
-      }
-    },
-    // Vehiculos
-    async getVehicles () {
-      try {
-        const res = await this.$store.dispatch('modules/vehicles/getVehicles')
-        this.vehicles = res
-        this.vehiclesFilter = res
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    filterVehicles (text) {
-      this.vehiclesFilter = this.vehicles.filter((option) => {
-        if (
-          option.number &&
-          option.number.toString().toLowerCase().includes(text.toLowerCase())
-        ) {
-          return option
-        }
-      })
-    },
-    // Participantes
-    async getParticipants () {
-      try {
-        const res = await this.$store.dispatch(
-          'modules/participants/getParticipants'
-        )
-        this.participants = res
-        this.participantsFilter = res
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    selectParticipant (option) {
-      option
-        ? (this.form.idparticipants = option.idparticipants)
-        : (this.form.idparticipants = null)
-    },
-    removeParticipant (index) {
-      this.form.participants.splice(index, 1)
-    },
-    filterParticipant (text) {
-      this.participantsFilter = this.participants.filter((option) => {
-        if (
-          option.name &&
-          option.name.toString().toLowerCase().includes(text.toLowerCase())
-        ) {
-          return option
-        }
-      })
-    },
-    // Subzonas
-    async getSubZones () {
-      try {
-        const res = await this.$store.dispatch('modules/zones/getSubZones')
-        this.subZones = res
-        this.subZonesFilter = res
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    filterSubZones (text) {
-      this.subZonesFilter = this.subZones.filter((option) => {
-        if (
-          option.description &&
-          option.description
-            .toString()
-            .toLowerCase()
-            .includes(text.toLowerCase())
-        ) {
-          return option
-        }
-      })
-    },
-    // Vegetacion
     async getVegetation () {
       try {
-        const res = await this.$store.dispatch(
+        this.vegetation = await this.$store.dispatch(
           'modules/vegetation/getVegetations'
         )
-        this.vegetation = res
-        this.vegetationFilter = res
+        // console.log(this.vegetation)
+        this.filterVegetable = this.vegetation
       } catch (error) {
         console.log(error)
       }
     },
-    filterVegetation (text) {
-      this.vegetationFilter = this.vegetation.filter((option) => {
+    async getDependences () {
+      try {
+        this.dependences = await this.$store.dispatch('modules/coordinations/getCoordinations')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    filterVegetableFun (text) {
+      this.filterVegetable = this.vegetation.filter((option) => {
         if (
           option.description &&
           option.description
@@ -1157,28 +1091,77 @@ export default {
         }
       })
     },
-    // Evidencia
-    viewIamge (image) {
-      this.imageUrl = URL.createObjectURL(image)
-    },
-    deleteDropFile (index) {
-      this.files.splice(index, 1)
-    },
-    async uploadEvidences (files) {
+    async uploadFiles (id) {
+      const formData = new FormData()
+      formData.append('idtechnical_opinion', id)
+      if (this.fileOificio) {
+        formData.append('request_doc', this.fileOficio)
+      }
+      if (this.fileRespuesta) {
+        formData.append('response_doc', this.fileRespuesta)
+      }
       try {
-        const res = await this.$store.dispatch(
-          'modules/binnacles/uploadEvidences',
-          files
-        )
-        this.idEvidences = res
+        await this.$store.dispatch('modules/technicalOp/uploadFiles', formData)
       } catch (error) {
-        this.$buefy.toast.open({
-          message: 'Ocurrió un error, intente nuevamente',
-          type: 'is-danger'
-        })
+        console.log(error)
       }
     },
-    // Coordenadas
+    async getLegalEntity () {
+      try {
+        this.legalEntity = await this.$store.dispatch('modules/legalEntity/getLegalEntitys')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getTypeLegalEntity () {
+      try {
+        this.typeLegalEntity = await this.$store.dispatch('modules/legalEntity/getTypeLegalEntitys')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getAppMethod () {
+      try {
+        this.appMethod = await this.$store.dispatch('modules/apMethod/getApplicationMethods')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getAppType () {
+      try {
+        this.appType = await this.$store.dispatch('modules/apType/getApplicantTypes')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getRequestMotive () {
+      try {
+        this.requestMotive = await this.$store.dispatch('modules/requestMotive/getRequestMotives')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getMotiveDescription () {
+      try {
+        this.motiveDescription = await this.$store.dispatch('modules/motiveDescription/getMotiveDescriptions')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getTenure () {
+      try {
+        this.tenure = await this.$store.dispatch('modules/tenure/getTenures')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getResponseOp () {
+      try {
+        this.responseOp = await this.$store.dispatch('modules/responseOp/getResponseOps')
+      } catch (error) {
+        console.log(error)
+      }
+    },
     addPoint () {
       if (this.formCoord.name && this.formCoord.name !== '') {
         if (this.points.length === 0) {
@@ -1255,3 +1238,5 @@ export default {
   }
 }
 </script>
+
+<style></style>
