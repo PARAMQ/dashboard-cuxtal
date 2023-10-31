@@ -51,7 +51,7 @@
           Niveles de gobierno
         </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/catalogos/legalEntity' }">
-          Persona moral
+          Nombres de personas morales
         </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/catalogos/typeLegalEntity' }">
           Tipo de persona moral
