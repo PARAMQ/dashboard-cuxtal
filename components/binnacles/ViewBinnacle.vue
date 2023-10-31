@@ -5,306 +5,288 @@
       <header class="modal-card-head">
         <p class="modal-card-title">
           {{
-            isExtraordinary ? 'Nueva bitácora extraordinaria' : 'Nueva bitácora'
+            isExtraordinary ? 'Visualizar bitácora extraordinaria' : 'Visualizar bitácora'
           }}
         </p>
       </header>
       <section class="modal-card-body">
-        <ValidationObserver ref="form" v-slot="{ handleSubmit }">
-          <form @submit.prevent="handleSubmit">
-            <div class="divider">
-              <strong>Estado de la bítacora</strong>
+        <form>
+          <div class="divider">
+            <strong>Estado de la bítacora</strong>
+          </div>
+          <div class="columns">
+            <div class="column">
+              <p>
+                {{ form.rapporteur ? form.rapporteur : 'No tiene relatoría' }}
+              </p>
             </div>
-            <div class="columns">
-              <div class="column">
-                <BInputWithValidation
-                  v-model="form.rapporteur"
-                  label="Relatoría"
-                  name="relatoría"
-                  label-position="on-border"
-                  rules="required"
-                  type="textarea"
-                  normal
-                />
+          </div>
+          <div class="divider">
+            <strong>Datos generales</strong>
+          </div>
+          <div class="columns">
+            <div class="column is-4">
+              <b-field label="Fecha">
+                <b-datepicker v-model="form.date" inline :editable="false" />
+              </b-field>
+            </div>
+            <div
+              class="column is-3 is-flex is-flex-direction-column is-justify-content-center has-text-centered"
+            >
+              <div>
+                <b-field label="Hora de inicio">
+                  <b-timepicker v-model="hourInit" inline />
+                </b-field>
+              </div>
+              <br>
+              <div>
+                <b-field label="Hora de finalización">
+                  <b-timepicker v-model="hourEnd" inline />
+                </b-field>
               </div>
             </div>
-            <div class="divider">
-              <strong>Datos generales</strong>
+            <div class="column">
+              <div class="divider">
+                <strong>Personal y vehiculos</strong>
+              </div>
+              <br>
+              <b-field label="Persona que realizó el recorrido">
+                <b-autocomplete
+                  :data="participantsFilter"
+                  icon="magnify"
+                  clearable
+                  field="name"
+                  open-on-focus
+                  @typing="filterParticipant"
+                  @select="selectParticipant"
+                >
+                  <template #empty>
+                    No hay resultados
+                  </template>
+                </b-autocomplete>
+              </b-field>
+              <b-field label="Vehículos utilizados">
+                <b-taginput
+                  v-model="form.list_vehicle"
+                  :data="vehiclesFilter"
+                  field="number"
+                  autocomplete
+                  :open-on-focus="true"
+                  @typing="filterVehicles"
+                >
+                  <template v-slot="props">
+                    <strong>{{ props.option.number }} -
+                      {{
+                        props.option.plates
+                          ? props.option.plates
+                          : 'sin placas reigstradas'
+                      }}</strong>
+                  </template>
+                  <template #empty>
+                    Sin resultados
+                  </template>
+                </b-taginput>
+              </b-field>
+              <b-field label="Participantes">
+                <b-taginput
+                  v-model="form.participants"
+                  :data="participantsFilter"
+                  field="name"
+                  autocomplete
+                  :open-on-focus="true"
+                  @typing="filterParticipant"
+                >
+                  <template slot-scope="props">
+                    <strong>{{ props.option.name }}
+                      {{ props.option.lastname }}</strong>
+                  </template>
+                  <template #empty>
+                    Sin resultados
+                  </template>
+                  <template #selected>
+                    <b-tag
+                      v-for="(tag, index) in form.participants"
+                      :key="index"
+                      closable
+                      @close="removeParticipant(index)"
+                    >
+                      {{ tag.name }} {{ tag.lastname }}
+                    </b-tag>
+                  </template>
+                </b-taginput>
+              </b-field>
             </div>
-            <div class="columns">
-              <div class="column is-4">
-                <b-field label="Fecha">
-                  <b-datepicker v-model="form.date" inline />
+          </div>
+          <div class="divider">
+            <strong>Vegetación y zonas</strong>
+          </div>
+          <div class="columns">
+            <div class="column">
+              <b-field label="Vegetación">
+                <b-taginput
+                  v-model="vegetableAffected"
+                  :data="vegetationFilter"
+                  field="description"
+                  autocomplete
+                  :open-on-focus="true"
+                  @typing="filterVegetation"
+                >
+                  <template v-slot="props">
+                    <strong>{{ props.option.description }}</strong>
+                  </template>
+                  <template #empty>
+                    Sin resultados
+                  </template>
+                </b-taginput>
+              </b-field>
+            </div>
+            <div class="column">
+              <b-field label="Subzonificación PM">
+                <b-taginput
+                  v-model="form.list_subzoning"
+                  :data="subZonesFilter"
+                  field="description"
+                  autocomplete
+                  :open-on-focus="true"
+                  @typing="filterSubZones"
+                >
+                  <template #empty>
+                    Sin resultados
+                  </template>
+                </b-taginput>
+              </b-field>
+            </div>
+          </div>
+          <div class="divider">
+            <strong>Coordenadas</strong>
+          </div>
+          <div class="columns">
+            <div class="column is-4">
+              <b-notification type="is-info" has-icon :closable="false">
+                Ingrese las coordenadas en formato UTM.
+              </b-notification>
+              <div class="container">
+                <b-field label="Descripción breve de la coordenada">
+                  <b-input v-model="formCoord.name" />
                 </b-field>
+                <!--
+                <b-switch v-model="isSwitched">
+                  {{ isSwitched ? 'Formato UTM' : 'Coordenadas clasicas' }}
+                </b-switch>
+                -->
+                <b-field :label="isSwitched ? 'Longitud' : 'Coordenada X'">
+                  <b-numberinput
+                    v-model="temporalPoint[0]"
+                    step="0.000000000000000001"
+                    :controls="false"
+                  />
+                </b-field>
+                <b-field :label="isSwitched ? 'Latitud' : 'Coordenada Y'">
+                  <b-numberinput
+                    v-model="temporalPoint[1]"
+                    step="0.000000000000000001"
+                    :controls="false"
+                  />
+                </b-field>
+              </div>
+              <div class="container m-3 has-text-centered">
+                <b-button type="is-success is-light" @click="addPoint">
+                  Agregar coordenada
+                </b-button>
+                <b-button type="is-info is-light" @click="viewPoint">
+                  Ver punto
+                </b-button>
               </div>
               <div
-                class="column is-3 is-flex is-flex-direction-column is-justify-content-center has-text-centered"
+                v-for="pointCoord in points"
+                :key="pointCoord.name"
+                class="container m-3"
               >
-                <b-notification
-                  v-model="validateHours"
-                  aria-close-label="Close notification"
-                >
-                  Es necesario que ingreses una hora de inicio y una hora de
-                  fin.
-                </b-notification>
-                <div>
-                  <b-field label="Hora de inicio">
-                    <b-timepicker v-model="hourInit" inline />
-                  </b-field>
-                </div>
-                <br>
-                <div>
-                  <b-field label="Hora de finalización">
-                    <b-timepicker v-model="hourEnd" inline />
-                  </b-field>
-                </div>
-              </div>
-              <div class="column">
-                <div class="divider">
-                  <strong>Personal y vehiculos</strong>
-                </div>
-                <br>
-                <b-field label="Persona que realizó el recorrido">
-                  <b-autocomplete
-                    :data="participantsFilter"
-                    icon="magnify"
-                    clearable
-                    field="name"
-                    open-on-focus
-                    @typing="filterParticipant"
-                    @select="selectParticipant"
+                <div class="control">
+                  <b-tag
+                    type="is-primary"
+                    attached
+                    aria-close-label="Close tag"
+                    closable
+                    @close="deletePoint"
+                    @click="viewPoint(pointCoord)"
                   >
-                    <template #empty>
-                      No hay resultados
-                    </template>
-                  </b-autocomplete>
-                </b-field>
-                <b-field label="Vehículos utilizados">
-                  <b-taginput
-                    v-model="form.list_vehicle"
-                    :data="vehiclesFilter"
-                    field="number"
-                    autocomplete
-                    :open-on-focus="true"
-                    @typing="filterVehicles"
-                  >
-                    <template v-slot="props">
-                      <strong>{{ props.option.number }} -
-                        {{
-                          props.option.plates
-                            ? props.option.plates
-                            : 'sin placas reigstradas'
-                        }}</strong>
-                    </template>
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                  </b-taginput>
-                </b-field>
-                <b-field label="Participantes">
-                  <b-taginput
-                    v-model="form.participants"
-                    :data="participantsFilter"
-                    field="name"
-                    autocomplete
-                    :open-on-focus="true"
-                    @typing="filterParticipant"
-                  >
-                    <template slot-scope="props">
-                      <strong>{{ props.option.name }}
-                        {{ props.option.lastname }}</strong>
-                    </template>
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                    <template #selected>
-                      <b-tag
-                        v-for="(tag, index) in form.participants"
-                        :key="index"
-                        closable
-                        @close="removeParticipant(index)"
-                      >
-                        {{ tag.name }} {{ tag.lastname }}
-                      </b-tag>
-                    </template>
-                  </b-taginput>
-                </b-field>
+                    {{ pointCoord.name }}
+                  </b-tag>
+                </div>
               </div>
             </div>
-            <div class="divider">
-              <strong>Vegetación y zonas</strong>
-            </div>
-            <div class="columns">
-              <div class="column">
-                <b-field label="Vegetación">
-                  <b-taginput
-                    v-model="vegetableAffected"
-                    :data="vegetationFilter"
-                    field="description"
-                    autocomplete
-                    :open-on-focus="true"
-                    @typing="filterVegetation"
-                  >
-                    <template v-slot="props">
-                      <strong>{{ props.option.description }}</strong>
-                    </template>
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                  </b-taginput>
-                </b-field>
-              </div>
-              <div class="column">
-                <b-field label="Subzonificación PM">
-                  <b-taginput
-                    v-model="form.list_subzoning"
-                    :data="subZonesFilter"
-                    field="description"
-                    autocomplete
-                    :open-on-focus="true"
-                    @typing="filterSubZones"
-                  >
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                  </b-taginput>
-                </b-field>
-              </div>
-            </div>
-            <div class="divider">
-              <strong>Coordenadas</strong>
-            </div>
-            <div class="columns">
-              <div class="column is-4">
-                <b-notification type="is-info" has-icon :closable="false">
-                  Ingrese las coordenadas en formato UTM.
-                </b-notification>
-                <div class="container">
-                  <b-field label="Descripción breve de la coordenada">
-                    <b-input v-model="formCoord.name" />
-                  </b-field>
-                  <!--
-                  <b-switch v-model="isSwitched">
-                    {{ isSwitched ? 'Formato UTM' : 'Coordenadas clasicas' }}
-                  </b-switch>
-                  -->
-                  <b-field :label="isSwitched ? 'Longitud' : 'Coordenada X'">
-                    <b-numberinput
-                      v-model="temporalPoint[0]"
-                      step="0.000000000000000001"
-                      :controls="false"
-                    />
-                  </b-field>
-                  <b-field :label="isSwitched ? 'Latitud' : 'Coordenada Y'">
-                    <b-numberinput
-                      v-model="temporalPoint[1]"
-                      step="0.000000000000000001"
-                      :controls="false"
-                    />
-                  </b-field>
-                </div>
-                <div class="container m-3 has-text-centered">
-                  <b-button type="is-success is-light" @click="addPoint">
-                    Agregar coordenada
-                  </b-button>
-                  <b-button type="is-info is-light" @click="viewPoint">
-                    Ver punto
-                  </b-button>
-                </div>
-                <div
-                  v-for="pointCoord in points"
-                  :key="pointCoord.name"
-                  class="container m-3"
-                >
-                  <div class="control">
-                    <b-tag
-                      type="is-primary"
-                      attached
-                      aria-close-label="Close tag"
-                      closable
-                      @close="deletePoint"
-                      @click="viewPoint(pointCoord)"
-                    >
-                      {{ pointCoord.name }}
-                    </b-tag>
-                  </div>
-                </div>
-              </div>
-              <div class="column is-8">
-                <vl-map
-                  :load-tiles-while-animating="true"
-                  :load-tiles-while-interacting="true"
-                  data-projection="EPSG:4326"
-                  style="height: 400px"
-                >
-                  <vl-view
-                    :zoom.sync="zoom"
-                    :center.sync="ViewPoint"
-                    :rotation.sync="rotation"
-                  />
+            <div class="column is-8">
+              <vl-map
+                :load-tiles-while-animating="true"
+                :load-tiles-while-interacting="true"
+                data-projection="EPSG:4326"
+                style="height: 400px"
+              >
+                <vl-view
+                  :zoom.sync="zoom"
+                  :center.sync="ViewPoint"
+                  :rotation.sync="rotation"
+                />
 
-                  <vl-layer-tile>
-                    <vl-source-osm />
-                  </vl-layer-tile>
+                <vl-layer-tile>
+                  <vl-source-osm />
+                </vl-layer-tile>
 
-                  <vl-feature>
-                    <vl-geom-point :coordinates="ViewPoint" />
-                  </vl-feature>
+                <vl-feature>
+                  <vl-geom-point :coordinates="ViewPoint" />
+                </vl-feature>
 
-                  <vl-feature>
-                    <vl-geom-multi-point :coordinates="pointsMap" />
-                  </vl-feature>
+                <vl-feature>
+                  <vl-geom-multi-point :coordinates="pointsMap" />
+                </vl-feature>
 
-                  <vl-layer-vector>
-                    <vl-source-vector :features.sync="features" />
-                  </vl-layer-vector>
-                </vl-map>
-              </div>
+                <vl-layer-vector>
+                  <vl-source-vector :features.sync="features" />
+                </vl-layer-vector>
+              </vl-map>
             </div>
-            <div class="divider">
-              <strong>Evidencias</strong>
+          </div>
+          <div class="divider">
+            <strong>Evidencias</strong>
+          </div>
+          <div class="columns">
+            <div class="column is-6">
+              <section>
+                <b-field>
+                  <b-upload v-model="files" multiple drag-drop accept=".png">
+                    <section class="section">
+                      <div class="content has-text-centered">
+                        <p>
+                          <b-icon icon="upload" size="is-large" />
+                        </p>
+                        <p>
+                          Arrastra aquí tus imágenes o has click aquí para
+                          subirlas.
+                        </p>
+                      </div>
+                    </section>
+                  </b-upload>
+                </b-field>
+                <div v-for="(file, index) in files" :key="file" class="tags">
+                  <b-tag
+                    type="is-primary"
+                    attached
+                    aria-close-label="Borrar elemento"
+                    closable
+                    @close="deleteDropFile(index)"
+                    @click="viewIamge(file)"
+                  >
+                    {{ index + 1 }} - {{ file.name }}
+                  </b-tag>
+                </div>
+              </section>
             </div>
-            <div class="columns">
-              <div class="column is-6">
-                <section>
-                  <b-field>
-                    <b-upload v-model="files" multiple drag-drop accept=".png">
-                      <section class="section">
-                        <div class="content has-text-centered">
-                          <p>
-                            <b-icon icon="upload" size="is-large" />
-                          </p>
-                          <p>
-                            Arrastra aquí tus imágenes o has click aquí para
-                            subirlas.
-                          </p>
-                        </div>
-                      </section>
-                    </b-upload>
-                  </b-field>
-                  <div v-for="(file, index) in files" :key="file" class="tags">
-                    <b-tag
-                      type="is-primary"
-                      attached
-                      aria-close-label="Borrar elemento"
-                      closable
-                      @close="deleteDropFile(index)"
-                      @click="viewIamge(file)"
-                    >
-                      {{ index + 1 }} - {{ file.name }}
-                    </b-tag>
-                  </div>
-                </section>
-              </div>
-            </div>
-            <ButtonGroup
-              :handle-submit="handleSubmit"
-              saving
-              @save="createOrUpdate"
-              @cancel="close"
-            />
-          </form>
-        </ValidationObserver>
+          </div>
+          <div class="has-text-centered" style="width: 100%;">
+            <b-button @click="close">Cerrar</b-button>
+          </div>
+        </form>
       </section>
     </div>
   </b-modal>
@@ -317,7 +299,7 @@ const utmObj = require('utm-latlng')
 const utm = require('utm')
 
 export default {
-  name: 'NewBinnacle',
+  name: 'ViewBinnacle',
   props: {
     plannification: {
       type: String,

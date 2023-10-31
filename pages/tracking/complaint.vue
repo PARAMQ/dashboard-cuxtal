@@ -282,21 +282,6 @@
         </div>
       </div>
     </div>
-    <new-binnacle
-      :active-modal="isActive"
-      :is-extraordinary="true"
-      :type="'Complaint'"
-      @update="refresh"
-      @close="isActive = false"
-    />
-    <edit-binnacle
-      :active-modal="isActiveEdit"
-      :id-binnacle="idBinnacle"
-      :is-extraordinary="true"
-      :type="'Complaint'"
-      @update="refresh"
-      @close="isActiveEdit = false"
-    />
     <new-incident
       :active-modal="isActiveIncident"
       @close="isActiveIncident = false"
@@ -381,7 +366,7 @@ export default {
           this.binaccleSelect
         )
         this.$buefy.toast.open({
-          message: '¡Registros eliminado!',
+          message: '¡Registro eliminado!',
           type: 'is-success'
         })
         this.hasSelect = false

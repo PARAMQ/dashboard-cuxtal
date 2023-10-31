@@ -1,4 +1,4 @@
-import { createOrUpdateBinnacle, getBinnalce, uploadEvidences, getBinnacles, getWordBinnacle } from '~/api/binnacles'
+import { createOrUpdateBinnacle, getBinnalce, uploadEvidences, getBinnacles, getWordBinnacle, deleteBinnacle } from '~/api/binnacles'
 
 export const actions = {
   async createOrUpdateBinnacle ({ commit }, data) {
@@ -19,6 +19,10 @@ export const actions = {
   },
   async getWordBinnacle ({ commit }, id) {
     const res = await getWordBinnacle(id)
+    return res
+  },
+  async deleteBinnacle ({ commit }, data) {
+    const res = await deleteBinnacle(data)
     return res
   }
 }

@@ -21,21 +21,12 @@
       <div class="columns m-2 binnalces">
         <div class="column">
           <div v-for="bitacora in binnacles" :key="bitacora.idbinnacle">
-            <div class="card" @click="viewInMap(bitacora.idbinnacle)">
+            <div class="card">
               <div class="card-header">
                 <div class="level m-1 full-w">
                   <div class="level-left">
                     <div class="level-item">
                       <p>{{ bitacora.number }}</p>
-                    </div>
-                  </div>
-                  <div class="level-right">
-                    <div class="level-item">
-                      <b-button
-                        type="is-info"
-                        icon-right="eye-outline"
-                        @click="openBinnacle(bitacora.idbinnacle)"
-                      />
                     </div>
                     <div class="level-item">
                       <b-tooltip
@@ -72,9 +63,32 @@
                       </b-tooltip>
                     </div>
                   </div>
+                  <div class="level-right">
+                    <div class="level-item">
+                      <b-button
+                        type="is-info is-light"
+                        icon-right="eye-outline"
+                        @click="openBinnacle(bitacora.idbinnacle)"
+                      />
+                    </div>
+                    <div class="level-item">
+                      <b-button
+                        type="is-danger is-light"
+                        icon-right="delete-empty-outline"
+                        @click="deleteBinnacle(bitacora.idbinnacle)"
+                      />
+                    </div>
+                    <div class="level-item">
+                      <b-button
+                        type="is-link is-light"
+                        icon-right="file-word"
+                        @click="getWord(bitacora.idbinnacle)"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="card-content">
+              <div class="card-content" @click="viewInMap(bitacora.idbinnacle)">
                 <p>
                   <strong>Fecha: </strong>
                   {{
@@ -189,12 +203,31 @@ export default {
       this.isActive = true
     },
     updateView () {
+      this.activeViewModal = false
       this.activeModal = false
       this.getData()
     },
     openBinnacle (binnacle) {
       this.idBinnacle = binnacle.idbinnacle
       this.activeViewModal = true
+    },
+    async deleteBinnacle (binnacle) {
+      try {
+        const data = {
+          idbinnacle: binnacle
+        }
+        await this.$store.dispatch('modules/binnacles/deleteBinnacle', data)
+        this.$buefy.notification.open({
+          message: 'Bitácora eliminada',
+          duration: 2500,
+          position: 'is-bottom-right',
+          type: 'is-warning',
+          hasIcon: true
+        })
+        this.getData()
+      } catch (error) {
+        console.log(error)
+      }
     },
     // Obtener todas las bitacoras
     async getData () {
@@ -248,6 +281,27 @@ export default {
       console.log(coords)
       const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')
       return [latLng.longitude, latLng.latitude]
+    },
+    // Obtener archivo Word
+    async getWord (binnacle) {
+      try {
+        const res = await this.$store.dispatch('modules/binnacles/getWordBinnacle', binnacle)
+        // Ensure the response is an ArrayBuffer
+        const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })
+        const blobURL = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        const filename = 'archivo.docx'
+        link.href = blobURL
+        link.setAttribute('download', filename)
+
+        // Trigger the download
+        link.click()
+
+        // Clean up
+        window.URL.revokeObjectURL(blobURL)
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }

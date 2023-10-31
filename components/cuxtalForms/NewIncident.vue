@@ -73,7 +73,10 @@
                 </div>
               </div>
               <b-field horizontal label="Denuncia presentada ante">
-                <b-select v-model="form.iddepto" placeholder="Seleccione una opción">
+                <b-select
+                  v-model="form.iddepto"
+                  placeholder="Seleccione una opción"
+                >
                   <option
                     v-for="option in dependences"
                     :key="option.idcoordination"
@@ -84,7 +87,10 @@
                 </b-select>
               </b-field>
               <b-field horizontal label="Nivel de gobierno">
-                <b-select v-model="form.idgov_level" placeholder="Seleccione una opción">
+                <b-select
+                  v-model="form.idgov_level"
+                  placeholder="Seleccione una opción"
+                >
                   <option
                     v-for="option in govLevels"
                     :key="option.idgov_level"
@@ -95,7 +101,10 @@
                 </b-select>
               </b-field>
               <b-field horizontal label="Ilícito ambiental denunciado">
-                <b-select v-model="form.idilicit_denounced" placeholder="Seleccione una opción">
+                <b-select
+                  v-model="form.idilicit_denounced"
+                  placeholder="Seleccione una opción"
+                >
                   <option
                     v-for="option in ilicits"
                     :key="option.idilicit_denounced"
@@ -171,7 +180,7 @@
                   </template>
                 </b-taginput>
               </b-field>
-              <b-field horizontal label="Subzonas">
+              <b-field horizontal label="Subzoninifcación PM">
                 <b-taginput
                   v-model="form.idsubzoning"
                   :data="filteredSubZones"
@@ -280,22 +289,28 @@
                 </div>
                 <div class="column">
                   <b-field horizontal label="Fecha de respuesta">
-                    <b-input
-                      v-model="form.date_respuesta"
-                      name="nivel"
-                      type="text"
-                      required
+                    <b-datepicker
+                      v-model="form.date_response"
+                      placeholder="Seleccione una fecha"
+                      icon="calendar-today"
+                      editable
                     />
                   </b-field>
                 </div>
                 <div class="column">
                   <b-field horizontal label="Respuesta">
-                    <b-input
-                      v-model="form.respuesta"
-                      name="nivel"
-                      type="text"
-                      required
-                    />
+                    <b-select
+                      v-model="form.response"
+                      placeholder="Seleccione una opción"
+                    >
+                      <option
+                        v-for="option in responses"
+                        :key="option.idresponse"
+                        :value="option.idresponse"
+                      >
+                        {{ option.description }}
+                      </option>
+                    </b-select>
                   </b-field>
                 </div>
               </div>
@@ -428,6 +443,7 @@ export default {
       ilicits: [],
       govLevels: [],
       tenures: [],
+      respones: [],
       formCoord: {
         description: ''
       },
@@ -448,6 +464,7 @@ export default {
     this.getTenures()
     this.getGovLevels()
     this.getIlicitsDenounced()
+    this.getResponses()
   },
   methods: {
     async createIncident () {
@@ -488,7 +505,10 @@ export default {
         formData.append('complaint_doc', this.fileDenuncia)
         formData.append('response_doc', this.fileRespuesta)
         formData.append('tramit_conlusion', this.fileTramite)
-        await this.$store.dispatch('modules/complaint/updateFilesComplaint', formData)
+        await this.$store.dispatch(
+          'modules/complaint/updateFilesComplaint',
+          formData
+        )
       } catch (error) {
         console.log(error)
       }
@@ -557,6 +577,15 @@ export default {
         this.pointsMap.splice(index, 1)
       }
     },
+    async getResponses () {
+      try {
+        this.responses = await this.$store.dispatch(
+          'modules/response/getResponses'
+        )
+      } catch (error) {
+        console.log(error)
+      }
+    },
     async getTenures () {
       try {
         this.tenures = await this.$store.dispatch('modules/tenure/getTenures')
@@ -566,14 +595,18 @@ export default {
     },
     async getGovLevels () {
       try {
-        this.govLevels = await this.$store.dispatch('modules/gobLevel/getGobLevels')
+        this.govLevels = await this.$store.dispatch(
+          'modules/gobLevel/getGobLevels'
+        )
       } catch (error) {
         console.log(error)
       }
     },
     async getIlicitsDenounced () {
       try {
-        this.ilicits = await this.$store.dispatch('modules/ilicitDenounced/getIlicitDenounceds')
+        this.ilicits = await this.$store.dispatch(
+          'modules/ilicitDenounced/getIlicitDenounceds'
+        )
       } catch (error) {
         console.log(error)
       }
@@ -596,7 +629,9 @@ export default {
     },
     async getOpZones () {
       try {
-        this.opZones = await this.$store.dispatch('modules/operativeZones/getZones')
+        this.opZones = await this.$store.dispatch(
+          'modules/operativeZones/getZones'
+        )
         this.filteredOpZone = this.opZones
       } catch (error) {
         console.log(error)

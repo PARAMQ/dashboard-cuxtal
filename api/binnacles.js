@@ -38,3 +38,11 @@ export const getWordBinnacle = (id) => {
     method: 'GET'
   })
 }
+
+export const deleteBinnacle = (data) => {
+  return request({
+    url: '/apiBinnacle.php/binnacle',
+    method: 'DELETE',
+    data
+  })
+}
