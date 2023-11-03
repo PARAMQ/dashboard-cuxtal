@@ -88,7 +88,7 @@ export default {
         (endDate.getMonth() + 1) +
         '-' +
         endDate.getDate()
-      console.log(this.form)
+      // console.log(this.form)
       try {
         this.isLoading = true
         await this.$store.dispatch('modules/plans/createOrUpdatePlan', this.form)
@@ -99,7 +99,7 @@ export default {
       } catch (error) {
         this.$buefy.snackbar.open('Ocurrió un problema, intente más tarde')
         this.isLoading = false
-        // console.log(error)
+        // // console.log(error)
       } finally {
         this.isLoading = false
       }

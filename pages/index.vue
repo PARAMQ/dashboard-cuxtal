@@ -93,7 +93,7 @@ export default {
         this.complaint = res.filter((x) => x.type === 'complaint')
         this.programmed = res.filter((x) => x.type === 'programmed')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getComplaints () {
@@ -101,7 +101,7 @@ export default {
         const res = await this.$store.dispatch('modules/complaint/getComplaints')
         this.complaints = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     getInfoDonnut () {

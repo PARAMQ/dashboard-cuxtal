@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     async createZone () {
-      console.log(this.form)
+      // console.log(this.form)
       try {
         this.isLoading = true
         await this.$store.dispatch(
@@ -94,20 +94,20 @@ export default {
           message: 'Ocurrió un error, intente nuevamente',
           type: 'is-danger'
         })
-        console.log(error)
+        // console.log(error)
       }
     },
     async getZones () {
       try {
         const res = await this.$store.dispatch('modules/zones/getZones')
         this.legalZones = res
-        console.log(this.legalZones)
+        // console.log(this.legalZones)
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filteredDataArray () {
-      // console.log(this.text)
+      // // console.log(this.text)
       this.options = this.legalZones.filter((option) => {
         return option.description.toString().toLowerCase().includes(this.text.toLowerCase())
       })

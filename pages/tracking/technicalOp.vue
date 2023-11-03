@@ -325,9 +325,9 @@ export default {
       try {
         const res = await this.$store.dispatch('modules/technicalOp/getTechnicalOps')
         this.binnacles = res
-        console.log(res)
+        // console.log(res)
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     refresh () {
@@ -367,7 +367,7 @@ export default {
           message: 'Ocurrió un error, intente más tarde',
           type: 'is-danger'
         })
-        console.log(error)
+        // console.log(error)
       }
     },
     viewBinnacle (binnacle, index) {
@@ -376,7 +376,7 @@ export default {
       this.hasSelect = true
       this.binaccleSelect = binnacle
       this.idBinnacle = binnacle.idbinnacle
-      console.log(this.binaccleSelect)
+      // console.log(this.binaccleSelect)
       this.indexBinnacle = index
     },
     async getVehicles () {
@@ -384,7 +384,7 @@ export default {
         const res = await this.$store.dispatch('modules/vehicles/getVehicles')
         this.vehicles = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async updateStatus () {
@@ -398,7 +398,7 @@ export default {
           type: 'is-success'
         })
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getParticipants () {
@@ -408,7 +408,7 @@ export default {
         )
         this.participants = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterData (text) {
@@ -424,14 +424,14 @@ export default {
       this.refresh()
     },
     saveEdit () {
-      console.log(this.binnacleSelect)
+      // console.log(this.binnacleSelect)
     },
     viewPoint (point) {
       this.point = [point.x, point.y]
     },
     async deletePlan () {
       try {
-        console.log(this.plan)
+        // console.log(this.plan)
         await this.$store.dispatch('modules/plans/deletePlan', this.plan)
         this.$buefy.toast.open({
           message: '¡Planificación eliminada!',
@@ -439,7 +439,7 @@ export default {
         })
         this.$router.push('/calendar')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
         this.$buefy.toast.open({
           message: 'Ocurrió un error, intente más tarde',
           type: 'is-danger'

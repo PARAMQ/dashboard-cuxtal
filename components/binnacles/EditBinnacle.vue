@@ -937,7 +937,7 @@ export default {
     },
     // Crear bitacora
     async createOrUpdate () {
-      console.log(this.form)
+      // console.log(this.form)
       this.form.hour_init = this.hourInit
       this.form.hour_end = this.hourEnd
       try {
@@ -945,10 +945,10 @@ export default {
           'modules/binnacles/createOrUpdateBinnacle',
           this.form
         )
-        console.log(idBinnacle)
+        // console.log(idBinnacle)
         const binnacle = await this.getBinnacle(idBinnacle)
         if (this.vegetableAffected.length > 0) {
-          console.log(this.vegetableAffected)
+          // console.log(this.vegetableAffected)
           binnacle.list_vegetable_affected = this.vegetableAffected.map((x) => {
             x.idbinnacle = idBinnacle
             return x
@@ -966,14 +966,14 @@ export default {
           await this.updateBinnacle(binnacle)
         }
         if (this.files.length > 0) {
-          console.log(this.files)
+          // console.log(this.files)
           const formData = new FormData()
           this.files.map((file, index) => {
             const typeFile = file.type
             const blobFile = new Blob([file], { type: typeFile })
             const temporalName = 'evidencia_' + (index + 1) + '_Bitácora_' + binnacle.number
             const temporalFile = new File([blobFile], temporalName, typeFile)
-            console.log(temporalFile)
+            // console.log(temporalFile)
             formData.append('binnacle_photo[]', temporalFile)
           })
           this.files.forEach((files, index) => {
@@ -984,7 +984,7 @@ export default {
             })
           })
           binnacle.list_image = this.temporalFiles
-          console.log(binnacle)
+          // console.log(binnacle)
           const positionsRelation = await this.updateBinnacle(binnacle)
           this.temporalFiles.forEach((x, index) => {
             formData.append('idimages[' + index + ']', positionsRelation[index])
@@ -1017,7 +1017,7 @@ export default {
         this.isLoading = false
         this.$emit('save')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       } finally {
         this.buttonDisabled = false
         this.isLoading = false
@@ -1031,7 +1031,7 @@ export default {
         )
         return res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getOneMoment (id) {
@@ -1042,7 +1042,7 @@ export default {
           id
         )
         this.isLoading = false
-        console.log(res)
+        // console.log(res)
         // res.idparticipants = this.binnacleObject.idparticipants
         res.date = new Date(res.date)
         res.hour_init = new Date(res.hour_init)
@@ -1063,7 +1063,7 @@ export default {
         res.participant = this.filterParticipantId(this.binnacleObject.idparticipants)
         this.form = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     // Actualizar bitacora
@@ -1088,7 +1088,7 @@ export default {
         this.vehicles = res
         this.vehiclesFilter = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterVehicles (text) {
@@ -1110,7 +1110,7 @@ export default {
         this.participants = res
         this.participantsFilter = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     selectParticipant (option) {
@@ -1142,7 +1142,7 @@ export default {
         this.subZones = res
         this.subZonesFilter = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterSubZones (text) {
@@ -1167,7 +1167,7 @@ export default {
         this.vegetation = res
         this.vegetationFilter = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterVegetation (text) {
@@ -1255,7 +1255,7 @@ export default {
             'modules/coordinates/createOrUpdateCoordinate',
             point
           )
-          // console.log(this.idPoints)
+          // // console.log(this.idPoints)
           this.idPoints.push({
             idcoordinates: res,
             idbinnacle: binnacle
@@ -1274,9 +1274,9 @@ export default {
     },
     convertCoordinatesFromUtm (coords) {},
     viewPoint () {
-      console.log(this.temporalPoint)
+      // console.log(this.temporalPoint)
       this.ViewPoint = this.convertCoordinatesToUtm(this.temporalPoint)
-      console.log(this.ViewPoint)
+      // console.log(this.ViewPoint)
     }
   }
 }

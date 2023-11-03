@@ -209,7 +209,7 @@ export default {
           message: 'Ocurrió un error, intente nuevamente',
           type: 'is-danger'
         })
-        console.log(error)
+        // console.log(error)
       }
     },
     deleteZone (zone) {
@@ -256,7 +256,7 @@ export default {
         )
         this.zonas = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     }
   }

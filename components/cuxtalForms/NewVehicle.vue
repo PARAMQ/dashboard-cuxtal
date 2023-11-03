@@ -98,7 +98,7 @@ export default {
         })
         this.$emit('create')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     }
   }

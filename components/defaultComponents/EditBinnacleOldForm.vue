@@ -445,12 +445,12 @@ export default {
   },
   watch: {
     objectBinnacle (newValue, oldValue) {
-      console.log(newValue)
+      // console.log(newValue)
     },
     async idBinnacle (newValue, oldValue) {
       if (newValue) {
         const binnacle = await this.getBinnacle(newValue)
-        console.log(binnacle)
+        // console.log(binnacle)
         binnacle.date = new Date(binnacle.date)
         if (binnacle.hour_init) {
           binnacle.hour_init = new Date(binnacle.hour_init)
@@ -466,10 +466,10 @@ export default {
       }
     },
     form (newValue, oldValue) {
-      console.log(newValue)
+      // console.log(newValue)
     },
     point (newValue, oldValue) {
-      // console.log(newValue)
+      // // console.log(newValue)
       if (newValue) {
         this.convertCoordinatesToUtm(newValue)
       }
@@ -512,14 +512,14 @@ export default {
         this.plan = res
         this.binnacles = res.binnacles ? res.binnacles : []
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async createOrUpdateBinnacle () {
       this.isLoading = true
       this.buttonDisabled = true
       const temporalForm = JSON.parse(JSON.stringify(this.form))
-      console.log(temporalForm)
+      // console.log(temporalForm)
       if (temporalForm.status === 'revisado') {
         this.$swal.fire({
           title: '¿Qué tipo de bitácora es?',
@@ -531,26 +531,26 @@ export default {
           denyButtonText: 'Denuncia',
           cancelButtonText: 'Programada'
         }).then(async (result) => {
-          // console.log(result)
+          // // console.log(result)
           if (result.isConfirmed) {
             // eslint-disable-next-line no-unused-expressions
             temporalForm.type = 'techOp'
             await this.createOrUpdate(temporalForm)
-            // // console.log('Opinion tecnica')
+            // // // console.log('Opinion tecnica')
             this.isLoading = false
             this.buttonDisabled = false
             // this.$router.push('/tracking/technicalOp/')
           } else if (result.isDenied) {
             temporalForm.type = 'complaint'
             await this.createOrUpdate(temporalForm)
-            // // console.log('Denuncia')
+            // // // console.log('Denuncia')
             this.isLoading = false
             this.buttonDisabled = false
             // this.$router.push('/tracking/complaint/')
           } else if (result.isDismissed) {
             temporalForm.type = 'programmed'
             await this.createOrUpdate(temporalForm)
-            // // console.log('programada')
+            // // // console.log('programada')
             this.isLoading = false
             this.buttonDisabled = false
             // this.$router.push('/tracking/programmed/')
@@ -630,7 +630,7 @@ export default {
         // this.isLoading = false
         // this.$emit('update')
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       } finally {
         this.buttonDisabled = false
         this.isLoading = false
@@ -638,14 +638,14 @@ export default {
     },
     readFile () {
       this.temporalFile = this.$refs.file.files[0]
-      // console.log(this.temporalFile)
+      // // console.log(this.temporalFile)
     },
     convertCoordinatesToUtm (coords) {
-      console.log(coords)
+      // console.log(coords)
       // eslint-disable-next-line
       const utm = new utmObj()
       const utmCoords = utm.convertLatLngToUtm(coords[0], coords[1], 1)
-      console.log(utmCoords)
+      // console.log(utmCoords)
     },
     convertCoordinatesFromUtm (coords) {},
     closeModal () {
@@ -708,7 +708,7 @@ export default {
         const res = await this.$store.dispatch('modules/vehicles/getVehicles')
         this.vehicles = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getVeg () {
@@ -718,7 +718,7 @@ export default {
         )
         this.vegetation = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getLegalZones () {
@@ -726,7 +726,7 @@ export default {
         this.legalZones = await this.$store.dispatch('modules/zones/getZones')
         this.filteredLegalZones = this.legalZones
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getSubZones () {
@@ -734,7 +734,7 @@ export default {
         this.subZones = await this.$store.dispatch('modules/zones/getSubZones')
         this.filteredSubZones = this.subZones
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getOpZones () {
@@ -744,7 +744,7 @@ export default {
         )
         this.filteredOpZones = this.opZones
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getParticipants () {
@@ -755,7 +755,7 @@ export default {
         this.options = res
         this.participants = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     filterData (text) {
@@ -802,7 +802,7 @@ export default {
         )
         return res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     viewPoint (point) {
@@ -812,7 +812,7 @@ export default {
       this.center = this.point
     },
     deletePoint (index) {
-      console.log(index)
+      // console.log(index)
       this.points.splice(index, 1)
       this.pointsMap.splice(index, 1)
       // this.form.list_coordinates_deleted.push(object)
@@ -835,7 +835,7 @@ export default {
           this.formCoord
         )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     filterVehicles (text) {
@@ -919,7 +919,7 @@ export default {
       })
     },
     filterPersonRecorrido () {
-      // console.log(this.participant)
+      // // console.log(this.participant)
       this.options = this.participants.filter((option) => {
         return option.name
           .toString()
@@ -929,7 +929,7 @@ export default {
     },
     deleteVehicles (object) {
       this.form.list_vehicles_deleted.push(object)
-      // console.log(object)
+      // // console.log(object)
     },
     deleteOpZone (object) {
       this.form.list_operative_zones_deleted.push(object)

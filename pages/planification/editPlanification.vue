@@ -336,16 +336,16 @@ export default {
   },
   methods: {
     async getPlan () {
-      // console.log(this.idPlanification)
+      // // console.log(this.idPlanification)
       try {
         const res = await this.$store.dispatch(
           'modules/plans/readPlan',
           this.idPlanification
         )
-        // console.log(res)
+        // // console.log(res)
         this.plan = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     refresh () {
@@ -387,7 +387,7 @@ export default {
           message: 'Ocurrió un error, intente más tarde',
           type: 'is-danger'
         })
-        console.log(error)
+        // console.log(error)
       }
     },
     viewBinnacle (binnacle, index) {
@@ -403,7 +403,7 @@ export default {
         const res = await this.$store.dispatch('modules/vehicles/getVehicles')
         this.vehicles = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async updateStatus () {
@@ -418,7 +418,7 @@ export default {
         })
         this.getPlan()
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getParticipants () {
@@ -428,7 +428,7 @@ export default {
         )
         this.participants = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterData (text) {
@@ -439,14 +439,14 @@ export default {
       })
     },
     saveEdit () {
-      console.log(this.binnacleSelect)
+      // console.log(this.binnacleSelect)
     },
     viewPoint (point) {
       this.point = [point.x, point.y]
     },
     async deletePlan () {
       try {
-        // console.log(this.plan)
+        // // console.log(this.plan)
         await this.$store.dispatch('modules/plans/deletePlan', this.plan)
         this.$buefy.toast.open({
           message: '¡Planificación eliminada!',
@@ -454,7 +454,7 @@ export default {
         })
         this.$router.push('/calendar')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
         this.$buefy.toast.open({
           message: 'Ocurrió un error, intente más tarde',
           type: 'is-danger'
@@ -478,7 +478,7 @@ export default {
         // Clean up
         window.URL.revokeObjectURL(blobURL)
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     }
   }

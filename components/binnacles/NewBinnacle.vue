@@ -64,7 +64,7 @@
                   <strong>Personal y vehiculos</strong>
                 </div>
                 <br>
-                <b-field label="Persona que realizó el recorrido">
+                <b-field label="Responsable">
                   <b-autocomplete
                     :data="participantsFilter"
                     icon="magnify"
@@ -268,7 +268,7 @@
               <div class="column is-6">
                 <section>
                   <b-field>
-                    <b-upload v-model="files" multiple drag-drop accept=".png">
+                    <b-upload v-model="files" multiple drag-drop>
                       <section class="section">
                         <div class="content has-text-centered">
                           <p>
@@ -896,7 +896,7 @@ export default {
     isActive (newVal, oldVal) {
       if (newVal && !this.isExtraordinary) {
         this.form.idplanification = this.plannification
-        console.log(this.form)
+        // console.log(this.form)
       } else if (this.isExtraordinary) {
         this.form.isextraordinary = true
       }
@@ -943,12 +943,12 @@ export default {
         const res = await this.$store.dispatch('modules/users/getData')
         this.form.iduser = res.idusers
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     // Crear bitacora
     async createOrUpdate () {
-      console.log(this.form)
+      // console.log(this.form)
       this.isLoading = true
       this.form.hour_init = this.hourInit
       this.form.hour_end = this.hourEnd
@@ -959,7 +959,7 @@ export default {
         )
         const binnacle = await this.getBinnacle(idBinnacle)
         if (this.vegetableAffected.length > 0) {
-          console.log(this.vegetableAffected)
+          // console.log(this.vegetableAffected)
           binnacle.list_vegetable_affected = this.vegetableAffected.map((x) => {
             x.idbinnacle = idBinnacle
             return x
@@ -977,13 +977,17 @@ export default {
           await this.updateBinnacle(binnacle)
         }
         if (this.files.length > 0) {
-          console.log(this.files)
           const formData = new FormData()
           this.files.map((file, index) => {
-            const temporalName = 'evidencia_' + (index + 1) + '_bitácora_' + binnacle.number + '.png'
-            const temporalFile = new File([file], temporalName, { type: 'image/png' })
-            console.log(temporalFile)
-            formData.append('binnacle_photo[]', temporalFile)
+            if (file.type === 'image/png') {
+              const temporalName = 'evidencia_' + (index + 1) + '_bitácora_' + binnacle.number + '.png'
+              const temporalFile = new File([file], temporalName, { type: 'image/png' })
+              formData.append('binnacle_photo[]', temporalFile)
+            } else if (file.type === 'image/jpeg') {
+              const temporalName = 'evidencia_' + (index + 1) + '_bitácora_' + binnacle.number + '.jpg'
+              const temporalFile = new File([file], temporalName, { type: 'image/jpeg' })
+              formData.append('binnacle_photo[]', temporalFile)
+            }
           })
           this.files.forEach((files, index) => {
             this.temporalFiles.push({
@@ -993,7 +997,7 @@ export default {
             })
           })
           binnacle.list_image = this.temporalFiles
-          console.log(binnacle)
+          // // console.log(binnacle)
           const positionsRelation = await this.updateBinnacle(binnacle)
           this.temporalFiles.forEach((x, index) => {
             formData.append('idimages[' + index + ']', positionsRelation[index])
@@ -1027,7 +1031,7 @@ export default {
         this.$emit('save')
       } catch (error) {
         this.isLoading = false
-        console.log(error)
+        // console.log(error)
       } finally {
         this.buttonDisabled = false
         this.isLoading = false
@@ -1041,7 +1045,7 @@ export default {
         )
         return res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     // Actualizar bitacora
@@ -1066,7 +1070,7 @@ export default {
         this.vehicles = res
         this.vehiclesFilter = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterVehicles (text) {
@@ -1088,7 +1092,7 @@ export default {
         this.participants = res
         this.participantsFilter = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     selectParticipant (option) {
@@ -1116,7 +1120,7 @@ export default {
         this.subZones = res
         this.subZonesFilter = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterSubZones (text) {
@@ -1141,7 +1145,7 @@ export default {
         this.vegetation = res
         this.vegetationFilter = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterVegetation (text) {
@@ -1229,7 +1233,7 @@ export default {
             'modules/coordinates/createOrUpdateCoordinate',
             point
           )
-          // console.log(this.idPoints)
+          // // console.log(this.idPoints)
           this.idPoints.push({
             idcoordinates: res,
             idbinnacle: binnacle
@@ -1248,9 +1252,9 @@ export default {
     },
     convertCoordinatesFromUtm (coords) {},
     viewPoint () {
-      console.log(this.temporalPoint)
+      // console.log(this.temporalPoint)
       this.ViewPoint = this.convertCoordinatesToUtm(this.temporalPoint)
-      console.log(this.ViewPoint)
+      // console.log(this.ViewPoint)
     }
   }
 }

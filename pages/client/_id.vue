@@ -174,7 +174,7 @@ export default {
     },
     async saveForm (form) {
       try {
-        console.log(form)
+        // console.log(form)
         this.$store.commit('buttonLoadingToggle')
         await this.$store.dispatch('modules/clients/createOrUpdate', form)
         this.$buefy.snackbar.open({
@@ -184,13 +184,13 @@ export default {
         })
         this.$router.push('/clients')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       } finally {
         this.$store.commit('buttonLoadingToggle')
       }
     },
     cancelForm () {
-      console.log(this.activeStep)
+      // console.log(this.activeStep)
     },
     async getData () {
       if (this.$route.params.id) {
@@ -200,7 +200,7 @@ export default {
             'modules/clients/getDetailsById',
             this.$route.params.id
           )
-          console.log(res)
+          // console.log(res)
 
           if (res) {
             this.isEdit = true
@@ -209,7 +209,7 @@ export default {
             this.$router.push({ name: 'clients' })
           }
         } catch (e) {
-          console.log(e)
+          // console.log(e)
           this.$buefy.toast.open({
             message: `Error: ${e.message}`,
             type: 'is-danger',

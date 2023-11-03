@@ -22,7 +22,7 @@ export const mutations = {
 export const actions = {
   async login ({ commit }, data) {
     const res = await login(data)
-    // console.log(res)
+    // // console.log(res)
     setToken(res)
     return res
   },
@@ -37,7 +37,7 @@ export const actions = {
     if (token && !state.user) {
       // const data = decodeToken(token)
       const user = await getUserInfo()
-      // console.log(user)
+      // // console.log(user)
       // TODO: refresh token
       delete user.password
       commit('set_user', user)
