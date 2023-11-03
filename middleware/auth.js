@@ -26,7 +26,7 @@ export default async function ({ store, redirect, route }) {
           ...user
         })
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
         // remove token and go to login page to re-login
         await store.dispatch('modules/auth/logout')
         redirect(`/auth/login?redirect=${route.path}`)

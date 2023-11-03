@@ -344,7 +344,7 @@ export default {
       try {
         this.binnacles = await this.$store.dispatch('modules/complaint/getComplaints')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     refresh () {
@@ -359,7 +359,7 @@ export default {
       this.isActiveEdit = true
     },
     async deleteBinnacle () {
-      console.log(this.binaccleSelect.idcomplaint)
+      // console.log(this.binaccleSelect.idcomplaint)
       try {
         await this.$store.dispatch(
           'modules/complaint/deleteComplaint',
@@ -377,11 +377,11 @@ export default {
           message: 'Ocurrió un error, intente más tarde',
           type: 'is-danger'
         })
-        console.log(error)
+        // console.log(error)
       }
     },
     async viewBinnacle (binnacle, index) {
-      console.log(binnacle)
+      // console.log(binnacle)
       this.isLoadingCard = true
       const tenure = await this.getTenure(binnacle.idtenure)
       const ilicit = await this.getIlicit(binnacle.idilicit_denounced)
@@ -412,7 +412,7 @@ export default {
         const res = await this.$store.dispatch('modules/vehicles/getVehicles')
         this.vehicles = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getVegetable (array) {
@@ -423,7 +423,7 @@ export default {
             const res = await this.$store.dispacth('modules/vegetation/getInfoVegetation', element.idva)
             vegetableA.push(res)
           } catch (error) {
-            console.log(error)
+            // console.log(error)
           }
         }
         return vegetableA
@@ -437,7 +437,7 @@ export default {
           const res = await this.$store.dispatch('modules/coordinations/getInfoCoordination', id)
           return res.description
         } catch (error) {
-          console.log(error)
+          // console.log(error)
         }
       } else {
         return 'Sin descripción'
@@ -449,7 +449,7 @@ export default {
           const res = await this.$store.dispatch('modules/gobLevel/getInfoGobLevel', id)
           return res.description
         } catch (error) {
-          console.log(error)
+          // console.log(error)
         }
       } else {
         return 'Sin descripción'
@@ -461,7 +461,7 @@ export default {
           const res = await this.$store.dispatch('modules/zones/getInfoZone', id)
           return res.description
         } catch (error) {
-          console.log(error)
+          // console.log(error)
         }
       } else {
         return 'Sin descripción'
@@ -473,7 +473,7 @@ export default {
           const res = await this.$store.dispatch('modules/zones/getInfoSubZone', id)
           return res.description
         } catch (error) {
-          console.log(error)
+          // console.log(error)
         }
       }
     },
@@ -483,7 +483,7 @@ export default {
           const res = await this.$store.dispatch('modules/zones/getInfoZone', id)
           return res.description
         } catch (error) {
-          console.log(error)
+          // console.log(error)
         }
       }
     },
@@ -493,7 +493,7 @@ export default {
           const res = await this.$store.dispatch('modules/ilicitDenounced/getInfoIlicitDenounced', id)
           return res.description
         } catch (error) {
-          console.log(error)
+          // console.log(error)
         }
       } else {
         return 'Sin descripción'
@@ -505,7 +505,7 @@ export default {
           const res = await this.$store.dispatch('modules/tenure/getInfoTenure', id)
           return res.description
         } catch (error) {
-          console.log(error)
+          // console.log(error)
         }
       } else {
         return 'Sin descripción'
@@ -522,7 +522,7 @@ export default {
           type: 'is-success'
         })
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getParticipants () {
@@ -532,7 +532,7 @@ export default {
         )
         this.participants = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterData (text) {
@@ -548,14 +548,14 @@ export default {
       this.refresh()
     },
     saveEdit () {
-      console.log(this.binnacleSelect)
+      // console.log(this.binnacleSelect)
     },
     viewPoint (point) {
       this.point = [point.x, point.y]
     },
     async deletePlan () {
       try {
-        console.log(this.plan)
+        // console.log(this.plan)
         await this.$store.dispatch('modules/plans/deletePlan', this.plan)
         this.$buefy.toast.open({
           message: '¡Planificación eliminada!',
@@ -563,7 +563,7 @@ export default {
         })
         this.$router.push('/calendar')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
         this.$buefy.toast.open({
           message: 'Ocurrió un error, intente más tarde',
           type: 'is-danger'

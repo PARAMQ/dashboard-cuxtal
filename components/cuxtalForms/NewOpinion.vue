@@ -1055,7 +1055,7 @@ export default {
           message: 'Ocurrió un error, intente nuevamente',
           type: 'is-danger'
         })
-        console.log(error)
+        // console.log(error)
       } finally {
         this.isLoading = false
       }
@@ -1065,17 +1065,17 @@ export default {
         this.vegetation = await this.$store.dispatch(
           'modules/vegetation/getVegetations'
         )
-        // console.log(this.vegetation)
+        // // console.log(this.vegetation)
         this.filterVegetable = this.vegetation
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getDependences () {
       try {
         this.dependences = await this.$store.dispatch('modules/coordinations/getCoordinations')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterVegetableFun (text) {
@@ -1103,63 +1103,63 @@ export default {
       try {
         await this.$store.dispatch('modules/technicalOp/uploadFiles', formData)
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getLegalEntity () {
       try {
         this.legalEntity = await this.$store.dispatch('modules/legalEntity/getLegalEntitys')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getTypeLegalEntity () {
       try {
         this.typeLegalEntity = await this.$store.dispatch('modules/legalEntity/getTypeLegalEntitys')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getAppMethod () {
       try {
         this.appMethod = await this.$store.dispatch('modules/apMethod/getApplicationMethods')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getAppType () {
       try {
         this.appType = await this.$store.dispatch('modules/apType/getApplicantTypes')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getRequestMotive () {
       try {
         this.requestMotive = await this.$store.dispatch('modules/requestMotive/getRequestMotives')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getMotiveDescription () {
       try {
         this.motiveDescription = await this.$store.dispatch('modules/motiveDescription/getMotiveDescriptions')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getTenure () {
       try {
         this.tenure = await this.$store.dispatch('modules/tenure/getTenures')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getResponseOp () {
       try {
         this.responseOp = await this.$store.dispatch('modules/responseOp/getResponseOps')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     addPoint () {
@@ -1212,7 +1212,7 @@ export default {
             'modules/coordinates/createOrUpdateCoordinate',
             point
           )
-          // console.log(this.idPoints)
+          // // console.log(this.idPoints)
           this.idPoints.push({
             idcoordinates: res,
             idbinnacle: binnacle
@@ -1231,9 +1231,9 @@ export default {
     },
     convertCoordinatesFromUtm (coords) {},
     viewPoint () {
-      console.log(this.temporalPoint)
+      // console.log(this.temporalPoint)
       this.ViewPoint = this.convertCoordinatesToUtm(this.temporalPoint)
-      console.log(this.ViewPoint)
+      // console.log(this.ViewPoint)
     }
   }
 }

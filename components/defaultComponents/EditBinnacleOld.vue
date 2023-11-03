@@ -363,7 +363,7 @@ export default {
     ...mapState(['user'])
   },
   created () {
-    console.log(this.idBinnacle)
+    // console.log(this.idBinnacle)
   },
   mounted () {
     this.center = this.point ? this.point : [0, 0]
@@ -383,13 +383,13 @@ export default {
           'modules/binnacles/getBinnacle',
           id
         )
-        console.log(res)
+        // console.log(res)
         res.date = new Date(res.date)
         res.hour_end = new Date(res.hour_end)
         res.hour_init = new Date(res.hour_init)
         this.form = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async createBinnacle () {
@@ -397,7 +397,7 @@ export default {
       this.buttonDisabled = true
       const temporalForm = JSON.parse(JSON.stringify(this.form))
       try {
-        console.log(temporalForm)
+        // console.log(temporalForm)
         /*
         // Cambiar esta parte por el this.updateBinnacle()
         const idBinnacle = await this.$store.dispatch(
@@ -449,11 +449,11 @@ export default {
         this.buttonDisabled = false
         this.isLoading = false
         if (temporalForm.status === 'revisado') {
-          console.log('revisado')
+          // console.log('revisado')
         }
         this.$emit('update')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       } finally {
         this.buttonDisabled = false
         this.isLoading = false
@@ -461,7 +461,7 @@ export default {
     },
     readFile () {
       this.temporalFile = this.$refs.file.files[0]
-      console.log(this.temporalFile)
+      // console.log(this.temporalFile)
     },
     closeModal () {
       this.form = {}
@@ -523,7 +523,7 @@ export default {
         const res = await this.$store.dispatch('modules/vehicles/getVehicles')
         this.vehicles = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getParticipants () {
@@ -533,7 +533,7 @@ export default {
         )
         this.participants = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterData (text) {
@@ -600,7 +600,7 @@ export default {
           this.formCoord
         )
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterVehicles (text) {

@@ -64,7 +64,7 @@
                   <strong>Personal y vehiculos</strong>
                 </div>
                 <br>
-                <b-field label="Persona que realizó el recorrido">
+                <b-field label="Responsable">
                   <b-autocomplete
                     :data="participantsFilter"
                     icon="magnify"
@@ -148,6 +148,22 @@
                     <template v-slot="props">
                       <strong>{{ props.option.description }}</strong>
                     </template>
+                    <template #empty>
+                      Sin resultados
+                    </template>
+                  </b-taginput>
+                </b-field>
+              </div>
+              <div class="column">
+                <b-field label="Zonas operativas">
+                  <b-taginput
+                    v-model="form.list_operative_zones"
+                    :data="opZonesFilter"
+                    field="description"
+                    autocomplete
+                    :open-on-focus="true"
+                    @typing="filterOpZone"
+                  >
                     <template #empty>
                       Sin resultados
                     </template>
@@ -247,7 +263,9 @@
                     <vl-source-osm />
                   </vl-layer-tile>
 
-                  <vl-feature>
+                  <vl-feature
+                    v-if="viewActive"
+                  >
                     <vl-geom-point :coordinates="ViewPoint" />
                   </vl-feature>
 
@@ -268,7 +286,7 @@
               <div class="column is-6">
                 <section>
                   <b-field>
-                    <b-upload v-model="files" multiple drag-drop accept=".png">
+                    <b-upload v-model="files" multiple drag-drop>
                       <section class="section">
                         <div class="content has-text-centered">
                           <p>
@@ -345,11 +363,12 @@ export default {
       formCoord: {},
       temporalPoint: [224190.791, 2311022.379],
       ViewPoint: [-89.60984537598705, 20.85610769792424],
+      viewActive: false,
       pointsMap: [[-89.60984537598705, 20.85610769792424]],
       points: [],
       idPoints: [],
       zoom: 12,
-      center: [-87, 41.999997974538374],
+      center: [-89.60984537598705, 20.85610769792424],
       rotation: 0,
       vehicles: [],
       vehiclesFilter: [],
@@ -896,7 +915,7 @@ export default {
     isActive (newVal, oldVal) {
       if (newVal && !this.isExtraordinary) {
         this.form.idplanification = this.plannification
-        console.log(this.form)
+        // console.log(this.form)
       } else if (this.isExtraordinary) {
         this.form.isextraordinary = true
       }
@@ -913,6 +932,7 @@ export default {
     this.getParticipants()
     this.getVegetation()
     this.getSubZones()
+    this.getOpZones()
   },
   methods: {
     // Funciones generales
@@ -921,6 +941,7 @@ export default {
         date: new Date(),
         idplanification: this.plannification
       }
+      this.viewActive = false
       this.files = []
       this.vegetableAffected = []
       this.temporalPoint = [224190.791, 2311022.379]
@@ -932,7 +953,7 @@ export default {
       this.vegetationFilter = this.vegetation
       this.legalZonesFilter = this.legalZones
       this.subZonesFilter = this.subZones
-      this.opZones = this.opZonesFilter
+      this.opZonesFilter = this.opZones
       this.participantsFilter = this.participants
       this.temporalFiles = []
       this.$emit('close')
@@ -943,12 +964,12 @@ export default {
         const res = await this.$store.dispatch('modules/users/getData')
         this.form.iduser = res.idusers
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     // Crear bitacora
     async createOrUpdate () {
-      console.log(this.form)
+      // console.log(this.form)
       this.isLoading = true
       this.form.hour_init = this.hourInit
       this.form.hour_end = this.hourEnd
@@ -959,7 +980,7 @@ export default {
         )
         const binnacle = await this.getBinnacle(idBinnacle)
         if (this.vegetableAffected.length > 0) {
-          console.log(this.vegetableAffected)
+          // console.log(this.vegetableAffected)
           binnacle.list_vegetable_affected = this.vegetableAffected.map((x) => {
             x.idbinnacle = idBinnacle
             return x
@@ -977,13 +998,17 @@ export default {
           await this.updateBinnacle(binnacle)
         }
         if (this.files.length > 0) {
-          console.log(this.files)
           const formData = new FormData()
           this.files.map((file, index) => {
-            const temporalName = 'evidencia_' + (index + 1) + '_bitácora_' + binnacle.number + '.png'
-            const temporalFile = new File([file], temporalName, { type: 'image/png' })
-            console.log(temporalFile)
-            formData.append('binnacle_photo[]', temporalFile)
+            if (file.type === 'image/png') {
+              const temporalName = 'evidencia_' + (index + 1) + '_bitácora_' + binnacle.number + '.png'
+              const temporalFile = new File([file], temporalName, { type: 'image/png' })
+              formData.append('binnacle_photo[]', temporalFile)
+            } else if (file.type === 'image/jpeg') {
+              const temporalName = 'evidencia_' + (index + 1) + '_bitácora_' + binnacle.number + '.jpg'
+              const temporalFile = new File([file], temporalName, { type: 'image/jpeg' })
+              formData.append('binnacle_photo[]', temporalFile)
+            }
           })
           this.files.forEach((files, index) => {
             this.temporalFiles.push({
@@ -993,7 +1018,6 @@ export default {
             })
           })
           binnacle.list_image = this.temporalFiles
-          console.log(binnacle)
           const positionsRelation = await this.updateBinnacle(binnacle)
           this.temporalFiles.forEach((x, index) => {
             formData.append('idimages[' + index + ']', positionsRelation[index])
@@ -1004,6 +1028,7 @@ export default {
           date: new Date(),
           idplanification: this.plannification
         }
+        this.viewActive = false
         this.files = []
         this.vegetableAffected = []
         this.temporalPoint = [224190.791, 2311022.379]
@@ -1027,7 +1052,7 @@ export default {
         this.$emit('save')
       } catch (error) {
         this.isLoading = false
-        console.log(error)
+        // console.log(error)
       } finally {
         this.buttonDisabled = false
         this.isLoading = false
@@ -1041,7 +1066,7 @@ export default {
         )
         return res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     // Actualizar bitacora
@@ -1066,7 +1091,7 @@ export default {
         this.vehicles = res
         this.vehiclesFilter = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterVehicles (text) {
@@ -1088,7 +1113,7 @@ export default {
         this.participants = res
         this.participantsFilter = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     selectParticipant (option) {
@@ -1109,6 +1134,29 @@ export default {
         }
       })
     },
+    // Zonas operativas
+    async getOpZones () {
+      try {
+        const res = await this.$store.dispatch('modules/operativeZones/getZones')
+        this.opZonesFilter = res
+        this.opZones = res
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    filterOpZone (text) {
+      this.opZonesFilter = this.opZones.filter((option) => {
+        if (
+          option.description &&
+          option.description
+            .toString()
+            .toLowerCase()
+            .includes(text.toLowerCase())
+        ) {
+          return option
+        }
+      })
+    },
     // Subzonas
     async getSubZones () {
       try {
@@ -1116,7 +1164,7 @@ export default {
         this.subZones = res
         this.subZonesFilter = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterSubZones (text) {
@@ -1141,7 +1189,7 @@ export default {
         this.vegetation = res
         this.vegetationFilter = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterVegetation (text) {
@@ -1180,6 +1228,7 @@ export default {
     },
     // Coordenadas
     addPoint () {
+      this.viewActive = false
       if (this.formCoord.name && this.formCoord.name !== '') {
         if (this.points.length === 0) {
           const pointConvert = this.convertCoordinatesToUtm([
@@ -1229,7 +1278,7 @@ export default {
             'modules/coordinates/createOrUpdateCoordinate',
             point
           )
-          // console.log(this.idPoints)
+          // // console.log(this.idPoints)
           this.idPoints.push({
             idcoordinates: res,
             idbinnacle: binnacle
@@ -1248,9 +1297,10 @@ export default {
     },
     convertCoordinatesFromUtm (coords) {},
     viewPoint () {
-      console.log(this.temporalPoint)
+      // console.log(this.temporalPoint)
       this.ViewPoint = this.convertCoordinatesToUtm(this.temporalPoint)
-      console.log(this.ViewPoint)
+      this.viewActive = true
+      // console.log(this.ViewPoint)
     }
   }
 }

@@ -471,7 +471,7 @@ export default {
         this.plan = res
         this.binnacles = res.binnacles ? res.binnacles : []
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async createOrUpdateBinnacle () {
@@ -491,26 +491,26 @@ export default {
           denyButtonText: 'Denuncia',
           cancelButtonText: 'Programada'
         }).then(async (result) => {
-          // console.log(result)
+          // // console.log(result)
           if (result.isConfirmed) {
             // eslint-disable-next-line no-unused-expressions
             temporalForm.type = 'techOp'
             await this.createOrUpdate(temporalForm)
-            // // console.log('Opinion tecnica')
+            // // // console.log('Opinion tecnica')
             this.isLoading = false
             this.buttonDisabled = false
             // this.$router.push('/tracking/technicalOp/')
           } else if (result.isDenied) {
             temporalForm.type = 'complaint'
             await this.createOrUpdate(temporalForm)
-            // // console.log('Denuncia')
+            // // // console.log('Denuncia')
             this.isLoading = false
             this.buttonDisabled = false
             // this.$router.push('/tracking/complaint/')
           } else if (result.isDismissed) {
             temporalForm.type = 'programmed'
             await this.createOrUpdate(temporalForm)
-            // // console.log('programada')
+            // // // console.log('programada')
             this.isLoading = false
             this.buttonDisabled = false
             // this.$router.push('/tracking/programmed/')
@@ -525,7 +525,7 @@ export default {
       */
     },
     async createOrUpdate (temporalForm) {
-      console.log(JSON.stringify(temporalForm))
+      // console.log(JSON.stringify(temporalForm))
       try {
         let binnacle
         let idBinnacle
@@ -592,7 +592,7 @@ export default {
         this.isLoading = false
         this.$emit('update')
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       } finally {
         this.buttonDisabled = false
         this.isLoading = false
@@ -665,7 +665,7 @@ export default {
         this.vehicles = res
         this.filteredVehicles = this.vehicles
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getVeg () {
@@ -675,7 +675,7 @@ export default {
         )
         this.vegetation = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getLegalZones () {
@@ -683,7 +683,7 @@ export default {
         this.legalZones = await this.$store.dispatch('modules/zones/getZones')
         this.filteredLegalZones = this.legalZones
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getSubZones () {
@@ -691,7 +691,7 @@ export default {
         this.subZones = await this.$store.dispatch('modules/zones/getSubZones')
         this.filteredSubZones = this.subZones
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getOpZones () {
@@ -701,7 +701,7 @@ export default {
         )
         this.filteredOpZones = this.opZones
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getParticipants () {
@@ -713,7 +713,7 @@ export default {
         this.participants = res
         this.filteredParticipants = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     filterData (text) {
@@ -760,7 +760,7 @@ export default {
         )
         return res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     viewPoint (point) {
@@ -791,7 +791,7 @@ export default {
           this.formCoord
         )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     filterVehicles (text) {
@@ -875,7 +875,7 @@ export default {
       })
     },
     filterPersonRecorrido () {
-      // console.log(this.participant)
+      // // console.log(this.participant)
       this.options = this.participants.filter((option) => {
         return option.name
           .toString()
@@ -884,7 +884,7 @@ export default {
       })
     },
     deleteVehicles (object) {
-      console.log(object)
+      // console.log(object)
     }
   }
 }

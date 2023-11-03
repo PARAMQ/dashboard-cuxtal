@@ -113,7 +113,7 @@ export default {
           'modules/deptos/getDeptos'
         )
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getCharges () {
@@ -122,7 +122,7 @@ export default {
           'modules/charges/getCharges'
         )
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async createUser () {

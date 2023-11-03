@@ -82,7 +82,7 @@
                       <b-button
                         type="is-link is-light"
                         icon-right="file-word"
-                        @click="getWord(bitacora.idbinnacle)"
+                        @click="getWord(bitacora.idbinnacle, bitacora.number)"
                       />
                     </div>
                   </div>
@@ -156,6 +156,13 @@
       :disable-form="true"
       @close="updateView"
     />
+    <b-notification
+      v-model="downloadFile"
+      type="is-info is-light"
+      :closable="false"
+    >
+      Descargando bitácora
+    </b-notification>
   </div>
 </template>
 
@@ -169,6 +176,7 @@ export default {
     return {
       activeModal: false,
       activeViewModal: false,
+      downloadFile: false,
       idBinnacle: 0,
       isActive: false,
       isLoadingBinnacles: false,
@@ -226,7 +234,7 @@ export default {
         })
         this.getData()
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     // Obtener todas las bitacoras
@@ -239,7 +247,7 @@ export default {
         // \this.getCoordinates(this.binnacles)
         this.isLoadingBinnacles = false
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     // Obtener la información por bitácora
@@ -248,7 +256,7 @@ export default {
         const res = await this.$store.dispatch('modules/binnacles/getBinnacle', idBinnacle)
         return res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     // Visualizar una bitácora en el mapa
@@ -262,7 +270,7 @@ export default {
         const point = [object.x, object.y]
         const pointConvert = this.convertCoordinatesToUtm(point)
         binnacle.points.push(pointConvert)
-        console.log(pointConvert)
+        // console.log(pointConvert)
       })
       if (binnacle.points.length > 0) {
         this.temporalPoints = binnacle.points
@@ -278,19 +286,22 @@ export default {
       }
     },
     convertCoordinatesToUtm (coords) {
-      console.log(coords)
+      // console.log(coords)
       const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')
       return [latLng.longitude, latLng.latitude]
     },
     // Obtener archivo Word
-    async getWord (binnacle) {
+    async getWord (binnacle, name) {
       try {
+        this.downloadFile = true
         const res = await this.$store.dispatch('modules/binnacles/getWordBinnacle', binnacle)
         // Ensure the response is an ArrayBuffer
         const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })
         const blobURL = window.URL.createObjectURL(blob)
         const link = document.createElement('a')
-        const filename = 'archivo.docx'
+        const secondPart = name.substring((name.length - 4), name.length)
+        const firstPart = name.substring(0, (name.length - 4))
+        const filename = 'bitácora_' + firstPart + '-' + secondPart + '.docx'
         link.href = blobURL
         link.setAttribute('download', filename)
 
@@ -299,8 +310,12 @@ export default {
 
         // Clean up
         window.URL.revokeObjectURL(blobURL)
+        this.downloadFile = false
       } catch (error) {
-        console.log(error)
+        this.downloadFile = false
+        // console.log(error)
+      } finally {
+        this.downloadFile = false
       }
     }
   }

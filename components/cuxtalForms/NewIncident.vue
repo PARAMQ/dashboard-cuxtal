@@ -255,7 +255,7 @@
                 >
                   <vl-view
                     :zoom.sync="zoom"
-                    :center.sync="point"
+                    :center.sync="center"
                     :rotation.sync="rotation"
                   />
 
@@ -266,6 +266,7 @@
                   <vl-feature>
                     <vl-geom-point :coordinates="point" />
                   </vl-feature>
+
                   <vl-feature>
                     <vl-geom-multi-point :coordinates="pointsMap" />
                   </vl-feature>
@@ -468,6 +469,7 @@ export default {
   },
   methods: {
     async createIncident () {
+      /*
       try {
         this.isLoading = true
         this.form.complaint_coordinates = this.points
@@ -475,7 +477,7 @@ export default {
           'modules/complaint/createOrUpdateComplaint',
           this.form
         )
-        console.log(res)
+        // console.log(res)
         // await this.uploadFiles(res)
         this.form = {}
         this.fileDenuncia = {}
@@ -493,10 +495,11 @@ export default {
           message: 'Ocurrió un error, intente nuevamente',
           type: 'is-danger'
         })
-        console.log(error)
+        // console.log(error)
       } finally {
         this.isLoading = false
       }
+      */
     },
     async uploadFiles (id) {
       try {
@@ -510,7 +513,7 @@ export default {
           formData
         )
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getVegetation () {
@@ -518,10 +521,10 @@ export default {
         this.vegetation = await this.$store.dispatch(
           'modules/vegetation/getVegetations'
         )
-        // console.log(this.vegetation)
+        // // console.log(this.vegetation)
         this.filterVegetable = this.vegetation
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getDependences () {
@@ -529,9 +532,9 @@ export default {
         this.dependences = await this.$store.dispatch(
           'modules/coordinations/getCoordinations'
         )
-        // console.log(this.dependences)
+        // // console.log(this.dependences)
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     addPoint () {
@@ -583,14 +586,14 @@ export default {
           'modules/response/getResponses'
         )
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getTenures () {
       try {
         this.tenures = await this.$store.dispatch('modules/tenure/getTenures')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getGovLevels () {
@@ -599,7 +602,7 @@ export default {
           'modules/gobLevel/getGobLevels'
         )
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getIlicitsDenounced () {
@@ -608,7 +611,7 @@ export default {
           'modules/ilicitDenounced/getIlicitDenounceds'
         )
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getLegalZones () {
@@ -616,7 +619,7 @@ export default {
         this.legalZones = await this.$store.dispatch('modules/zones/getZones')
         this.filteredLegalZones = this.legalZones
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getSubZones () {
@@ -624,7 +627,7 @@ export default {
         this.subZones = await this.$store.dispatch('modules/zones/getSubZones')
         this.filteredSubZones = this.subZones
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getOpZones () {
@@ -634,7 +637,7 @@ export default {
         )
         this.filteredOpZone = this.opZones
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterVegetableFun (text) {

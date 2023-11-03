@@ -224,9 +224,9 @@ export default {
         })
         this.isLoading = false
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
-      console.log()
+      // console.log()
     },
     cancelEdit () {
       this.hasEdit = false
@@ -258,7 +258,7 @@ export default {
               type: 'is-success'
             })
           } catch (error) {
-            console.log(error)
+            // console.log(error)
           }
         }
       })
@@ -275,11 +275,11 @@ export default {
         this.isLoading = true
         this.vehiculos = []
         const res = await this.$store.dispatch('modules/users/getUsers')
-        console.log(res)
+        // console.log(res)
         this.usuarios = res
         this.isLoading = false
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     }
   }

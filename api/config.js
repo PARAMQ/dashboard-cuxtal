@@ -10,7 +10,7 @@ const service = axios.create({
   // timeout: 30000
 })
 
-// console.log(process.env.baseUrl)
+// // console.log(process.env.baseUrl)
 
 service.interceptors.request.use((config) => {
   if (!config.public) {

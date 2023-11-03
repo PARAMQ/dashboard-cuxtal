@@ -48,7 +48,7 @@ const status = (status) => {
   return status === 'process' ? 'is-warning' : (status === 'danger' ? 'is-danger' : (status === 'success' ? 'is-success' : (status === 'active' ? 'is-info' : 'is-dark')))
 }
 const statusBinnacle = (status) => {
-  // console.log(status)
+  // // console.log(status)
   /*
   switch (status) {
     case status === 'sin-revisar':

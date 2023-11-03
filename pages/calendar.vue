@@ -186,7 +186,7 @@ export default {
         this.plans = plans
         this.isLoadingPlans = false
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     }
   }
