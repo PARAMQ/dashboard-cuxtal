@@ -155,6 +155,22 @@
                 </b-field>
               </div>
               <div class="column">
+                <b-field label="Zonas operativas">
+                  <b-taginput
+                    v-model="form.list_operative_zones"
+                    :data="opZonesFilter"
+                    field="description"
+                    autocomplete
+                    :open-on-focus="true"
+                    @typing="filterOpZone"
+                  >
+                    <template #empty>
+                      Sin resultados
+                    </template>
+                  </b-taginput>
+                </b-field>
+              </div>
+              <div class="column">
                 <b-field label="Subzonificación PM">
                   <b-taginput
                     v-model="form.list_subzoning"
@@ -247,7 +263,9 @@
                     <vl-source-osm />
                   </vl-layer-tile>
 
-                  <vl-feature>
+                  <vl-feature
+                    v-if="viewActive"
+                  >
                     <vl-geom-point :coordinates="ViewPoint" />
                   </vl-feature>
 
@@ -345,11 +363,12 @@ export default {
       formCoord: {},
       temporalPoint: [224190.791, 2311022.379],
       ViewPoint: [-89.60984537598705, 20.85610769792424],
+      viewActive: false,
       pointsMap: [[-89.60984537598705, 20.85610769792424]],
       points: [],
       idPoints: [],
       zoom: 12,
-      center: [-87, 41.999997974538374],
+      center: [-89.60984537598705, 20.85610769792424],
       rotation: 0,
       vehicles: [],
       vehiclesFilter: [],
@@ -913,6 +932,7 @@ export default {
     this.getParticipants()
     this.getVegetation()
     this.getSubZones()
+    this.getOpZones()
   },
   methods: {
     // Funciones generales
@@ -921,6 +941,7 @@ export default {
         date: new Date(),
         idplanification: this.plannification
       }
+      this.viewActive = false
       this.files = []
       this.vegetableAffected = []
       this.temporalPoint = [224190.791, 2311022.379]
@@ -932,7 +953,7 @@ export default {
       this.vegetationFilter = this.vegetation
       this.legalZonesFilter = this.legalZones
       this.subZonesFilter = this.subZones
-      this.opZones = this.opZonesFilter
+      this.opZonesFilter = this.opZones
       this.participantsFilter = this.participants
       this.temporalFiles = []
       this.$emit('close')
@@ -997,7 +1018,6 @@ export default {
             })
           })
           binnacle.list_image = this.temporalFiles
-          // // console.log(binnacle)
           const positionsRelation = await this.updateBinnacle(binnacle)
           this.temporalFiles.forEach((x, index) => {
             formData.append('idimages[' + index + ']', positionsRelation[index])
@@ -1008,6 +1028,7 @@ export default {
           date: new Date(),
           idplanification: this.plannification
         }
+        this.viewActive = false
         this.files = []
         this.vegetableAffected = []
         this.temporalPoint = [224190.791, 2311022.379]
@@ -1113,6 +1134,29 @@ export default {
         }
       })
     },
+    // Zonas operativas
+    async getOpZones () {
+      try {
+        const res = await this.$store.dispatch('modules/operativeZones/getZones')
+        this.opZonesFilter = res
+        this.opZones = res
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    filterOpZone (text) {
+      this.opZonesFilter = this.opZones.filter((option) => {
+        if (
+          option.description &&
+          option.description
+            .toString()
+            .toLowerCase()
+            .includes(text.toLowerCase())
+        ) {
+          return option
+        }
+      })
+    },
     // Subzonas
     async getSubZones () {
       try {
@@ -1184,6 +1228,7 @@ export default {
     },
     // Coordenadas
     addPoint () {
+      this.viewActive = false
       if (this.formCoord.name && this.formCoord.name !== '') {
         if (this.points.length === 0) {
           const pointConvert = this.convertCoordinatesToUtm([
@@ -1254,6 +1299,7 @@ export default {
     viewPoint () {
       // console.log(this.temporalPoint)
       this.ViewPoint = this.convertCoordinatesToUtm(this.temporalPoint)
+      this.viewActive = true
       // console.log(this.ViewPoint)
     }
   }

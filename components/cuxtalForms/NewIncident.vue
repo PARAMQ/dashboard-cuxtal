@@ -255,7 +255,7 @@
                 >
                   <vl-view
                     :zoom.sync="zoom"
-                    :center.sync="point"
+                    :center.sync="center"
                     :rotation.sync="rotation"
                   />
 
@@ -266,6 +266,7 @@
                   <vl-feature>
                     <vl-geom-point :coordinates="point" />
                   </vl-feature>
+
                   <vl-feature>
                     <vl-geom-multi-point :coordinates="pointsMap" />
                   </vl-feature>
@@ -468,6 +469,7 @@ export default {
   },
   methods: {
     async createIncident () {
+      /*
       try {
         this.isLoading = true
         this.form.complaint_coordinates = this.points
@@ -497,6 +499,7 @@ export default {
       } finally {
         this.isLoading = false
       }
+      */
     },
     async uploadFiles (id) {
       try {

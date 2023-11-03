@@ -643,8 +643,8 @@ export default {
     convertCoordinatesToUtm (coords) {
       // console.log(coords)
       // eslint-disable-next-line
-      const utm = new utmObj()
-      const utmCoords = utm.convertLatLngToUtm(coords[0], coords[1], 1)
+      // const utm = new utmObj()
+      // const utmCoords = utm.convertLatLngToUtm(coords[0], coords[1], 1)
       // console.log(utmCoords)
     },
     convertCoordinatesFromUtm (coords) {},
