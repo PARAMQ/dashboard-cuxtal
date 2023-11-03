@@ -82,7 +82,7 @@
                       <b-button
                         type="is-link is-light"
                         icon-right="file-word"
-                        @click="getWord(bitacora.idbinnacle)"
+                        @click="getWord(bitacora.idbinnacle, bitacora.number)"
                       />
                     </div>
                   </div>
@@ -156,6 +156,13 @@
       :disable-form="true"
       @close="updateView"
     />
+    <b-notification
+      v-model="downloadFile"
+      type="is-info is-light"
+      :closable="false"
+    >
+      Descargando bitácora
+    </b-notification>
   </div>
 </template>
 
@@ -169,6 +176,7 @@ export default {
     return {
       activeModal: false,
       activeViewModal: false,
+      downloadFile: false,
       idBinnacle: 0,
       isActive: false,
       isLoadingBinnacles: false,
@@ -283,14 +291,17 @@ export default {
       return [latLng.longitude, latLng.latitude]
     },
     // Obtener archivo Word
-    async getWord (binnacle) {
+    async getWord (binnacle, name) {
       try {
+        this.downloadFile = true
         const res = await this.$store.dispatch('modules/binnacles/getWordBinnacle', binnacle)
         // Ensure the response is an ArrayBuffer
         const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })
         const blobURL = window.URL.createObjectURL(blob)
         const link = document.createElement('a')
-        const filename = 'archivo.docx'
+        const secondPart = name.substring((name.length - 4), name.length)
+        const firstPart = name.substring(0, (name.length - 4))
+        const filename = 'bitácora_' + firstPart + '-' + secondPart + '.docx'
         link.href = blobURL
         link.setAttribute('download', filename)
 
@@ -299,8 +310,12 @@ export default {
 
         // Clean up
         window.URL.revokeObjectURL(blobURL)
+        this.downloadFile = false
       } catch (error) {
+        this.downloadFile = false
         // console.log(error)
+      } finally {
+        this.downloadFile = false
       }
     }
   }

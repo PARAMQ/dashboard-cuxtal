@@ -468,7 +468,9 @@ export default {
         const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })
         const blobURL = window.URL.createObjectURL(blob)
         const link = document.createElement('a')
-        const filename = 'archivo.docx'
+        const secondPart = name.substring((name.length - 4), name.length)
+        const firstPart = name.substring(0, (name.length - 4))
+        const filename = 'bitácora_' + firstPart + '-' + secondPart + '.docx'
         link.href = blobURL
         link.setAttribute('download', filename)
 
