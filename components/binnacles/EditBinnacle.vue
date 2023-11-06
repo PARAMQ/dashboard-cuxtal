@@ -314,9 +314,11 @@
 
 <script>
 // eslint-disable-next-line
+// import jsonData from '../../assets/tablajes/vertices_dzununcan_json/Vertx_dzununcan_22841.json'
+// eslint-disable-next-line
 const utmObj = require('utm-latlng')
 // eslint-disable-next-line
-const utm = require('utm')
+const utm = require('utm') 
 
 export default {
   name: 'EditBinnacle',
@@ -892,6 +894,7 @@ export default {
           }
         }
       ]
+      // ertices: jsonData
     }
   },
   watch: {

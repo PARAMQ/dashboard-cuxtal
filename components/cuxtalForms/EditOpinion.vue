@@ -4,7 +4,7 @@
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
-          Nueva opinión técnica
+          Editar opinión técnica {{  }}
         </p>
       </div>
       <div class="card-content">
@@ -461,7 +461,7 @@ const utmObj = require('utm-latlng')
 const utm = require('utm')
 
 export default {
-  name: 'NewOpinion',
+  name: 'EditOpinion',
   props: {
     activeModal: {
       default: false,

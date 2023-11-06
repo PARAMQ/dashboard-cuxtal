@@ -5,10 +5,11 @@
       <header class="modal-card-head">
         <p class="modal-card-title">
           {{
-            isExtraordinary ? 'Visualizar bitácora extraordinaria' : 'Visualizar bitácora'
+            'Bitácora ' + form.number
           }}
         </p>
       </header>
+      <!--
       <section class="modal-card-body">
         <form>
           <div class="divider">
@@ -170,11 +171,6 @@
                 <b-field label="Descripción breve de la coordenada">
                   <b-input v-model="formCoord.name" />
                 </b-field>
-                <!--
-                <b-switch v-model="isSwitched">
-                  {{ isSwitched ? 'Formato UTM' : 'Coordenadas clasicas' }}
-                </b-switch>
-                -->
                 <b-field :label="isSwitched ? 'Longitud' : 'Coordenada X'">
                   <b-numberinput
                     v-model="temporalPoint[0]"
@@ -289,6 +285,183 @@
           </div>
         </form>
       </section>
+      -->
+      <section class="modal-card-body">
+        <div class="container">
+          <div class="columns">
+            <div class="column">
+              <div class="divider">
+                <strong>Relatoría</strong>
+              </div>
+              <div class="container">
+                <p>
+                  {{ form.rapporteur ? form.rapporteur : 'No tiene relatoría' }}
+                </p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="divider">
+                <strong>Datos generales</strong>
+              </div>
+              <div class="container is-flex is-justify-content-center">
+                <div class="columns">
+                  <div class="column">
+                    <b-datepicker v-model="form.date" inline />
+                  </div>
+                  <div class="column has-text-centered">
+                    <div>
+                      <b-field label="Hora de inicio">
+                        <b-timepicker v-model="form.hourInit" inline />
+                      </b-field>
+                    </div>
+                    <br>
+                    <div>
+                      <b-field label="Hora de finalización">
+                        <b-timepicker v-model="form.hourEnd" inline />
+                      </b-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <div class="columns">
+            <div class="column">
+              <div class="divider">
+                <strong>Responsable</strong>
+              </div>
+              <div v-if="form.participant" class="container">
+                <p><strong>Nombre completo: </strong>{{ form.participant }}</p>
+              </div>
+              <div v-else class="container has-text-centered">
+                <p>No se registró el responsable</p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="divider">
+                <strong>Participantes</strong>
+              </div>
+              <div v-if="form.participants.length > 0" class="container">
+                <div
+                  v-for="participant in form.participants"
+                  :key="participant.idparticipants"
+                  class="m-2"
+                >
+                  <b-taglist attached>
+                    <b-tag type="is-light" size="is-medium">
+                      {{ participant.name + ' ' + participant.lastname }}
+                    </b-tag>
+                    <b-tag type="is-success is-light" size="is-medium">
+                      {{ participant.charge ? participant.charge.description : 'Sin cargo' }}
+                    </b-tag>
+                  </b-taglist>
+                </div>
+              </div>
+              <div v-else class="container has-text-centered">
+                <p>Sin participantes</p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="divider">
+                <strong>Vehículos</strong>
+              </div>
+              <div v-if="form.list_vehicle.length > 0" class="container">
+                <div
+                  v-for="vehicle in form.list_vehicle"
+                  :key="vehicle.idvehicle"
+                  class="m-2"
+                >
+                  <b-taglist attached>
+                    <b-tag type="is-light" size="is-medium">{{ vehicle.number }}</b-tag>
+                    <b-tag type="is-info is-light" size="is-medium">{{ vehicle.plates }}</b-tag>
+                  </b-taglist>
+                </div>
+              </div>
+              <div v-else class="container has-text-centered">
+                <p>Sin vehículos</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <div class="columns">
+            <div class="column">
+              <div class="divider">
+                <strong>Vegetación</strong>
+              </div>
+              <div v-if="form.vegetableAffected.length > 0" class="container">
+                <div
+                  v-for="va in form.vegetableAffected"
+                  :key="va.idva"
+                  class="m-2"
+                >
+                  <b-taglist attached>
+                    <b-tag type="is-light" size="is-medium">
+                      {{ va.description }}
+                    </b-tag>
+                    <b-tag type="is-success is-light" size="is-medium">
+                      {{ va.cientificName ? va.cientificName : 'Sin nombre científico' }}
+                    </b-tag>
+                  </b-taglist>
+                </div>
+              </div>
+              <div v-else class="container has-text-centered">
+                <p>Sin vegetación</p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="divider">
+                <strong>Zonas de vigilancia</strong>
+              </div>
+              <div v-if="form.list_operative_zones.length > 0" class="container">
+                <div
+                  v-for="opZone in form.list_operative_zones"
+                  :key="opZone.idoperative_zones"
+                  class="m-2"
+                >
+                  <b-tag type="is-light" size="is-medium">
+                    {{ opZone.description }}
+                  </b-tag>
+                </div>
+              </div>
+              <div v-else class="container has-text-centered">
+                <p>Sin zonas de vigilancia</p>
+              </div>
+            </div>
+            <div class="column is-6">
+              <div class="divider">
+                <strong>Zonificación y Subzonificación PM</strong>
+              </div>
+              <div v-if="form.temporalZoning.length > 0" class="container">
+                <div
+                  v-for="subzone in form.temporalZoning"
+                  :key="subzone.idsubzoning"
+                  class="m-2"
+                >
+                  <b-taglist attached>
+                    <b-tag type="is-light" size="is-medium">
+                      {{ subzone.description }}
+                    </b-tag>
+                    <b-tag type="is-info is-light" size="is-medium">
+                      {{ subzone.zoning ? subzone.zoning.description : 'Sin zoníficacion asignada' }}
+                    </b-tag>
+                  </b-taglist>
+                </div>
+              </div>
+              <div v-else class="container has-text-centered">
+                <p>Sin zonificación y subzonificación PM</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="has-text-centered" style="width: 100%;">
+          <b-button @click="close">
+            <strong>Cerrar</strong>
+          </b-button>
+        </div>
+      </section>
     </div>
   </b-modal>
 </template>
@@ -302,9 +475,10 @@ const utm = require('utm')
 export default {
   name: 'ViewBinnacle',
   props: {
-    plannification: {
-      type: String,
-      default: null
+    binnacleObject: {
+      type: Object,
+      // eslint-disable-next-line vue/require-valid-default-prop
+      default: {}
     },
     activeModal: {
       type: Boolean,
@@ -322,7 +496,15 @@ export default {
   data () {
     return {
       form: {
-        date: new Date()
+        date: new Date(),
+        participant: null,
+        participants: [],
+        hourInit: new Date(),
+        hourEnd: new Date(),
+        temporalZoning: [],
+        list_operative_zones: [],
+        vegetableAffected: [],
+        list_vehicle: []
       },
       isLoading: false,
       hourInit: new Date(),
@@ -338,21 +520,8 @@ export default {
       zoom: 12,
       center: [-87, 41.999997974538374],
       rotation: 0,
-      vehicles: [],
-      vehiclesFilter: [],
-      vegetation: [],
-      vegetationFilter: [],
-      legalZones: [],
-      legalZonesFilter: [],
-      subZones: [],
-      subZonesFilter: [],
-      opZones: [],
-      opZonesFilter: [],
-      participants: [],
-      participantsFilter: [],
-      files: [],
-      vegetableAffected: [],
-      temporalFiles: [],
+      zoning: [],
+      charges: [],
       features: [
         {
           type: 'Feature',
@@ -880,191 +1049,109 @@ export default {
     }
   },
   watch: {
-    isActive (newVal, oldVal) {
-      if (newVal && !this.isExtraordinary) {
-        this.form.idplanification = this.plannification
-        // console.log(this.form)
-      } else if (this.isExtraordinary) {
-        this.form.isextraordinary = true
+    activeModal (newVal, oldVal) {
+      if (newVal) {
+        this.getOneMoment(this.binnacleObject.idbinnacle)
       }
     }
   },
   mounted () {
-    this.hourEnd.setHours(this.hourEnd.getHours() + 1)
-    this.center = this.point ? this.point : [0, 0]
-    if (this.plannification) {
-      this.form.idplanification = this.plannification
-    }
-    this.getUser()
-    this.getVehicles()
-    this.getParticipants()
-    this.getVegetation()
-    this.getSubZones()
+    this.getCharges()
+    this.getZoning()
   },
   methods: {
     // Funciones generales
     close () {
       this.form = {
         date: new Date(),
-        idplanification: this.plannification
+        participant: null,
+        participants: [],
+        hourInit: new Date(),
+        hourEnd: new Date(),
+        temporalZoning: [],
+        list_operative_zones: [],
+        vegetableAffected: [],
+        list_vehicle: []
       }
-      this.files = []
-      this.vegetableAffected = []
       this.temporalPoint = [224190.791, 2311022.379]
       this.ViewPoint = [-89.60984537598705, 20.85610769792424]
       this.pointsMap = [[-89.60984537598705, 20.85610769792424]]
-      this.points = []
-      this.idPoints = []
-      this.vehiclesFilter = this.vehicles
-      this.vegetationFilter = this.vegetation
-      this.legalZonesFilter = this.legalZones
-      this.subZonesFilter = this.subZones
-      this.opZones = this.opZonesFilter
-      this.participantsFilter = this.participants
-      this.temporalFiles = []
       this.$emit('close')
     },
-    // Información usuario
-    async getUser () {
+    async getOneMoment (id) {
       try {
-        const res = await this.$store.dispatch('modules/users/getData')
-        this.form.iduser = res.idusers
-      } catch (error) {
-        // console.log(error)
-      }
-    },
-    // Crear bitacora
-    async createOrUpdate () {
-      // console.log(this.form)
-      this.isLoading = true
-      this.form.hour_init = this.hourInit
-      this.form.hour_end = this.hourEnd
-      try {
-        const idBinnacle = await this.$store.dispatch(
-          'modules/binnacles/createOrUpdateBinnacle',
-          this.form
-        )
-        const binnacle = await this.getBinnacle(idBinnacle)
-        if (this.vegetableAffected.length > 0) {
-          // console.log(this.vegetableAffected)
-          binnacle.list_vegetable_affected = this.vegetableAffected.map((x) => {
-            x.idbinnacle = idBinnacle
-            return x
-          })
-          await this.updateBinnacle(binnacle)
-        }
-        if (this.points.length > 0) {
-          this.points.map((point) => {
-            const coord = point
-            coord.idbinnacle = idBinnacle
-            return coord
-          })
-          await this.createPoints(this.points, idBinnacle)
-          binnacle.list_coordinates = this.idPoints
-          await this.updateBinnacle(binnacle)
-        }
-        if (this.files.length > 0) {
-          // console.log(this.files)
-          const formData = new FormData()
-          this.files.map((file, index) => {
-            const temporalName = 'evidencia_' + (index + 1) + '_bitácora_' + binnacle.number + '.png'
-            const temporalFile = new File([file], temporalName, { type: 'image/png' })
-            // console.log(temporalFile)
-            formData.append('binnacle_photo[]', temporalFile)
-          })
-          this.files.forEach((files, index) => {
-            this.temporalFiles.push({
-              description: 'evidencia_' + (index + 1) + '_' + binnacle.number,
-              idbinnacle: idBinnacle,
-              position: index + 1
-            })
-          })
-          binnacle.list_image = this.temporalFiles
-          // console.log(binnacle)
-          const positionsRelation = await this.updateBinnacle(binnacle)
-          this.temporalFiles.forEach((x, index) => {
-            formData.append('idimages[' + index + ']', positionsRelation[index])
-          })
-          await this.uploadEvidences(formData)
-        }
-        this.form = {
-          date: new Date(),
-          idplanification: this.plannification
-        }
-        this.files = []
-        this.vegetableAffected = []
-        this.temporalPoint = [224190.791, 2311022.379]
-        this.ViewPoint = [-89.60984537598705, 20.85610769792424]
-        this.pointsMap = [[-89.60984537598705, 20.85610769792424]]
-        this.points = []
-        this.idPoints = []
-        this.vehiclesFilter = this.vehicles
-        this.vegetationFilter = this.vegetation
-        this.legalZonesFilter = this.legalZones
-        this.subZonesFilter = this.subZones
-        this.opZones = this.opZonesFilter
-        this.participantsFilter = this.participants
-        this.temporalFiles = []
-        this.$buefy.toast.open({
-          message: '¡Bitácora guardada!',
-          type: 'is-success'
-        })
-        this.buttonDisabled = false
-        this.isLoading = false
-        this.$emit('save')
-      } catch (error) {
-        this.isLoading = false
-        // console.log(error)
-      } finally {
-        this.buttonDisabled = false
-        this.isLoading = false
-      }
-    },
-    async getBinnacle (id) {
-      try {
+        this.isLoading = true
         const res = await this.$store.dispatch(
           'modules/binnacles/getBinnacle',
           id
         )
-        return res
+        res.date = new Date(res.date)
+        res.hourInit = new Date(res.hour_init)
+        res.hourEnd = new Date(res.hour_end)
+        const participants = res.participants.map((participant) => {
+          const charge = this.charges.find(x => x.idcharge === participant.idcharge)
+          participant.charge = charge
+          return participant
+        })
+        res.temporalParticipants = participants
+        const objetoFiltrado = {}
+        const objetosUnicos = res.list_vegetable_affected.filter((obj) => {
+          const idva = obj.idva
+          if (!objetoFiltrado[idva]) {
+            objetoFiltrado[idva] = true
+            return true
+          }
+          return false
+        })
+        res.vegetableAffected = objetosUnicos
+        const zoning = res.list_subzones.map((zone) => {
+          const temporalZoning = this.zoning.find(x => x.idzoning === zone.idzoning)
+          zone.zoning = temporalZoning
+          return zone
+        })
+        res.temporalZoning = zoning
+        console.log(res)
+        this.isLoading = false
+        /*
+        res.date = new Date(res.date)
+        res.hour_init = new Date(res.hour_init)
+        this.hourInit = res.hour_init
+        res.hour_end = new Date(res.hour_end)
+        this.hourEnd = res.hour_end
+        const objetoFiltrado = {}
+        const objetosUnicos = res.list_vegetable_affected.filter((obj) => {
+          const idva = obj.idva
+          if (!objetoFiltrado[idva]) {
+            objetoFiltrado[idva] = true
+            return true
+          }
+          return false
+        })
+        res.list_subzoning = res.list_subzones
+        this.vegetableAffected = objetosUnicos
+        res.participant = this.filterParticipantId(this.binnacleObject.idparticipants)
+        */
+        this.form = res
       } catch (error) {
         // // console.log(error)
       }
     },
-    // Actualizar bitacora
-    async updateBinnacle (binnacle) {
+    // Obtener cargos
+    async getCharges () {
       try {
-        const res = await this.$store.dispatch(
-          'modules/binnacles/createOrUpdateBinnacle',
-          binnacle
-        )
-        return res
-      } catch (error) {
-        this.$buefy.toast.open({
-          message: 'Ocurrió un error, intente nuevamente',
-          type: 'is-danger'
-        })
-      }
-    },
-    // Vehiculos
-    async getVehicles () {
-      try {
-        const res = await this.$store.dispatch('modules/vehicles/getVehicles')
-        this.vehicles = res
-        this.vehiclesFilter = res
+        this.charges = await this.$store.dispatch('modules/charges/getCharges')
+        // console.log(this.charges)
       } catch (error) {
         // console.log(error)
       }
     },
-    filterVehicles (text) {
-      this.vehiclesFilter = this.vehicles.filter((option) => {
-        if (
-          option.number &&
-          option.number.toString().toLowerCase().includes(text.toLowerCase())
-        ) {
-          return option
-        }
-      })
+    // Obtener zonas operativas
+    async getZoning () {
+      try {
+        this.zoning = await this.$store.dispatch('modules/zones/getZones')
+      } catch (error) {
+        // console.log(error)
+      }
     },
     // Participantes
     async getParticipants () {
@@ -1078,156 +1165,9 @@ export default {
         // console.log(error)
       }
     },
-    selectParticipant (option) {
-      option
-        ? (this.form.idparticipants = option.idparticipants)
-        : (this.form.idparticipants = null)
-    },
-    removeParticipant (index) {
-      this.form.participants.splice(index, 1)
-    },
-    filterParticipant (text) {
-      this.participantsFilter = this.participants.filter((option) => {
-        if (
-          option.name &&
-          option.name.toString().toLowerCase().includes(text.toLowerCase())
-        ) {
-          return option
-        }
-      })
-    },
-    // Subzonas
-    async getSubZones () {
-      try {
-        const res = await this.$store.dispatch('modules/zones/getSubZones')
-        this.subZones = res
-        this.subZonesFilter = res
-      } catch (error) {
-        // console.log(error)
-      }
-    },
-    filterSubZones (text) {
-      this.subZonesFilter = this.subZones.filter((option) => {
-        if (
-          option.description &&
-          option.description
-            .toString()
-            .toLowerCase()
-            .includes(text.toLowerCase())
-        ) {
-          return option
-        }
-      })
-    },
-    // Vegetacion
-    async getVegetation () {
-      try {
-        const res = await this.$store.dispatch(
-          'modules/vegetation/getVegetations'
-        )
-        this.vegetation = res
-        this.vegetationFilter = res
-      } catch (error) {
-        // console.log(error)
-      }
-    },
-    filterVegetation (text) {
-      this.vegetationFilter = this.vegetation.filter((option) => {
-        if (
-          option.description &&
-          option.description
-            .toString()
-            .toLowerCase()
-            .includes(text.toLowerCase())
-        ) {
-          return option
-        }
-      })
-    },
     // Evidencia
     viewIamge (image) {
       this.imageUrl = URL.createObjectURL(image)
-    },
-    deleteDropFile (index) {
-      this.files.splice(index, 1)
-    },
-    async uploadEvidences (files) {
-      try {
-        const res = await this.$store.dispatch(
-          'modules/binnacles/uploadEvidences',
-          files
-        )
-        this.idEvidences = res
-      } catch (error) {
-        this.$buefy.toast.open({
-          message: 'Ocurrió un error, intente nuevamente',
-          type: 'is-danger'
-        })
-      }
-    },
-    // Coordenadas
-    addPoint () {
-      if (this.formCoord.name && this.formCoord.name !== '') {
-        if (this.points.length === 0) {
-          const pointConvert = this.convertCoordinatesToUtm([
-            this.temporalPoint[0],
-            this.temporalPoint[1]
-          ])
-          this.pointsMap = [pointConvert]
-        } else {
-          const pointConvert = this.convertCoordinatesToUtm([
-            this.temporalPoint[0],
-            this.temporalPoint[1]
-          ])
-          this.pointsMap.push(pointConvert)
-        }
-        this.formCoord.x = this.temporalPoint[0]
-        this.formCoord.y = this.temporalPoint[1]
-        this.points.push(this.formCoord)
-        this.formCoord = {
-          name: '',
-          x: 0,
-          y: 0
-        }
-        this.temporalPoint = [224190.791, 2311022.379]
-      } else {
-        this.$buefy.toast.open({
-          duration: 4000,
-          message: 'Es necesario asignar un nombre a las coordenadas',
-          position: 'is-bottom',
-          type: 'is-danger'
-        })
-      }
-    },
-    deletePoint (index) {
-      if (this.pointsMap.length === 1) {
-        this.points = []
-        this.pointsMap = [[-89.60984537598705, 20.85610769792424]]
-      } else {
-        this.points.splice(index, 1)
-        this.pointsMap.splice(index, 1)
-      }
-    },
-    createPoints (points, binnacle) {
-      const coordenadas = points
-      try {
-        coordenadas.forEach(async (point) => {
-          const res = await this.$store.dispatch(
-            'modules/coordinates/createOrUpdateCoordinate',
-            point
-          )
-          // // console.log(this.idPoints)
-          this.idPoints.push({
-            idcoordinates: res,
-            idbinnacle: binnacle
-          })
-        })
-      } catch (error) {
-        this.$buefy.toast.open({
-          message: 'No se pudieron agregar las coordenadas, intente nuevamente',
-          type: 'is-danger'
-        })
-      }
     },
     convertCoordinatesToUtm (coords) {
       const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')

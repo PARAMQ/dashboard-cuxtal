@@ -400,7 +400,7 @@
 import { mapState } from 'vuex'
 import KML from 'ol/format/KML'
 export default {
-  name: 'ViewBinnacle',
+  name: 'ViewBinnacleOld',
   props: {
     activeModal: {
       default: false,

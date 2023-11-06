@@ -1,4 +1,5 @@
 <template>
+  <!--
   <section class="hero is-cuxtal">
     <div v-if="!hasEdit" class="cont">
       <div class="card is-principal m-2">
@@ -12,48 +13,13 @@
         <div class="card-content">
           <div class="level">
             <div class="level-left">
-              <!--
-              <div class="level-item">
-                <b-select v-model="plan.estatus">
-                  <option
-                    v-for="option in options"
-                    :key="option.value"
-                    :value="option.value"
-                  >
-                    {{ option.label }}
-                  </option>
-                </b-select>
-              </div>
-              <div class="level-item">
-                <b-button
-                  size="is-small"
-                  type="is-success is-light"
-                  icon-right="content-save"
-                  @click="updateStatus"
-                />
-              </div>
-                -->
             </div>
             <div class="level-right">
-              <!--
-              <div class="level-item">
-                <b-button @click="isActive = true">
-                  Nueva bitácora extraordinaria
-                </b-button>
-              </div>
-              -->
               <div class="level-item">
                 <b-button @click="isActiveOT = true">
                   Nueva opinión técnica
                 </b-button>
               </div>
-              <!--
-              <div class="level-item">
-                <b-button type="is-danger" @click="deletePlan">
-                  Eliminar recorrido
-                </b-button>
-              </div>
-                -->
             </div>
           </div>
           <div class="columns">
@@ -65,9 +31,9 @@
                     :key="binnacle.idbinnacle"
                     class="container"
                   >
-                    <div class="card" @click="viewBinnacle(binnacle, index)">
+                    <div class="card" @click="viewOp(binnacle, index)">
                       <div class="card-content">
-                        <p><strong>Folio:</strong> {{ binnacle.number }}</p>
+                        <p><strong>Folio:</strong> {{ binnacle.folium }}</p>
                       </div>
                     </div>
                   </div>
@@ -105,7 +71,7 @@
                     </div>
                   </div>
                 </div>
-                <!--
+
                 <div class="card-content">
                   <div>
                     <div class="divider">
@@ -259,7 +225,7 @@
                     </div>
                   </div>
                 </div>
-                -->
+
               </div>
               <div v-else>
                 <p>Selecciona un registro para ver su información</p>
@@ -275,9 +241,133 @@
       @create="refresh"
     />
   </section>
+  -->
+  <div id="map" class="columns">
+    <b-loading
+      v-model="isLoadingData"
+      :is-full-page="true"
+      :can-cancel="false"
+    />
+    <div class="column is-4">
+      <section class="m-2 has-text-centered">
+        <b-button
+          label="Nueva opinión técnica"
+          type="is-light"
+          @click="activeModal = true"
+        />
+      </section>
+      <div class="columns m-2 binnalces">
+        <div v-if="data.length > 0" class="column">
+          <div v-for="technicalOp in data" :key="technicalOp.idtechnical_opinion">
+            <div class="card">
+              <div class="card-header">
+                <div class="level m-1 full-w">
+                  <div class="level-left">
+                    <div class="level-item">
+                      <p>{{ technicalOp.number }}</p>
+                    </div>
+                    <div class="level-item">
+                    </div>
+                  </div>
+                  <div class="level-right">
+                    <div class="level-item">
+                      <b-button
+                        type="is-info is-light"
+                        icon-right="eye-outline"
+                        @click="openOp(technicalOp)"
+                      />
+                    </div>
+                    <div class="level-item">
+                      <b-button
+                        type="is-danger is-light"
+                        icon-right="delete-empty-outline"
+                        @click="deleteOp(technicalOp)"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-content" @click="viewInMap(technicalOp.idtechnical_opinion)">
+                <p>
+                  <strong>Motivo de solicitud: </strong>
+                  {{
+                    technicalOp.request_motive ? technicalOp.request_motive : 'Sin motivo de solicitud'
+                  }}
+                </p>
+                <br>
+                <p>
+                  <strong>Descripción de motivo: </strong>
+                  {{
+                    technicalOp.motive_description ? technicalOp.motive_description : 'Sin descripción'
+                  }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column has-text-centered">
+          <p>Sin registros</p>
+        </div>
+      </div>
+    </div>
+    <div class="column is-8">
+      <vl-map
+        :load-tiles-while-animating="true"
+        :load-tiles-while-interacting="true"
+        data-projection="EPSG:4326"
+        style="height: 100%"
+      >
+        <vl-view
+          :zoom.sync="zoom"
+          :center.sync="center"
+          :rotation.sync="rotation"
+        />
+
+        <vl-layer-tile>
+          <vl-source-osm />
+        </vl-layer-tile>
+
+        <vl-feature v-if="viewOp">
+          <vl-geom-multi-point :coordinates="temporalPoints" />
+        </vl-feature>
+
+        <vl-layer-vector>
+          <vl-source-vector :features.sync="features" />
+        </vl-layer-vector>
+      </vl-map>
+    </div>
+    <new-opinion
+      :active-modal="activeModal"
+      @close="updateView"
+      @save="updateView"
+    />
+    <!--
+    <new-binnacle
+      :active-modal="activeModal"
+      :plannification="null"
+      :is-extraordinary="true"
+      @close="updateView"
+      @save="updateView"
+    />
+    <view-binnacle
+      :active-modal="activeViewModal"
+      :binnacle-object="binnacleSelect"
+      :disable-form="true"
+      @close="updateView"
+    />
+    <b-notification
+      v-model="downloadFile"
+      type="is-info is-light"
+      :closable="false"
+    >
+      Descargando bitácora
+    </b-notification>
+    -->
+  </div>
 </template>
 
 <script>
+/*
 export default {
   name: 'TechnicalOp',
   data () {
@@ -370,7 +460,7 @@ export default {
         // console.log(error)
       }
     },
-    viewBinnacle (binnacle, index) {
+    viewOp (binnacle, index) {
       this.hasSelect = false
       this.binnacleSelect = {}
       this.hasSelect = true
@@ -448,23 +538,121 @@ export default {
     }
   }
 }
+*/
+import data from '../../assets/cuxtalPoligono.json'
+// eslint-disable-next-line
+const utm = require('utm')
+
+export default {
+  name: 'TechnicalOp',
+  data () {
+    return {
+      isLoadingData: false,
+      activeModal: false,
+      data: [],
+      viewOp: false,
+      temporalPoints: [],
+      zoom: 12,
+      center: [-89.60984537598705, 20.85610769792424],
+      rotation: 0,
+      features: [
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: data
+          }
+        }
+      ]
+    }
+  },
+  mounted () {
+    this.getData()
+  },
+  methods: {
+    async getData () {
+      try {
+        this.isLoadingData = true
+        this.data = await this.$store.dispatch('modules/technicalOp/getTechnicalOps')
+        this.isLoadingData = false
+      } catch (error) {
+        // console.log(error)
+      } finally {
+        this.isLoadingData = false
+      }
+    },
+    updateView () {
+      this.activeModal = false
+      this.getData()
+    },
+    async deleteOp (techOp) {
+      try {
+        await this.$store.dispatch('modules/technicalOp/deleteTechnicalOp', techOp)
+        this.$buefy.notification.open({
+          message: 'Opinión técnica eliminada',
+          duration: 2500,
+          position: 'is-bottom-right',
+          type: 'is-success',
+          hasIcon: true
+        })
+        this.getData()
+      } catch (error) {
+        // console.log(error)
+      }
+    },
+    // Visualizar una bitácora en el mapa
+    async viewInMap (option) {
+      this.viewBinnacle = false
+      this.temporalPoints = [[-89.60984537598705, 20.85610769792424]]
+      const binnacle = await this.getBinnacle(option)
+      binnacle.points = []
+      const temporalPoints = binnacle.coordinates_binnacle
+      temporalPoints.forEach((object) => {
+        const point = [object.x, object.y]
+        const pointConvert = this.convertCoordinatesToUtm(point)
+        binnacle.points.push(pointConvert)
+        // console.log(pointConvert)
+      })
+      if (binnacle.points.length > 0) {
+        this.temporalPoints = binnacle.points
+        this.viewBinnacle = true
+      } else {
+        this.$buefy.notification.open({
+          message: 'La bitácora no contiene coordenadas.',
+          duration: 2500,
+          position: 'is-bottom-right',
+          type: 'is-warning',
+          hasIcon: true
+        })
+      }
+    },
+    convertCoordinatesToUtm (coords) {
+      // console.log(coords)
+      const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')
+      return [latLng.longitude, latLng.latitude]
+    }
+  }
+}
 </script>
 
 <style>
-.scroll {
-  height: 400px;
+.full-w {
+  width: 100% !important;
+}
+
+.binnalces {
+  height: 650px;
   overflow-y: scroll;
 }
-.card.is-principal {
-  background-color: white !important;
-  width: 1000px;
+
+#map {
+  min-height: 75vh;
 }
+
 .card {
   background-color: white !important;
 }
-.is-card-binnacle {
-  min-width: 300px;
-}
+
 .hero.is-cuxtal {
   background-color: #0403039a;
   background-image: url('assets/cuxtal/background.jpg');
@@ -475,12 +663,5 @@ export default {
 }
 .modal-background {
   background-color: rgba(0, 0, 0, 0.568);
-}
-.cont {
-  margin-left: auto;
-  margin-right: auto;
-}
-.animation-content.modal-content {
-  max-width: 1200px !important;
 }
 </style>
