@@ -1,28 +1,32 @@
 <template>
-  <b-modal v-model="activeModal" :destroy-on-hide="false" :can-cancel="false">
+  <b-modal
+    v-model="activeModal"
+    :full-screen="true"
+    :destroy-on-hide="false"
+    :can-cancel="false"
+  >
     <b-loading v-model="isLoading" :is-full-page="true" :can-cancel="false" />
-    <div class="card">
-      <div class="card-header">
-        <p class="card-header-title">
+    <div class="modal-card">
+      <div class="modal-card-head">
+        <p class="modal-card-title">
           Nueva denuncia
         </p>
       </div>
-      <div class="card-content">
-        <div class="content">
-          <form @submit.prevent="submit">
+      <div class="modal-card-body">
+        <ValidationObserver ref="form" v-slot="{ handleSubmit }">
+          <form @submit.prevent="handleSubmit">
             <div class="divider">
               <strong>Datos generales</strong>
             </div>
             <div class="columns">
               <div class="column">
-                <b-field label="Número de oficio de denuncia">
-                  <b-input
-                    v-model="form.code"
-                    name="número de oficio"
-                    type="text"
-                    required
-                  />
-                </b-field>
+                <BInputWithValidation
+                  v-model="form.code"
+                  label="Número de oficio"
+                  name="número de oficio"
+                  rules="required"
+                  normal
+                />
               </div>
               <div class="column">
                 <b-field label="Fecha de oficio de denuncia">
@@ -138,10 +142,10 @@
               </b-field>
             </div>
             <!--
-            <div class="divider">
-              <strong>Alcances</strong>
-            </div>
-            -->
+          <div class="divider">
+            <strong>Alcances</strong>
+          </div>
+          -->
             <div class="divider">
               <strong>Zonas</strong>
             </div>
@@ -203,20 +207,23 @@
             </div>
             <div class="columns">
               <div class="column is-4">
+                <b-notification type="is-info" has-icon :closable="false">
+                  Ingrese las coordenadas en formato UTM.
+                </b-notification>
                 <div class="container">
                   <b-field label="Descripción breve de la coordenada">
-                    <b-input v-model="formCoord.description" />
+                    <b-input v-model="formCoord.name" />
                   </b-field>
-                  <b-field label="Coordenada X">
+                  <b-field :label="isSwitched ? 'Longitud' : 'Coordenada X'">
                     <b-numberinput
-                      v-model="point[0]"
+                      v-model="temporalPoint[0]"
                       step="0.000000000000000001"
                       :controls="false"
                     />
                   </b-field>
-                  <b-field label="Coordenada Y">
+                  <b-field :label="isSwitched ? 'Latitud' : 'Coordenada Y'">
                     <b-numberinput
-                      v-model="point[1]"
+                      v-model="temporalPoint[1]"
                       step="0.000000000000000001"
                       :controls="false"
                     />
@@ -226,10 +233,13 @@
                   <b-button type="is-success is-light" @click="addPoint">
                     Agregar coordenada
                   </b-button>
+                  <b-button type="is-info is-light" @click="viewPoint">
+                    Ver punto
+                  </b-button>
                 </div>
                 <div
                   v-for="pointCoord in points"
-                  :key="pointCoord.description"
+                  :key="pointCoord.name"
                   class="container m-3"
                 >
                   <div class="control">
@@ -241,7 +251,7 @@
                       @close="deletePoint"
                       @click="viewPoint(pointCoord)"
                     >
-                      {{ pointCoord.description }}
+                      {{ pointCoord.name }}
                     </b-tag>
                   </div>
                 </div>
@@ -264,12 +274,16 @@
                   </vl-layer-tile>
 
                   <vl-feature>
-                    <vl-geom-point :coordinates="point" />
+                    <vl-geom-point :coordinates="ViewPoint" />
                   </vl-feature>
 
                   <vl-feature>
                     <vl-geom-multi-point :coordinates="pointsMap" />
                   </vl-feature>
+
+                  <vl-layer-vector>
+                    <vl-source-vector :features.sync="features" />
+                  </vl-layer-vector>
                 </vl-map>
               </div>
             </div>
@@ -316,79 +330,88 @@
                 </div>
               </div>
             </div>
-            <div class="divider">
-              <strong>Documentos</strong>
+            <!--
+          <div class="divider">
+            <strong>Documentos</strong>
+          </div>
+          <div class="columns has-text-centered">
+            <div class="column is-flex is-justify-content-center">
+              <b-field label="Oficio de denuncia">
+                <b-field
+                  class="file is-primary"
+                  :class="{ 'has-name': !!fileDenuncia }"
+                >
+                  <b-upload
+                    v-model="fileDenuncia"
+                    :multiple="true"
+                    class="file-label"
+                    rounded
+                  >
+                    <span class="file-cta">
+                      <b-icon class="file-icon" icon="upload" />
+                      <span class="file-label">{{
+                        fileDenuncia.name || 'Subir archivo'
+                      }}</span>
+                    </span>
+                  </b-upload>
+                </b-field>
+              </b-field>
             </div>
-            <div class="columns has-text-centered">
-              <div class="column is-flex is-justify-content-center">
-                <b-field label="Oficio de denuncia">
-                  <b-field
-                    class="file is-primary"
-                    :class="{ 'has-name': !!fileDenuncia }"
+            <div class="column is-flex is-justify-content-center">
+              <b-field label="Oficio de respuesta">
+                <b-field
+                  class="file is-primary"
+                  :class="{ 'has-name': !!fileRespuesta }"
+                >
+                  <b-upload
+                    v-model="fileRespuesta"
+                    :multiple="true"
+                    class="file-label"
+                    rounded
                   >
-                    <b-upload
-                      v-model="fileDenuncia"
-                      :multiple="true"
-                      class="file-label"
-                      rounded
-                    >
-                      <span class="file-cta">
-                        <b-icon class="file-icon" icon="upload" />
-                        <span class="file-label">{{
-                          fileDenuncia.name || 'Subir archivo'
-                        }}</span>
-                      </span>
-                    </b-upload>
-                  </b-field>
+                    <span class="file-cta">
+                      <b-icon class="file-icon" icon="upload" />
+                      <span class="file-label">{{
+                        fileRespuesta.name || 'Subir archivo'
+                      }}</span>
+                    </span>
+                  </b-upload>
                 </b-field>
-              </div>
-              <div class="column is-flex is-justify-content-center">
-                <b-field label="Oficio de respuesta">
-                  <b-field
-                    class="file is-primary"
-                    :class="{ 'has-name': !!fileRespuesta }"
-                  >
-                    <b-upload
-                      v-model="fileRespuesta"
-                      :multiple="true"
-                      class="file-label"
-                      rounded
-                    >
-                      <span class="file-cta">
-                        <b-icon class="file-icon" icon="upload" />
-                        <span class="file-label">{{
-                          fileRespuesta.name || 'Subir archivo'
-                        }}</span>
-                      </span>
-                    </b-upload>
-                  </b-field>
-                </b-field>
-              </div>
-              <div class="column is-flex is-justify-content-center">
-                <b-field label="Conclusión de trámite">
-                  <b-field
-                    class="file is-primary"
-                    :class="{ 'has-name': !!fileTramite }"
-                  >
-                    <b-upload
-                      v-model="fileTramite"
-                      :multiple="true"
-                      class="file-label"
-                      rounded
-                    >
-                      <span class="file-cta">
-                        <b-icon class="file-icon" icon="upload" />
-                        <span class="file-label">{{
-                          fileTramite.name || 'Subir archivo'
-                        }}</span>
-                      </span>
-                    </b-upload>
-                  </b-field>
-                </b-field>
-              </div>
+              </b-field>
             </div>
+            <div class="column is-flex is-justify-content-center">
+              <b-field label="Conclusión de trámite">
+                <b-field
+                  class="file is-primary"
+                  :class="{ 'has-name': !!fileTramite }"
+                >
+                  <b-upload
+                    v-model="fileTramite"
+                    :multiple="true"
+                    class="file-label"
+                    rounded
+                  >
+                    <span class="file-cta">
+                      <b-icon class="file-icon" icon="upload" />
+                      <span class="file-label">{{
+                        fileTramite.name || 'Subir archivo'
+                      }}</span>
+                    </span>
+                  </b-upload>
+                </b-field>
+              </b-field>
+            </div>
+          </div>
+          -->
+            <ButtonGroup
+              :handle-submit="handleSubmit"
+              saving
+              @save="createOrUpdate"
+              @cancel="close"
+            />
           </form>
-        </div>
+        </ValidationObserver>
+        <!--
         <div class="card-footer">
           <div class="card-footer-item">
             <b-button @click="$emit('close')">
@@ -401,12 +424,19 @@
             </b-button>
           </div>
         </div>
+        -->
       </div>
     </div>
   </b-modal>
 </template>
 
 <script>
+import data from '../../assets/cuxtalPoligono.json'
+// eslint-disable-next-line
+const utmObj = require('utm-latlng')
+// eslint-disable-next-line
+const utm = require('utm')
+
 export default {
   name: 'NewIncident',
   props: {
@@ -444,16 +474,26 @@ export default {
       ilicits: [],
       govLevels: [],
       tenures: [],
-      respones: [],
-      formCoord: {
-        description: ''
-      },
-      zoom: 12,
-      center: [0, 0],
-      rotation: 0,
-      point: [-89.60984537598705, 20.85610769792424],
+      responses: [],
+      formCoord: {},
+      isSwitched: true,
+      temporalPoint: [224190.791, 2311022.379],
+      ViewPoint: [-89.60984537598705, 20.85610769792424],
       pointsMap: [[-89.60984537598705, 20.85610769792424]],
-      points: []
+      points: [],
+      idPoints: [],
+      zoom: 12,
+      center: [-89.60984537598705, 20.85610769792424],
+      rotation: 0,
+      features: [
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: data
+          }
+        }
+      ]
     }
   },
   mounted () {
@@ -468,17 +508,40 @@ export default {
     this.getResponses()
   },
   methods: {
-    async createIncident () {
-      /*
+    close () {
+      this.form = {}
+      this.fileDenuncia = {}
+      this.fileRespuesta = {}
+      this.fileTramite = {}
+      this.$emit('close')
+    },
+    async createOrUpdate () {
       try {
         this.isLoading = true
         this.form.complaint_coordinates = this.points
+        const temporalVa = this.form.complaint_va
+        delete this.form.complaint_va
         const res = await this.$store.dispatch(
           'modules/complaint/createOrUpdateComplaint',
           this.form
         )
-        // console.log(res)
-        // await this.uploadFiles(res)
+        if (temporalVa && temporalVa.length > 0) {
+          this.form.complaint_va = temporalVa.map((x) => {
+            const temporal = {
+              idva: x.idva,
+              idcomplaint: res
+            }
+            return temporal
+          })
+          this.form.idcomplaint = res
+          await this.$store.dispatch(
+            'modules/complaint/createOrUpdateComplaint',
+            this.form
+          )
+        }
+        if (this.fileDenuncia.name || this.fileRespuesta.name || this.fileTramite.name) {
+          await this.uploadFiles(res)
+        }
         this.form = {}
         this.fileDenuncia = {}
         this.fileRespuesta = {}
@@ -488,7 +551,7 @@ export default {
           message: 'Denuncia guardada!',
           type: 'is-success'
         })
-        this.$emit('create')
+        this.$emit('save')
       } catch (error) {
         this.isLoading = false
         this.$buefy.toast.open({
@@ -499,15 +562,20 @@ export default {
       } finally {
         this.isLoading = false
       }
-      */
     },
     async uploadFiles (id) {
       try {
         const formData = new FormData()
         formData.append('idcomplaint', id)
-        formData.append('complaint_doc', this.fileDenuncia)
-        formData.append('response_doc', this.fileRespuesta)
-        formData.append('tramit_conlusion', this.fileTramite)
+        if (this.fileDenuncia.name) {
+          formData.append('complaint_doc', this.fileDenuncia)
+        }
+        if (this.fileRespuesta.name) {
+          formData.append('response_doc', this.fileRespuesta)
+        }
+        if (this.fileTramite.name) {
+          formData.append('tramit_conlusion', this.fileTramite)
+        }
         await this.$store.dispatch(
           'modules/complaint/updateFilesComplaint',
           formData
@@ -535,49 +603,6 @@ export default {
         // // console.log(this.dependences)
       } catch (error) {
         // console.log(error)
-      }
-    },
-    addPoint () {
-      if (this.formCoord.description && this.formCoord.description !== '') {
-        const temporalPoint = this.point
-        if (this.points.length === 0) {
-          const temporalPoints = []
-          temporalPoints.push(temporalPoint)
-          this.pointsMap = temporalPoints
-        } else {
-          this.pointsMap.push([temporalPoint[0], temporalPoint[1]])
-        }
-        this.formCoord.x = temporalPoint[0]
-        this.formCoord.y = temporalPoint[1]
-        this.points.push(this.formCoord)
-        this.formCoord = {
-          description: '',
-          x: 0,
-          y: 0
-        }
-        this.point = [-89.60984537598705, 20.85610769792424]
-      } else {
-        this.$buefy.toast.open({
-          duration: 4000,
-          message: 'Es necesario asignar un nombre a las coordenadas',
-          position: 'is-bottom',
-          type: 'is-danger'
-        })
-      }
-    },
-    viewPoint (point) {
-      this.formCoord.description = point.description
-      this.point[0] = point.x
-      this.point[1] = point.y
-      this.center = this.point
-    },
-    deletePoint (index) {
-      if (this.points.length === 1) {
-        this.points = []
-        this.pointsMap = [[-89.60984537598705, 20.85610769792424]]
-      } else {
-        this.points.splice(index, 1)
-        this.pointsMap.splice(index, 1)
       }
     },
     async getResponses () {
@@ -691,6 +716,76 @@ export default {
           return option
         }
       })
+    },
+    addPoint () {
+      if (this.formCoord.name && this.formCoord.name !== '') {
+        if (this.points.length === 0) {
+          const pointConvert = this.convertCoordinatesToUtm([
+            this.temporalPoint[0],
+            this.temporalPoint[1]
+          ])
+          this.pointsMap = [pointConvert]
+        } else {
+          const pointConvert = this.convertCoordinatesToUtm([
+            this.temporalPoint[0],
+            this.temporalPoint[1]
+          ])
+          this.pointsMap.push(pointConvert)
+        }
+        this.formCoord.x = this.temporalPoint[0]
+        this.formCoord.y = this.temporalPoint[1]
+        this.points.push(this.formCoord)
+        this.formCoord = {
+          name: '',
+          x: 0,
+          y: 0
+        }
+        this.temporalPoint = [224190.791, 2311022.379]
+      } else {
+        this.$buefy.toast.open({
+          duration: 4000,
+          message: 'Es necesario asignar un nombre a las coordenadas',
+          position: 'is-bottom',
+          type: 'is-danger'
+        })
+      }
+    },
+    deletePoint (index) {
+      if (this.pointsMap.length === 1) {
+        this.points = []
+        this.pointsMap = [[-89.60984537598705, 20.85610769792424]]
+      } else {
+        this.points.splice(index, 1)
+        this.pointsMap.splice(index, 1)
+      }
+    },
+    createPoints (points, binnacle) {
+      const coordenadas = points
+      try {
+        coordenadas.forEach(async (point) => {
+          const res = await this.$store.dispatch(
+            'modules/coordinates/createOrUpdateCoordinate',
+            point
+          )
+          this.idPoints.push({
+            idcoordinates: res,
+            idbinnacle: binnacle
+          })
+        })
+      } catch (error) {
+        this.$buefy.toast.open({
+          message: 'No se pudieron agregar las coordenadas, intente nuevamente',
+          type: 'is-danger'
+        })
+      }
+    },
+    convertCoordinatesToUtm (coords) {
+      const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')
+      return [latLng.longitude, latLng.latitude]
+    },
+    convertCoordinatesFromUtm (coords) {},
+    viewPoint () {
+      this.ViewPoint = this.convertCoordinatesToUtm(this.temporalPoint)
     }
   }
 }

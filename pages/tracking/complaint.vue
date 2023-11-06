@@ -299,15 +299,13 @@
       </section>
       <div class="columns m-2 binnalces">
         <div v-if="data.length > 0" class="column">
-          <div v-for="complaint in data" :key="complaint.idtechnical_opinion">
+          <div v-for="complaint in data" :key="complaint.idcomplaint">
             <div class="card">
               <div class="card-header">
                 <div class="level m-1 full-w">
                   <div class="level-left">
                     <div class="level-item">
-                      <p>{{ complaint.number }}</p>
-                    </div>
-                    <div class="level-item">
+                      <p>Código: {{ complaint.code }}</p>
                     </div>
                   </div>
                   <div class="level-right">
@@ -315,31 +313,24 @@
                       <b-button
                         type="is-info is-light"
                         icon-right="eye-outline"
-                        @click="openOp(complaint)"
+                        @click="viewInMap(complaint)"
                       />
                     </div>
                     <div class="level-item">
                       <b-button
                         type="is-danger is-light"
                         icon-right="delete-empty-outline"
-                        @click="deleteOp(complaint)"
+                        @click="deleteComplaint(complaint)"
                       />
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="card-content" @click="viewInMap(complaint.idtechnical_opinion)">
-                <p>
-                  <strong>Motivo de solicitud: </strong>
-                  {{
-                    complaint.request_motive ? complaint.request_motive : 'Sin motivo de solicitud'
-                  }}
-                </p>
-                <br>
+              <div class="card-content" @click="viewInMap(complaint.idcomplaint)">
                 <p>
                   <strong>Descripción de motivo: </strong>
                   {{
-                    complaint.motive_description ? complaint.motive_description : 'Sin descripción'
+                    complaint.description ? complaint.description : 'Sin descripción'
                   }}
                 </p>
               </div>
@@ -368,7 +359,7 @@
           <vl-source-osm />
         </vl-layer-tile>
 
-        <vl-feature v-if="viewOp">
+        <vl-feature v-if="viewComplaint">
           <vl-geom-multi-point :coordinates="temporalPoints" />
         </vl-feature>
 
@@ -377,7 +368,14 @@
         </vl-layer-vector>
       </vl-map>
     </div>
+    <!--
     <new-opinion
+      :active-modal="activeModal"
+      @close="updateView"
+      @save="updateView"
+    />
+    -->
+    <new-incident
       :active-modal="activeModal"
       @close="updateView"
       @save="updateView"
@@ -702,7 +700,7 @@ export default {
       isLoadingData: false,
       activeModal: false,
       data: [],
-      viewOp: false,
+      viewComplaint: false,
       temporalPoints: [],
       zoom: 12,
       center: [-89.60984537598705, 20.85610769792424],
@@ -737,11 +735,19 @@ export default {
       this.activeModal = false
       this.getData()
     },
-    async deleteOp (techOp) {
+    async getComplaint (id) {
       try {
-        await this.$store.dispatch('modules/complaint/deleteComplaint', techOp)
+        const res = await this.$store.dispatch('modules/complaint/getInfoComplaint', id)
+        return res
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async deleteComplaint (complaint) {
+      try {
+        await this.$store.dispatch('modules/complaint/deleteComplaint', complaint)
         this.$buefy.notification.open({
-          message: 'Opinión técnica eliminada',
+          message: 'denuncia eliminada',
           duration: 2500,
           position: 'is-bottom-right',
           type: 'is-success',
@@ -754,23 +760,22 @@ export default {
     },
     // Visualizar una bitácora en el mapa
     async viewInMap (option) {
-      this.viewBinnacle = false
+      this.viewComplaint = false
       this.temporalPoints = [[-89.60984537598705, 20.85610769792424]]
-      const binnacle = await this.getBinnacle(option)
-      binnacle.points = []
-      const temporalPoints = binnacle.coordinates_binnacle
-      temporalPoints.forEach((object) => {
-        const point = [object.x, object.y]
-        const pointConvert = this.convertCoordinatesToUtm(point)
-        binnacle.points.push(pointConvert)
-        // console.log(pointConvert)
-      })
-      if (binnacle.points.length > 0) {
-        this.temporalPoints = binnacle.points
-        this.viewBinnacle = true
+      const complaint = await this.getComplaint(option)
+      complaint.points = []
+      if (complaint.complaint_coordinates && complaint.complaint_coordinates.length > 0) {
+        const temporalPoints = complaint.complaint_coordinates
+        temporalPoints.forEach((object) => {
+          const point = [object.x, object.y]
+          const pointConvert = this.convertCoordinatesToUtm(point)
+          complaint.points.push(pointConvert)
+        })
+        this.temporalPoints = complaint.points
+        this.viewComplaint = true
       } else {
         this.$buefy.notification.open({
-          message: 'La bitácora no contiene coordenadas.',
+          message: 'La denuncia no contiene coordenadas.',
           duration: 2500,
           position: 'is-bottom-right',
           type: 'is-warning',
@@ -788,20 +793,23 @@ export default {
 </script>
 
 <style>
-.scroll {
-  height: 400px;
+.full-w {
+  width: 100% !important;
+}
+
+.binnalces {
+  height: 650px;
   overflow-y: scroll;
 }
-.card.is-principal {
-  background-color: white !important;
-  width: 1000px;
+
+#map {
+  min-height: 75vh;
 }
+
 .card {
   background-color: white !important;
 }
-.is-card-binnacle {
-  min-width: 300px;
-}
+
 .hero.is-cuxtal {
   background-color: #0403039a;
   background-image: url('assets/cuxtal/background.jpg');
@@ -812,12 +820,5 @@ export default {
 }
 .modal-background {
   background-color: rgba(0, 0, 0, 0.568);
-}
-.cont {
-  margin-left: auto;
-  margin-right: auto;
-}
-.animation-content.modal-content {
-  max-width: 1200px !important;
 }
 </style>

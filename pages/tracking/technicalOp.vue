@@ -305,7 +305,7 @@
             </div>
           </div>
         </div>
-        <div class="column has-text-centered">
+        <div v-else class="column has-text-centered">
           <p>Sin registros</p>
         </div>
       </div>
@@ -581,6 +581,14 @@ export default {
         this.isLoadingData = false
       }
     },
+    async getOp (id) {
+      try {
+        const res = await this.$store.dispatch('modules/technicalOp/getInfoTechnicalOp', id)
+        return res
+      } catch (error) {
+        console.log(error)
+      }
+    },
     updateView () {
       this.activeModal = false
       this.getData()
@@ -602,23 +610,22 @@ export default {
     },
     // Visualizar una bitácora en el mapa
     async viewInMap (option) {
-      this.viewBinnacle = false
+      this.viewTechOp = false
       this.temporalPoints = [[-89.60984537598705, 20.85610769792424]]
-      const binnacle = await this.getBinnacle(option)
-      binnacle.points = []
-      const temporalPoints = binnacle.coordinates_binnacle
-      temporalPoints.forEach((object) => {
-        const point = [object.x, object.y]
-        const pointConvert = this.convertCoordinatesToUtm(point)
-        binnacle.points.push(pointConvert)
-        // console.log(pointConvert)
-      })
-      if (binnacle.points.length > 0) {
-        this.temporalPoints = binnacle.points
-        this.viewBinnacle = true
+      const techOp = await this.getOp(option)
+      techOp.points = []
+      if (techOp.list_coordinates && techOp.list_coordinates.length > 0) {
+        const temporalPoints = techOp.list_coordinates
+        temporalPoints.forEach((object) => {
+          const point = [object.x, object.y]
+          const pointConvert = this.convertCoordinatesToUtm(point)
+          techOp.points.push(pointConvert)
+        })
+        this.temporalPoints = techOp.points
+        this.viewTechOp = true
       } else {
         this.$buefy.notification.open({
-          message: 'La bitácora no contiene coordenadas.',
+          message: 'La opinión técnica no contiene coordenadas.',
           duration: 2500,
           position: 'is-bottom-right',
           type: 'is-warning',

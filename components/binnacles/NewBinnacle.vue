@@ -465,14 +465,6 @@ export default {
           this.form
         )
         const binnacle = await this.getBinnacle(idBinnacle)
-        if (this.vegetableAffected.length > 0) {
-          // console.log(this.vegetableAffected)
-          binnacle.list_vegetable_affected = this.vegetableAffected.map((x) => {
-            x.idbinnacle = idBinnacle
-            return x
-          })
-          await this.updateBinnacle(binnacle)
-        }
         if (this.points.length > 0) {
           this.points.map((point) => {
             const coord = point
@@ -509,6 +501,14 @@ export default {
             formData.append('idimages[' + index + ']', positionsRelation[index])
           })
           await this.uploadEvidences(formData)
+          if (this.vegetableAffected.length > 0) {
+          // console.log(this.vegetableAffected)
+            binnacle.list_vegetable_affected = this.vegetableAffected.map((x) => {
+              x.idbinnacle = idBinnacle
+              return x
+            })
+            await this.updateBinnacle(binnacle)
+          }
         }
         this.form = {
           date: new Date(),

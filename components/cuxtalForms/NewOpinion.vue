@@ -299,7 +299,7 @@
                 >
                   <vl-view
                     :zoom.sync="zoom"
-                    :center.sync="ViewPoint"
+                    :center.sync="center"
                     :rotation.sync="rotation"
                   />
 
@@ -363,7 +363,6 @@
                 </div>
               </div>
             </div>
-            <!--
             <div class="divider">
               <strong>Documentos</strong>
             </div>
@@ -407,7 +406,6 @@
                 </b-field>
               </div>
             </div>
-            -->
             <br>
             <ButtonGroup
               :handle-submit="handleSubmit"
@@ -463,7 +461,7 @@ export default {
       points: [],
       idPoints: [],
       zoom: 12,
-      center: [-87, 41.999997974538374],
+      center: [-89.60984537598705, 20.85610769792424],
       rotation: 0,
       features: [
         {
@@ -523,10 +521,11 @@ export default {
     async uploadFiles (id) {
       const formData = new FormData()
       formData.append('idtechnical_opinion', id)
-      if (this.fileOificio) {
+      console.log(this.fileOficio)
+      if (this.fileOficio.name) {
         formData.append('request_doc', this.fileOficio)
       }
-      if (this.fileRespuesta) {
+      if (this.fileRespuesta.name) {
         formData.append('response_doc', this.fileRespuesta)
       }
       try {
