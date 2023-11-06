@@ -456,6 +456,41 @@
             </div>
           </div>
         </div>
+        <div class="container">
+          <div class="columns">
+            <div class="column">
+              <div class="divider">
+                <strong>Coordenadas registradas</strong>
+              </div>
+              <vl-map
+                :load-tiles-while-animating="true"
+                :load-tiles-while-interacting="true"
+                data-projection="EPSG:4326"
+                style="height: 400px"
+              >
+                <vl-view
+                  :zoom.sync="zoom"
+                  :center.sync="center"
+                  :rotation.sync="rotation"
+                />
+
+                <vl-layer-tile>
+                  <vl-source-osm />
+                </vl-layer-tile>
+
+                <vl-feature
+                  v-if="viewPoints"
+                >
+                  <vl-geom-multi-point :coordinates="pointsMap" />
+                </vl-feature>
+
+                <vl-layer-vector>
+                  <vl-source-vector :features.sync="features" />
+                </vl-layer-vector>
+              </vl-map>
+            </div>
+          </div>
+        </div>
         <div class="has-text-centered" style="width: 100%;">
           <b-button @click="close">
             <strong>Cerrar</strong>
@@ -515,10 +550,11 @@ export default {
       temporalPoint: [224190.791, 2311022.379],
       ViewPoint: [-89.60984537598705, 20.85610769792424],
       pointsMap: [[-89.60984537598705, 20.85610769792424]],
+      viewPoints: false,
       points: [],
       idPoints: [],
       zoom: 12,
-      center: [-87, 41.999997974538374],
+      center: [-89.60984537598705, 20.85610769792424],
       rotation: 0,
       zoning: [],
       charges: [],
@@ -1110,7 +1146,23 @@ export default {
           return zone
         })
         res.temporalZoning = zoning
-        console.log(res)
+        this.viewPoints = false
+        if (res.coordinates_binnacle && res.coordinates_binnacle.length > 0) {
+          const temporalPoints = res.coordinates_binnacle
+          console.log(temporalPoints)
+          temporalPoints.forEach((object) => {
+            const point = [object.x, object.y]
+            const pointConvert = this.convertCoordinatesToUtm(point)
+            // console.log(pointConvert)
+            res.points = []
+            res.points.push(pointConvert)
+          })
+          this.pointsMap = res.points
+          this.viewPoints = true
+        } else {
+          this.viewPoints = false
+        }
+        // console.log(res)
         this.isLoading = false
         /*
         res.date = new Date(res.date)
@@ -1135,6 +1187,11 @@ export default {
       } catch (error) {
         // // console.log(error)
       }
+    },
+    convertCoordinatesToUtm (coords) {
+      // console.log(coords)
+      const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')
+      return [latLng.longitude, latLng.latitude]
     },
     // Obtener cargos
     async getCharges () {
@@ -1168,10 +1225,6 @@ export default {
     // Evidencia
     viewIamge (image) {
       this.imageUrl = URL.createObjectURL(image)
-    },
-    convertCoordinatesToUtm (coords) {
-      const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')
-      return [latLng.longitude, latLng.latitude]
     },
     convertCoordinatesFromUtm (coords) {},
     viewPoint () {
