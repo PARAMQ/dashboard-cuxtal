@@ -305,7 +305,7 @@
                 <div class="column">
                   <b-field horizontal label="Fecha de respuesta">
                     <b-datepicker
-                      v-model="form.date_response"
+                      v-model="form.response_date"
                       placeholder="Seleccione una fecha"
                       icon="calendar-today"
                       editable
@@ -406,20 +406,6 @@
             />
           </form>
         </ValidationObserver>
-        <!--
-        <div class="card-footer">
-          <div class="card-footer-item">
-            <b-button @click="$emit('close')">
-              Cancelar
-            </b-button>
-          </div>
-          <div class="card-footer-item">
-            <b-button type="is-success" @click="createIncident">
-              Guardar
-            </b-button>
-          </div>
-        </div>
-        -->
       </div>
     </div>
   </b-modal>
@@ -491,6 +477,13 @@ export default {
       ]
     }
   },
+  watch: {
+    activeModal (newVal, oldVal) {
+      if (newVal) {
+        this.$buefy.snackbar.open('Recuerda subir los documentos en PDF.')
+      }
+    }
+  },
   mounted () {
     this.getVegetation()
     this.getDependences()
@@ -501,6 +494,7 @@ export default {
     this.getGovLevels()
     this.getIlicitsDenounced()
     this.getResponses()
+    this.getUser()
   },
   methods: {
     close () {
@@ -509,6 +503,14 @@ export default {
       this.fileRespuesta = {}
       this.fileTramite = {}
       this.$emit('close')
+    },
+    async getUser () {
+      try {
+        const res = await this.$store.dispatch('modules/users/getData')
+        this.form.iduser = res.idusers
+      } catch (error) {
+        // console.log(error)
+      }
     },
     async createOrUpdate () {
       try {
@@ -539,7 +541,7 @@ export default {
           this.fileRespuesta.name ||
           this.fileTramite.name
         ) {
-          await this.uploadFiles(res)
+          await this.uploadFiles(this.form.code, res)
         }
         this.form = {}
         this.fileDenuncia = {}
@@ -562,18 +564,27 @@ export default {
         this.isLoading = false
       }
     },
-    async uploadFiles (id) {
+    async uploadFiles (code, id) {
       try {
         const formData = new FormData()
         formData.append('idcomplaint', id)
         if (this.fileDenuncia.name) {
-          formData.append('complaint_doc', this.fileDenuncia)
+          const temporalName = 'oficioDenuncia_' + code + '_' + this.fileDenuncia.name
+          const temporalDenuncia = new File([this.fileDenuncia], temporalName, { type: this.fileDenuncia.type })
+          formData.append('complaint_doc', temporalDenuncia)
+          this.fileDenuncia = {}
         }
         if (this.fileRespuesta.name) {
-          formData.append('response_doc', this.fileRespuesta)
+          const temporalName = 'oficioRespuesta_' + code + '_' + this.fileRespuesta.name
+          const temporalRespuesta = new File([this.fileRespuesta], temporalName, { type: this.fileRespuesta.type })
+          formData.append('response_doc', temporalRespuesta)
+          this.fileRespuesta = {}
         }
         if (this.fileTramite.name) {
-          formData.append('tramit_conlusion', this.fileTramite)
+          const temporalName = 'oficioTramite_' + code + '_' + this.fileTramite.name
+          const temporalTramite = new File([this.fileTramite], temporalName, { type: this.fileTramite.type })
+          formData.append('tramit_conlusion', temporalTramite)
+          this.fileTramite = {}
         }
         await this.$store.dispatch(
           'modules/complaint/updateFilesComplaint',

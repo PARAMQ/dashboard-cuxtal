@@ -246,7 +246,7 @@
                 </b-notification>
                 <div class="container">
                   <b-field label="Descripción breve de la coordenada">
-                    <b-input v-model="formCoord.name" />
+                    <b-input v-model="formCoord.description" />
                   </b-field>
                   <b-field :label="isSwitched ? 'Longitud' : 'Coordenada X'">
                     <b-numberinput
@@ -474,6 +474,13 @@ export default {
       ]
     }
   },
+  watch: {
+    activeModal (newVal, oldVal) {
+      if (newVal) {
+        this.$buefy.snackbar.open('Recuerda subir los documentos en PDF.')
+      }
+    }
+  },
   mounted () {
     this.getVegetation()
     // this.getDependences()
@@ -497,10 +504,22 @@ export default {
         this.isLoading = true
         console.log(this.form)
         const id = await this.$store.dispatch('modules/technicalOp/createOrUpdateTechnicalOp', this.form)
+        if (this.points && this.points.length > 0) {
+          this.form.idtechnical_opinion = id
+          const temporalPoints = this.points.map((x) => {
+            x.idtech_op_coordinates = id
+            return x
+          })
+          this.form.list_coordinates = temporalPoints
+          await this.$store.dispatch('modules/technicalOp/createOrUpdateTechnicalOp', this.form)
+        }
         if (this.fileOficio.name || this.fileRespuesta.name) {
           await this.uploadFiles(id)
         }
         this.form = {}
+        this.points = []
+        this.fileOficio = {}
+        this.fileRespuesta = {}
         this.isLoading = false
         this.$buefy.toast.open({
           message: 'Guardado!',
@@ -623,7 +642,7 @@ export default {
     },
     // Coordenadas
     addPoint () {
-      if (this.formCoord.name && this.formCoord.name !== '') {
+      if (this.formCoord.description && this.formCoord.description !== '') {
         if (this.points.length === 0) {
           const pointConvert = this.convertCoordinatesToUtm([
             this.temporalPoint[0],
@@ -641,7 +660,7 @@ export default {
         this.formCoord.y = this.temporalPoint[1]
         this.points.push(this.formCoord)
         this.formCoord = {
-          name: '',
+          description: '',
           x: 0,
           y: 0
         }

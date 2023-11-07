@@ -270,6 +270,7 @@
                     </div>
                   </div>
                   <div class="level-right">
+                    <!--
                     <div class="level-item">
                       <b-button
                         type="is-info is-light"
@@ -277,6 +278,7 @@
                         @click="openOp(technicalOp)"
                       />
                     </div>
+                    -->
                     <div class="level-item">
                       <b-button
                         type="is-danger is-light"

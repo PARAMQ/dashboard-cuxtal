@@ -73,6 +73,7 @@
                         @click="openBinnacle(bitacora)"
                       />
                     </div>
+                    <!--
                     <div class="level-item">
                       <b-button
                         type="is-link is-light"
@@ -80,6 +81,7 @@
                         @click="editBinnacle(bitacora)"
                       />
                     </div>
+                    -->
                     <div class="level-item">
                       <b-button
                         type="is-danger is-light"

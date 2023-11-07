@@ -101,7 +101,9 @@ export default {
       '~/components/calendar',
       '~/components/binnacles',
       '~/components/cuxtalForms',
-      '~/components/defaultComponents'
+      '~/components/defaultComponents',
+      '~/components/complaint',
+      '~/components/techOp'
     ]
   },
   devtools: true,

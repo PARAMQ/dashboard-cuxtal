@@ -309,6 +309,7 @@
                     </div>
                   </div>
                   <div class="level-right">
+                    <!--
                     <div class="level-item">
                       <b-button
                         type="is-info is-light"
@@ -316,6 +317,7 @@
                         @click="viewInMap(complaint)"
                       />
                     </div>
+                    -->
                     <div class="level-item">
                       <b-button
                         type="is-danger is-light"
@@ -328,7 +330,7 @@
               </div>
               <div class="card-content" @click="viewInMap(complaint.idcomplaint)">
                 <p>
-                  <strong>Descripción de motivo: </strong>
+                  <strong>Denuncia presentada ante: </strong>
                   {{
                     complaint.description ? complaint.description : 'Sin descripción'
                   }}
@@ -701,6 +703,7 @@ export default {
       activeModal: false,
       data: [],
       viewComplaint: false,
+      dependences: [],
       temporalPoints: [],
       zoom: 12,
       center: [-89.60984537598705, 20.85610769792424],
@@ -724,6 +727,13 @@ export default {
       try {
         this.isLoadingData = true
         this.data = await this.$store.dispatch('modules/complaint/getComplaints')
+        const complaints = this.data.map((object) => {
+          const dependence = this.dependences.find(x => x.idcoordination === object.iddepto)
+          object.dependence = dependence
+          return object
+        })
+        console.log(complaints)
+        this.data = complaints
         this.isLoadingData = false
       } catch (error) {
         // console.log(error)
@@ -787,6 +797,16 @@ export default {
       // console.log(coords)
       const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')
       return [latLng.longitude, latLng.latitude]
+    },
+    async getDependences () {
+      try {
+        this.dependences = await this.$store.dispatch(
+          'modules/coordinations/getCoordinations'
+        )
+        // // console.log(this.dependences)
+      } catch (error) {
+        // console.log(error)
+      }
     }
   }
 }
