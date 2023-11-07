@@ -309,15 +309,13 @@
                     </div>
                   </div>
                   <div class="level-right">
-                    <!--
                     <div class="level-item">
                       <b-button
                         type="is-info is-light"
                         icon-right="eye-outline"
-                        @click="viewInMap(complaint)"
+                        @click="viewRegister(complaint)"
                       />
                     </div>
-                    -->
                     <div class="level-item">
                       <b-button
                         type="is-danger is-light"
@@ -328,7 +326,7 @@
                   </div>
                 </div>
               </div>
-              <div class="card-content" @click="viewInMap(complaint.idcomplaint)">
+              <div class="card-content">
                 <p>
                   <strong>Denuncia presentada ante: </strong>
                   {{
@@ -361,7 +359,7 @@
           <vl-source-osm />
         </vl-layer-tile>
 
-        <vl-feature v-if="viewComplaint">
+        <vl-feature v-if="viewPoints">
           <vl-geom-multi-point :coordinates="temporalPoints" />
         </vl-feature>
 
@@ -379,6 +377,12 @@
     -->
     <new-incident
       :active-modal="activeModal"
+      @close="updateView"
+      @save="updateView"
+    />
+    <view-incident
+      :active-modal="activeViewModal"
+      :incident-object="complaint"
       @close="updateView"
       @save="updateView"
     />
@@ -702,7 +706,9 @@ export default {
       isLoadingData: false,
       activeModal: false,
       data: [],
-      viewComplaint: false,
+      complaint: {},
+      viewPoints: false,
+      activeViewModal: false,
       dependences: [],
       temporalPoints: [],
       zoom: 12,
@@ -732,7 +738,7 @@ export default {
           object.dependence = dependence
           return object
         })
-        console.log(complaints)
+        // console.log(complaints)
         this.data = complaints
         this.isLoadingData = false
       } catch (error) {
@@ -741,8 +747,14 @@ export default {
         this.isLoadingData = false
       }
     },
+    viewRegister (object) {
+      this.complaint = object
+      this.activeViewModal = true
+    },
     updateView () {
       this.activeModal = false
+      this.activeViewModal = false
+      this.complaint = {}
       this.getData()
     },
     async getComplaint (id) {

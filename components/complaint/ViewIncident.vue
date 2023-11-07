@@ -13,399 +13,417 @@
         </p>
       </div>
       <div class="modal-card-body">
-        <ValidationObserver ref="form" v-slot="{ handleSubmit }">
-          <form @submit.prevent="handleSubmit">
-            <div class="divider">
-              <strong>Datos generales</strong>
-            </div>
-            <div class="columns">
-              <div class="column">
-                <BInputWithValidation
-                  v-model="form.code"
-                  label="Número de oficio"
-                  name="número de oficio"
-                  rules="required"
-                  normal
-                />
-              </div>
-              <div class="column">
-                <b-field label="Fecha de oficio de denuncia">
-                  <b-datepicker
-                    v-model="form.date"
-                    placeholder="Haz click aquí para seleccionar fecha"
-                    icon="calendar-today"
-                  />
-                </b-field>
-              </div>
-              <div class="column">
-                <b-field label="Fecha de recepción de denuncia">
-                  <b-datepicker
-                    v-model="form.date_reception"
-                    placeholder="Haz click aquí para seleccionar fecha"
-                    icon="calendar-today"
-                  />
-                </b-field>
-              </div>
-            </div>
-            <div>
-              <div class="columns">
-                <div class="column is-9">
-                  <b-field label="Dirección del predio">
-                    <b-input
-                      v-model="form.address"
-                      name="predio"
-                      type="text"
-                      required
-                    />
-                  </b-field>
-                </div>
-                <div class="column">
-                  <b-field label="Tenencia del predio">
-                    <b-select
-                      v-model="form.idtenure"
-                      placeholder="Selecciona una opción"
-                    >
-                      <option
-                        v-for="option in tenures"
-                        :key="option.idtenure"
-                        :value="option.idtenure"
-                      >
-                        {{ option.description }}
-                      </option>
-                    </b-select>
-                  </b-field>
-                </div>
-              </div>
-              <b-field horizontal label="Denuncia presentada ante">
-                <b-select
-                  v-model="form.iddepto"
-                  placeholder="Seleccione una opción"
-                >
-                  <option
-                    v-for="option in dependences"
-                    :key="option.idcoordination"
-                    :value="option.idcoordination"
-                  >
-                    {{ option.description }}
-                  </option>
-                </b-select>
-              </b-field>
-              <b-field horizontal label="Nivel de gobierno">
-                <b-select
-                  v-model="form.idgov_level"
-                  placeholder="Seleccione una opción"
-                >
-                  <option
-                    v-for="option in govLevels"
-                    :key="option.idgov_level"
-                    :value="option.idgov_level"
-                  >
-                    {{ option.description }}
-                  </option>
-                </b-select>
-              </b-field>
-              <b-field horizontal label="Ilícito ambiental denunciado">
-                <b-select
-                  v-model="form.idilicit_denounced"
-                  placeholder="Seleccione una opción"
-                >
-                  <option
-                    v-for="option in ilicits"
-                    :key="option.idilicit_denounced"
-                    :value="option.idilicit_denounced"
-                  >
-                    {{ option.description }}
-                  </option>
-                </b-select>
-              </b-field>
-            </div>
-            <div class="divider">
-              <strong>Vegetación</strong>
-            </div>
-            <div>
-              <b-field label="Vegetación afectada">
-                <b-taginput
-                  v-model="form.complaint_va"
-                  :data="filterVegetable"
-                  field="description"
-                  autocomplete
-                  :open-on-focus="true"
-                  @typing="filterVegetableFun"
-                >
-                  <template v-slot="props">
-                    <strong>{{ props.option.description }}</strong>
-                  </template>
-                  <template #empty>
-                    Sin resultados
-                  </template>
-                </b-taginput>
-              </b-field>
-            </div>
-            <!--
+        <form @submit.prevent="handleSubmit">
           <div class="divider">
-            <strong>Alcances</strong>
+            <strong>Datos generales</strong>
           </div>
-          -->
-            <div class="divider">
-              <strong>Zonas</strong>
-            </div>
-            <div>
-              <b-field horizontal label="Zonas de vigilancia">
-                <b-taginput
-                  v-model="form.idoperative_zone"
-                  :data="filteredOpZone"
-                  field="description"
-                  autocomplete
-                  :open-on-focus="true"
-                  @typing="filterOpZone"
-                >
-                  <template v-slot="props">
-                    <strong>{{ props.option.description }}</strong>
-                  </template>
-                  <template #empty>
-                    Sin resultados
-                  </template>
-                </b-taginput>
-              </b-field>
-              <b-field horizontal label="Zonificación PM">
-                <b-taginput
-                  v-model="form.idzoning"
-                  :data="filteredLegalZones"
-                  field="description"
-                  autocomplete
-                  :open-on-focus="true"
-                  @typing="filterLegalZone"
-                >
-                  <template v-slot="props">
-                    <strong>{{ props.option.description }}</strong>
-                  </template>
-                  <template #empty>
-                    Sin resultados
-                  </template>
-                </b-taginput>
-              </b-field>
-              <b-field horizontal label="Subzoninifcación PM">
-                <b-taginput
-                  v-model="form.idsubzoning"
-                  :data="filteredSubZones"
-                  field="description"
-                  autocomplete
-                  :open-on-focus="true"
-                  @typing="filterSubzone"
-                >
-                  <template v-slot="props">
-                    <strong>{{ props.option.description }}</strong>
-                  </template>
-                  <template #empty>
-                    Sin resultados
-                  </template>
-                </b-taginput>
+          <div class="columns">
+            <div class="column">
+              <b-field label="Número de oficio">
+                <p>{{ form.code }}</p>
               </b-field>
             </div>
-            <div class="divider">
-              <strong>Coordenadas</strong>
+            <div class="column">
+              <b-field label="Fecha de oficio de denuncia">
+                <b-datepicker
+                  v-model="form.date"
+                  placeholder="Haz click aquí para seleccionar fecha"
+                  icon="calendar-today"
+                />
+              </b-field>
             </div>
+            <div class="column">
+              <b-field label="Fecha de recepción de denuncia">
+                <b-datepicker
+                  v-model="form.date_reception"
+                  placeholder="Haz click aquí para seleccionar fecha"
+                  icon="calendar-today"
+                />
+              </b-field>
+            </div>
+          </div>
+          <div>
             <div class="columns">
-              <div class="column is-4">
-                <b-notification type="is-info" has-icon :closable="false">
-                  Ingrese las coordenadas en formato UTM.
-                </b-notification>
-                <div class="container">
-                  <b-field label="Descripción breve de la coordenada">
-                    <b-input v-model="formCoord.name" />
-                  </b-field>
-                  <b-field :label="isSwitched ? 'Longitud' : 'Coordenada X'">
-                    <b-numberinput
-                      v-model="temporalPoint[0]"
-                      step="0.000000000000000001"
-                      :controls="false"
-                    />
-                  </b-field>
-                  <b-field :label="isSwitched ? 'Latitud' : 'Coordenada Y'">
-                    <b-numberinput
-                      v-model="temporalPoint[1]"
-                      step="0.000000000000000001"
-                      :controls="false"
-                    />
-                  </b-field>
-                </div>
-                <div class="container m-3 has-text-centered">
-                  <b-button type="is-success is-light" @click="addPoint">
-                    Agregar coordenada
-                  </b-button>
-                  <b-button type="is-info is-light" @click="viewPoint">
-                    Ver punto
-                  </b-button>
-                </div>
-                <div
-                  v-for="pointCoord in points"
-                  :key="pointCoord.name"
-                  class="container m-3"
-                >
-                  <div class="control">
-                    <b-tag
-                      type="is-primary"
-                      attached
-                      aria-close-label="Close tag"
-                      closable
-                      @close="deletePoint"
-                      @click="viewPoint(pointCoord)"
-                    >
-                      {{ pointCoord.name }}
-                    </b-tag>
-                  </div>
-                </div>
+              <div class="column is-9">
+                <b-field label="Dirección del predio">
+                  <p>{{ form.address }}</p>
+                </b-field>
               </div>
-              <div class="column is-8">
-                <vl-map
-                  :load-tiles-while-animating="true"
-                  :load-tiles-while-interacting="true"
-                  data-projection="EPSG:4326"
-                  style="height: 400px"
+              <div class="column">
+                <b-field label="Tenencia del predio">
+                  <b-tag size="is-medium">{{ form.idtenure ? form.tenure.description : 'Sin tenencia de predio' }}</b-tag>
+                  <!--
+                  <b-select
+                    v-model="form.idtenure"
+                    placeholder="Selecciona una opción"
+                  >
+                    <option
+                      v-for="option in tenures"
+                      :key="option.idtenure"
+                      :value="option.idtenure"
+                    >
+                      {{ option.description }}
+                    </option>
+                  </b-select>
+                  -->
+                </b-field>
+              </div>
+            </div>
+            <b-field horizontal label="Denuncia presentada ante">
+              <b-tag size="is-medium">{{ form.iddepto ? form.depto.description : 'Sin dependencia seleccionada' }}</b-tag>
+              <!--
+              <b-select
+                v-model="form.iddepto"
+                placeholder="Seleccione una opción"
+              >
+                <option
+                  v-for="option in dependences"
+                  :key="option.idcoordination"
+                  :value="option.idcoordination"
                 >
-                  <vl-view
-                    :zoom.sync="zoom"
-                    :center.sync="center"
-                    :rotation.sync="rotation"
+                  {{ option.description }}
+                </option>
+              </b-select>
+              -->
+            </b-field>
+            <b-field horizontal label="Nivel de gobierno">
+              <b-tag size="is-medium">{{ form.idgov_level ? form.level.description : 'Sin dependencia seleccionada' }}</b-tag>
+              <!--
+              <b-select
+                v-model="form.idgov_level"
+                placeholder="Seleccione una opción"
+              >
+                <option
+                  v-for="option in govLevels"
+                  :key="option.idgov_level"
+                  :value="option.idgov_level"
+                >
+                  {{ option.description }}
+                </option>
+              </b-select>
+              -->
+            </b-field>
+            <b-field horizontal label="Ilícito ambiental denunciado">
+              <b-tag size="is-medium">{{ form.idilicit_denounced ? form.ilicit.description : 'Sin dependencia seleccionada' }}</b-tag>
+              <!--
+              <b-select
+                v-model="form.idilicit_denounced"
+                placeholder="Seleccione una opción"
+              >
+                <option
+                  v-for="option in ilicits"
+                  :key="option.idilicit_denounced"
+                  :value="option.idilicit_denounced"
+                >
+                  {{ option.description }}
+                </option>
+              </b-select>
+              -->
+            </b-field>
+          </div>
+          <div class="divider">
+            <strong>Vegetación</strong>
+          </div>
+          <div>
+            <b-field label="Vegetación afectada">
+              <b-taginput
+                v-model="form.complaint_va"
+                :data="filterVegetable"
+                field="description"
+                autocomplete
+                :open-on-focus="true"
+                @typing="filterVegetableFun"
+              >
+                <template v-slot="props">
+                  <strong>{{ props.option.description }}</strong>
+                </template>
+                <template #empty>
+                  Sin resultados
+                </template>
+              </b-taginput>
+            </b-field>
+          </div>
+          <!--
+        <div class="divider">
+          <strong>Alcances</strong>
+        </div>
+        -->
+          <div class="divider">
+            <strong>Zonas</strong>
+          </div>
+          <div>
+            <b-field horizontal label="Zonas de vigilancia">
+              <b-taginput
+                v-model="form.idoperative_zone"
+                :data="filteredOpZone"
+                field="description"
+                autocomplete
+                :open-on-focus="true"
+                @typing="filterOpZone"
+              >
+                <template v-slot="props">
+                  <strong>{{ props.option.description }}</strong>
+                </template>
+                <template #empty>
+                  Sin resultados
+                </template>
+              </b-taginput>
+            </b-field>
+            <b-field horizontal label="Zonificación PM">
+              <b-taginput
+                v-model="form.idzoning"
+                :data="filteredLegalZones"
+                field="description"
+                autocomplete
+                :open-on-focus="true"
+                @typing="filterLegalZone"
+              >
+                <template v-slot="props">
+                  <strong>{{ props.option.description }}</strong>
+                </template>
+                <template #empty>
+                  Sin resultados
+                </template>
+              </b-taginput>
+            </b-field>
+            <b-field horizontal label="Subzoninifcación PM">
+              <b-taginput
+                v-model="form.idsubzoning"
+                :data="filteredSubZones"
+                field="description"
+                autocomplete
+                :open-on-focus="true"
+                @typing="filterSubzone"
+              >
+                <template v-slot="props">
+                  <strong>{{ props.option.description }}</strong>
+                </template>
+                <template #empty>
+                  Sin resultados
+                </template>
+              </b-taginput>
+            </b-field>
+          </div>
+          <div class="divider">
+            <strong>Coordenadas</strong>
+          </div>
+          <div class="columns">
+            <!--
+            <div class="column is-4">
+              <b-notification type="is-info" has-icon :closable="false">
+                Ingrese las coordenadas en formato UTM.
+              </b-notification>
+              <div class="container">
+                <b-field label="Descripción breve de la coordenada">
+                  <b-input v-model="formCoord.name" />
+                </b-field>
+                <b-field :label="isSwitched ? 'Longitud' : 'Coordenada X'">
+                  <b-numberinput
+                    v-model="temporalPoint[0]"
+                    step="0.000000000000000001"
+                    :controls="false"
                   />
-
-                  <vl-layer-tile>
-                    <vl-source-osm />
-                  </vl-layer-tile>
-
-                  <vl-feature>
-                    <vl-geom-point :coordinates="ViewPoint" />
-                  </vl-feature>
-
-                  <vl-feature>
-                    <vl-geom-multi-point :coordinates="pointsMap" />
-                  </vl-feature>
-
-                  <vl-layer-vector>
-                    <vl-source-vector :features.sync="features" />
-                  </vl-layer-vector>
-                </vl-map>
+                </b-field>
+                <b-field :label="isSwitched ? 'Latitud' : 'Coordenada Y'">
+                  <b-numberinput
+                    v-model="temporalPoint[1]"
+                    step="0.000000000000000001"
+                    :controls="false"
+                    disabled
+                  />
+                </b-field>
               </div>
-            </div>
-            <div class="divider">
-              <strong>Seguimiento</strong>
-            </div>
-            <div>
-              <div class="columns">
-                <div class="column">
-                  <b-field horizontal label="Oficio de respuesta">
-                    <b-input
-                      v-model="form.of_respuesta"
-                      name="nivel"
-                      type="text"
-                      required
-                    />
-                  </b-field>
-                </div>
-                <div class="column">
-                  <b-field horizontal label="Fecha de respuesta">
-                    <b-datepicker
-                      v-model="form.response_date"
-                      placeholder="Seleccione una fecha"
-                      icon="calendar-today"
-                      editable
-                    />
-                  </b-field>
-                </div>
-                <div class="column">
-                  <b-field horizontal label="Respuesta">
-                    <b-select
-                      v-model="form.response"
-                      placeholder="Seleccione una opción"
-                    >
-                      <option
-                        v-for="option in responses"
-                        :key="option.idresponse"
-                        :value="option.idresponse"
-                      >
-                        {{ option.description }}
-                      </option>
-                    </b-select>
-                  </b-field>
+              <div class="container m-3 has-text-centered">
+                <b-button type="is-success is-light" @click="addPoint">
+                  Agregar coordenada
+                </b-button>
+                <b-button type="is-info is-light" @click="viewPoint">
+                  Ver punto
+                </b-button>
+              </div>
+              <div
+                v-for="pointCoord in points"
+                :key="pointCoord.name"
+                class="container m-3"
+              >
+                <div class="control">
+                  <b-tag
+                    type="is-primary"
+                    attached
+                    aria-close-label="Close tag"
+                    closable
+                    @close="deletePoint"
+                    @click="viewPoint(pointCoord)"
+                  >
+                    {{ pointCoord.name }}
+                  </b-tag>
                 </div>
               </div>
             </div>
-            <div class="divider">
-              <strong>Documentos</strong>
+            -->
+            <div class="column">
+              <vl-map
+                :load-tiles-while-animating="true"
+                :load-tiles-while-interacting="true"
+                data-projection="EPSG:4326"
+                style="height: 600px"
+              >
+                <vl-view
+                  :zoom.sync="zoom"
+                  :center.sync="center"
+                  :rotation.sync="rotation"
+                />
+
+                <vl-layer-tile>
+                  <vl-source-osm />
+                </vl-layer-tile>
+
+                <vl-feature v-if="activePoints">
+                  <vl-geom-multi-point :coordinates="pointsMap" />
+                </vl-feature>
+
+                <vl-layer-vector>
+                  <vl-source-vector :features.sync="features" />
+                </vl-layer-vector>
+              </vl-map>
             </div>
-            <div class="columns has-text-centered">
-              <div class="column is-flex is-justify-content-center">
-                <b-field label="Oficio de denuncia">
-                  <b-field
-                    class="file is-primary"
-                    :class="{ 'has-name': !!fileDenuncia }"
-                  >
-                    <b-upload
-                      v-model="fileDenuncia"
-                      class="file-label"
-                      rounded
-                    >
-                      <span class="file-cta">
-                        <b-icon class="file-icon" icon="upload" />
-                        <span class="file-label">{{
-                          fileDenuncia.name || 'Subir archivo'
-                        }}</span>
-                      </span>
-                    </b-upload>
-                  </b-field>
+          </div>
+          <div class="divider">
+            <strong>Seguimiento</strong>
+          </div>
+          <div>
+            <div class="columns">
+              <div class="column">
+                <b-field horizontal label="Oficio de respuesta">
+                  <b-input
+                    v-model="form.description"
+                    name="nivel"
+                    type="text"
+                    required
+                    disabled
+                  />
                 </b-field>
               </div>
-              <div class="column is-flex is-justify-content-center">
-                <b-field label="Oficio de respuesta">
-                  <b-field
-                    class="file is-primary"
-                    :class="{ 'has-name': !!fileRespuesta }"
-                  >
-                    <b-upload
-                      v-model="fileRespuesta"
-                      class="file-label"
-                      rounded
-                    >
-                      <span class="file-cta">
-                        <b-icon class="file-icon" icon="upload" />
-                        <span class="file-label">{{
-                          fileRespuesta.name || 'Subir archivo'
-                        }}</span>
-                      </span>
-                    </b-upload>
-                  </b-field>
+              <div class="column">
+                <b-field horizontal label="Fecha de respuesta">
+                  <b-datepicker
+                    v-model="form.response_date"
+                    placeholder="Seleccione una fecha"
+                    icon="calendar-today"
+                    editable
+                  />
                 </b-field>
               </div>
-              <div class="column is-flex is-justify-content-center">
-                <b-field label="Conclusión de trámite">
-                  <b-field
-                    class="file is-primary"
-                    :class="{ 'has-name': !!fileTramite }"
+              <div class="column">
+                <b-field horizontal label="Respuesta">
+                  <b-select
+                    v-model="form.response"
+                    placeholder="Seleccione una opción"
                   >
-                    <b-upload
-                      v-model="fileTramite"
-                      class="file-label"
-                      rounded
+                    <option
+                      v-for="option in responses"
+                      :key="option.idresponse"
+                      :value="option.idresponse"
                     >
-                      <span class="file-cta">
-                        <b-icon class="file-icon" icon="upload" />
-                        <span class="file-label">{{
-                          fileTramite.name || 'Subir archivo'
-                        }}</span>
-                      </span>
-                    </b-upload>
-                  </b-field>
+                      {{ option.description }}
+                    </option>
+                  </b-select>
                 </b-field>
               </div>
             </div>
-            <ButtonGroup
-              :handle-submit="handleSubmit"
-              saving
-              @save="createOrUpdate"
-              @cancel="close"
-            />
-          </form>
-        </ValidationObserver>
+          </div>
+          <div class="divider">
+            <strong>Documentos</strong>
+          </div>
+          <div class="columns has-text-centered">
+            <div class="column is-flex is-justify-content-center">
+              <b-field label="Oficio de denuncia">
+                <b-button v-if="form.complaint_doc" @click="downloadFile(form.complaint_doc, 'denuncia')">Descargar archivo</b-button>
+                <b-tag v-else>Sin archivo</b-tag>
+                <!--
+                <b-field
+                  class="file is-primary"
+                  :class="{ 'has-name': !!fileDenuncia }"
+                >
+                  <b-upload
+                    v-model="fileDenuncia"
+                    class="file-label"
+                    rounded
+                  >
+                    <span class="file-cta">
+                      <b-icon class="file-icon" icon="upload" />
+                      <span class="file-label">{{
+                        fileDenuncia.name || 'Subir archivo'
+                      }}</span>
+                    </span>
+                  </b-upload>
+                </b-field>
+                -->
+              </b-field>
+            </div>
+            <div class="column is-flex is-justify-content-center">
+              <b-field label="Oficio de respuesta">
+                <b-button v-if="form.response_doc" @click="downloadFile(form.response_doc, 'respuesta')">Descargar archivo</b-button>
+                <b-tag v-else>Sin archivo</b-tag>
+                <!--
+                <b-field
+                  class="file is-primary"
+                  :class="{ 'has-name': !!fileRespuesta }"
+                >
+                  <b-upload
+                    v-model="fileRespuesta"
+                    class="file-label"
+                    rounded
+                  >
+                    <span class="file-cta">
+                      <b-icon class="file-icon" icon="upload" />
+                      <span class="file-label">{{
+                        fileRespuesta.name || 'Subir archivo'
+                      }}</span>
+                    </span>
+                  </b-upload>
+                </b-field>
+                -->
+              </b-field>
+            </div>
+            <div class="column is-flex is-justify-content-center">
+              <b-field label="Conclusión de trámite">
+                <b-button v-if="form.tramit_conclusion" @click="downloadFile(form.tramit_conclusion, 'tramite')">Descargar archivo</b-button>
+                <b-tag v-else>Sin archivo</b-tag>
+                <!--
+                <b-field
+                  class="file is-primary"
+                  :class="{ 'has-name': !!fileTramite }"
+                >
+                  <b-upload
+                    v-model="fileTramite"
+                    class="file-label"
+                    rounded
+                  >
+                    <span class="file-cta">
+                      <b-icon class="file-icon" icon="upload" />
+                      <span class="file-label">{{
+                        fileTramite.name || 'Subir archivo'
+                      }}</span>
+                    </span>
+                  </b-upload>
+                </b-field>
+                -->
+              </b-field>
+            </div>
+          </div>
+          <div class="container m-2 has-text-centered">
+            <b-button @click="close"><strong>Cerrar</strong></b-button>
+          </div>
+          <!--
+          <ButtonGroup
+            :handle-submit="handleSubmit"
+            saving
+            @save="createOrUpdate"
+            @cancel="close"
+          />
+          -->
+        </form>
       </div>
     </div>
   </b-modal>
@@ -424,6 +442,11 @@ export default {
     activeModal: {
       default: false,
       type: Boolean
+    },
+    incidentObject: {
+      type: Object,
+      // eslint-disable-next-line vue/require-valid-default-prop
+      default: {}
     }
   },
   data () {
@@ -463,6 +486,7 @@ export default {
       pointsMap: [[-89.60984537598705, 20.85610769792424]],
       points: [],
       idPoints: [],
+      activePoints: false,
       zoom: 12,
       center: [-89.60984537598705, 20.85610769792424],
       rotation: 0,
@@ -480,7 +504,8 @@ export default {
   watch: {
     activeModal (newVal, oldVal) {
       if (newVal) {
-        this.$buefy.snackbar.open('Recuerda subir los documentos en PDF.')
+        // this.$buefy.snackbar.open('Recuerda subir los documentos en PDF.')
+        this.getIncident(this.incidentObject)
       }
     }
   },
@@ -502,6 +527,8 @@ export default {
       this.fileDenuncia = {}
       this.fileRespuesta = {}
       this.fileTramite = {}
+      this.activePoints = false
+      this.pointsMap = []
       this.$emit('close')
     },
     async getUser () {
@@ -510,6 +537,34 @@ export default {
         this.form.iduser = res.idusers
       } catch (error) {
         // console.log(error)
+      }
+    },
+    async getIncident (object) {
+      try {
+        this.isLoading = true
+        console.log(object)
+        const res = await this.$store.dispatch('modules/complaint/getInfoComplaint', object.idcomplaint)
+        console.log(res)
+        res.date = res.date ? new Date(res.date) : null
+        res.date_reception = res.date_reception ? new Date(res.date_reception) : null
+        res.response_date = res.response_date ? new Date(res.response_date) : null
+        res.tenure = res.idtenure ? this.tenures.find(x => x.idtenure === res.idtenure) : null
+        res.depto = res.iddepto ? this.dependences.find(x => x.idcoordination === res.iddepto) : null
+        res.level = res.idgov_level ? this.govLevels.find(x => x.idgov_level === res.idgov_level) : null
+        res.ilicit = res.idilicit_denounced ? this.ilicits.find(x => x.idilicit_denounced === res.idilicit_denounced) : null
+        if (res.complaint_coordinates) {
+          this.pointsMap = res.complaint_coordinates.map((x) => {
+            const point = this.convertCoordinatesToUtm([x.x, x.y])
+            return point
+          })
+          console.log(this.pointsMap)
+          this.activePoints = true
+        }
+        this.form = res
+        console.log(this.form)
+        this.isLoading = false
+      } catch (error) {
+        console.log(error)
       }
     },
     async createOrUpdate () {
@@ -592,6 +647,23 @@ export default {
         )
       } catch (error) {
         // console.log(error)
+      }
+    },
+    async downloadFile (urlFile, type) {
+      try {
+        const response = await fetch(urlFile) // Reemplaza 'URL_DEL_ARCHIVO' con la URL real del archivo que deseas descargar.
+        const blob = await response.blob()
+
+        // Crea un objeto URL para el blob y crea un enlace temporal para la descarga.
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = type // Especifica el nombre del archivo que se descargará.
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+      } catch (error) {
+        console.error('Error al descargar el archivo:', error)
       }
     },
     async getVegetation () {
@@ -786,6 +858,30 @@ export default {
         this.$buefy.toast.open({
           message: 'No se pudieron agregar las coordenadas, intente nuevamente',
           type: 'is-danger'
+        })
+      }
+    },
+    async viewPoints (option) {
+      this.viewComplaint = false
+      this.temporalPoints = [[-89.60984537598705, 20.85610769792424]]
+      const complaint = await this.getComplaint(option)
+      complaint.points = []
+      if (complaint.complaint_coordinates && complaint.complaint_coordinates.length > 0) {
+        const temporalPoints = complaint.complaint_coordinates
+        temporalPoints.forEach((object) => {
+          const point = [object.x, object.y]
+          const pointConvert = this.convertCoordinatesToUtm(point)
+          complaint.points.push(pointConvert)
+        })
+        this.temporalPoints = complaint.points
+        this.viewComplaint = true
+      } else {
+        this.$buefy.notification.open({
+          message: 'La denuncia no contiene coordenadas.',
+          duration: 2500,
+          position: 'is-bottom-right',
+          type: 'is-warning',
+          hasIcon: true
         })
       }
     },

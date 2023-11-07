@@ -2,15 +2,30 @@
   <section class="hero is-fullheight">
     <div class="hero-body">
       <div class="columns">
-        <!--
         <div class="column">
-          <div class="card">
+          <div class="card" style="heigth: 100%;">
+            <header class="card-header">
+              <p class="card-header-title">
+                Vegetación registrada
+              </p>
+            </header>
             <div class="card-content has-text-centered">
-              <p>tarjeta 1</p>
+              <h1><strong>{{ vegetation.length > 0 ? vegetation.length : 'Sin vegetación registrada' }}</strong></h1>
             </div>
           </div>
         </div>
-      -->
+        <div class="column">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Recorridos programados en {{ dateNow.getFullYear() }} (año actual)
+              </p>
+            </header>
+            <div class="card-content has-text-centered">
+              <h1><strong>{{ planification.length > 0 ? planification.length : 'Sin recorridos programados' }}</strong></h1>
+            </div>
+          </div>
+        </div>
         <div class="column">
           <div class="card">
             <div v-if="series.length > 0" class="card-content is-flex is-justify-content-center">
@@ -68,20 +83,29 @@ export default {
     await this.getData()
     this.getInfoDonnut()
   },
-  async mounted () {
-    await this.getComplaints()
-    this.getInfoDonnut()
-  },
   data () {
     return {
       series: [],
       options: {
-        labels: ['Opiniones técnicas', 'Denuncias', 'Programadas']
+        labels: ['Opiniones técnicas', 'Denuncias']
       },
+      dateNow: new Date(),
+      techOps: [],
       techOp: [],
+      vegetation: [],
       complaints: [],
-      programmed: []
+      programmed: [],
+      planification: [],
+      binnaclesIsExtraordinary: [],
+      binnaclesProgrammed: []
     }
+  },
+  async mounted () {
+    await this.getComplaints()
+    await this.getTechOp()
+    this.getVegetation()
+    this.getInfoDonnut()
+    this.getPlanifications()
   },
   methods: {
     async getData () {
@@ -89,6 +113,8 @@ export default {
         const res = await this.$store.dispatch(
           'modules/binnacles/getBinnacles'
         )
+        this.binnaclesIsExtraordinary = res.filter(x => x.isextraordinary)
+        this.binnaclesProgrammed = res.filter(x => !x.isextraordinary)
         this.techOp = res.filter((x) => x.type === 'techOp')
         this.complaint = res.filter((x) => x.type === 'complaint')
         this.programmed = res.filter((x) => x.type === 'programmed')
@@ -100,12 +126,48 @@ export default {
       try {
         const res = await this.$store.dispatch('modules/complaint/getComplaints')
         this.complaints = res
+        this.complaint = res.length
+        console.log(this.complaint)
       } catch (error) {
         // console.log(error)
       }
     },
+    async getTechOp () {
+      try {
+        const res = await this.$store.dispatch('modules/technicalOp/getTechnicalOps')
+        this.techOps = res
+        this.techOp = res.length
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getVegetation () {
+      try {
+        const res = await this.$store.dispatch('modules/vegetation/getVegetations')
+        this.vegetation = res
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getPlanifications () {
+      const today = new Date() // Obtén la fecha actual
+      const currentYear = today.getFullYear() // Obtiene el año actual
+
+      // Primer día del año
+      const firstDayOfYear = new Date(currentYear, 0, 1)
+
+      // Último día del año
+      const lastDayOfYear = new Date(currentYear, 11, 31)
+      try {
+        const res = await this.$store.dispatch('modules/plans/getPlans', [firstDayOfYear, lastDayOfYear])
+        this.planification = res
+      } catch (error) {
+        console.log(error)
+      }
+    },
     getInfoDonnut () {
-      this.series = [Number(this.techOp.length), Number(this.complaints.length), Number(this.programmed.length)]
+      this.series = [Number(this.techOp), Number(this.complaints), Number(this.programmed.length)]
+      this.series = [Number(this.techOp), Number(this.complaint)]
     }
   },
   head () {

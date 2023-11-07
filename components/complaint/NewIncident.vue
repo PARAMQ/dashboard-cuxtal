@@ -295,8 +295,8 @@
                 <div class="column">
                   <b-field horizontal label="Oficio de respuesta">
                     <b-input
-                      v-model="form.of_respuesta"
-                      name="nivel"
+                      v-model="form.description"
+                      name="oficio de respuesta"
                       type="text"
                       required
                     />
