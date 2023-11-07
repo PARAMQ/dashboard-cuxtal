@@ -18,11 +18,11 @@
               <div class="card">
                 <div class="card-content scroll">
                   <div
-                    v-for="veg in vegetacion"
+                    v-for="(veg, index) in vegetacion"
                     :key="veg.idva"
                     class="container"
                   >
-                    <div class="card" @click="viewVeg(veg)">
+                    <div class="card" @click="viewVeg(veg, index)">
                       <div class="card-content">
                         <div class="container">
                           <div class="columns">
@@ -52,11 +52,9 @@
                   <div class="level">
                     <div class="level-left">
                       <div class="level-item">
-                        <!--
                         <p class="card-header-title">
-                          ID: {{ vegetation.idva }}
+                          ID: {{ vegetation.possition }}
                         </p>
-                        -->
                       </div>
                     </div>
                     <div class="level-right has-text-left">
@@ -198,8 +196,9 @@ export default {
     this.getData()
   },
   methods: {
-    viewVeg (vegetation) {
+    viewVeg (vegetation, index) {
       this.vegetation = vegetation
+      this.vegetation.possition = (Number(index) + 1)
       this.selectVeg = true
     },
     cancelEdit () {

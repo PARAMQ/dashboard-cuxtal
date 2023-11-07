@@ -44,6 +44,9 @@
                     </template>
                   </b-autocomplete>
                 </b-field>
+                <b-tooltip label="Si vinculas una bitácora, usará las zonas operativas, zonificación y subzonificación PM registrado en el." position="is-right">
+                  <b-icon icon="help" size="is-small" />
+                </b-tooltip>
               </div>
               <div class="column">
                 <b-field label="Fecha de oficio de denuncia">
