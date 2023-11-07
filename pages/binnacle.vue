@@ -28,6 +28,7 @@
                     <div class="level-item">
                       <p>{{ bitacora.number }}</p>
                     </div>
+                    <!--
                     <div class="level-item">
                       <b-tooltip
                         v-if="bitacora.status === 'revisado'"
@@ -52,8 +53,8 @@
                         />
                       </b-tooltip>
                       <b-tooltip
-                        v-else-if="bitacora.status === 'sin-revisar'"
-                        label="En revisión"
+                        v-else-if="bitacora.status === 'por-revisar'"
+                        label="Por revisar"
                         position="is-left"
                       >
                         <b-icon icon="clock" size="is-small" type="is-light" />
@@ -62,6 +63,7 @@
                         <b-icon icon="alert" size="is-small" type="is-danger" />
                       </b-tooltip>
                     </div>
+                    -->
                   </div>
                   <div class="level-right">
                     <div class="level-item">
@@ -73,6 +75,13 @@
                     </div>
                     <div class="level-item">
                       <b-button
+                        type="is-link is-light"
+                        icon-right="pencil"
+                        @click="editBinnacle(bitacora)"
+                      />
+                    </div>
+                    <div class="level-item">
+                      <b-button
                         type="is-danger is-light"
                         icon-right="delete-empty-outline"
                         @click="deleteBinnacle(bitacora.idbinnacle)"
@@ -80,7 +89,7 @@
                     </div>
                     <div class="level-item">
                       <b-button
-                        type="is-link is-light"
+                        type="is-success is-light"
                         icon-right="file-word"
                         @click="getWord(bitacora.idbinnacle, bitacora.number)"
                       />
@@ -156,6 +165,12 @@
       :disable-form="true"
       @close="updateView"
     />
+    <edit-binnacle
+      :active-modal="activeEditModal"
+      :binnacle-object="binnacleSelect"
+      @close="updateView"
+      @save="updateView"
+    />
     <b-notification
       v-model="downloadFile"
       type="is-info is-light"
@@ -177,6 +192,7 @@ export default {
     return {
       activeModal: false,
       activeViewModal: false,
+      activeEditModal: false,
       downloadFile: false,
       idBinnacle: '',
       binnacleSelect: {},
@@ -212,13 +228,17 @@ export default {
     },
     updateView () {
       this.activeViewModal = false
+      this.activeEditModal = false
       this.activeModal = false
       this.getData()
     },
     openBinnacle (binnacle) {
-      console.log(binnacle)
       this.binnacleSelect = binnacle
       this.activeViewModal = true
+    },
+    editBinnacle (binnacle) {
+      this.binnacleSelect = binnacle
+      this.activeEditModal = true
     },
     async deleteBinnacle (binnacle) {
       try {

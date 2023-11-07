@@ -491,7 +491,25 @@
             </div>
           </div>
         </div>
-        <div class="has-text-centered" style="width: 100%;">
+        <div v-if="form.list_image && form.list_image.length > 0" class="container">
+          <div class="divider">
+            <strong>Evidencias</strong>
+          </div>
+          <div v-for="image in form.list_image" :key="image" class="columns">
+            <figure v-if="image.path" class="image is-128x128">
+              <img :src="image.path">
+            </figure>
+          </div>
+        </div>
+        <div v-else class="container">
+          <div class="divider">
+            <strong>Evidencias</strong>
+          </div>
+          <div class="has-text-centered">
+            <p>Sin evidencias</p>
+          </div>
+        </div>
+        <div class="has-text-centered m-2" style="width: 100%;">
           <b-button @click="close">
             <strong>Cerrar</strong>
           </b-button>

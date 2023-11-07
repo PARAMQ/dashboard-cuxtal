@@ -330,79 +330,74 @@
                 </div>
               </div>
             </div>
-            <!--
-          <div class="divider">
-            <strong>Documentos</strong>
-          </div>
-          <div class="columns has-text-centered">
-            <div class="column is-flex is-justify-content-center">
-              <b-field label="Oficio de denuncia">
-                <b-field
-                  class="file is-primary"
-                  :class="{ 'has-name': !!fileDenuncia }"
-                >
-                  <b-upload
-                    v-model="fileDenuncia"
-                    :multiple="true"
-                    class="file-label"
-                    rounded
-                  >
-                    <span class="file-cta">
-                      <b-icon class="file-icon" icon="upload" />
-                      <span class="file-label">{{
-                        fileDenuncia.name || 'Subir archivo'
-                      }}</span>
-                    </span>
-                  </b-upload>
-                </b-field>
-              </b-field>
+            <div class="divider">
+              <strong>Documentos</strong>
             </div>
-            <div class="column is-flex is-justify-content-center">
-              <b-field label="Oficio de respuesta">
-                <b-field
-                  class="file is-primary"
-                  :class="{ 'has-name': !!fileRespuesta }"
-                >
-                  <b-upload
-                    v-model="fileRespuesta"
-                    :multiple="true"
-                    class="file-label"
-                    rounded
+            <div class="columns has-text-centered">
+              <div class="column is-flex is-justify-content-center">
+                <b-field label="Oficio de denuncia">
+                  <b-field
+                    class="file is-primary"
+                    :class="{ 'has-name': !!fileDenuncia }"
                   >
-                    <span class="file-cta">
-                      <b-icon class="file-icon" icon="upload" />
-                      <span class="file-label">{{
-                        fileRespuesta.name || 'Subir archivo'
-                      }}</span>
-                    </span>
-                  </b-upload>
+                    <b-upload
+                      v-model="fileDenuncia"
+                      class="file-label"
+                      rounded
+                    >
+                      <span class="file-cta">
+                        <b-icon class="file-icon" icon="upload" />
+                        <span class="file-label">{{
+                          fileDenuncia.name || 'Subir archivo'
+                        }}</span>
+                      </span>
+                    </b-upload>
+                  </b-field>
                 </b-field>
-              </b-field>
-            </div>
-            <div class="column is-flex is-justify-content-center">
-              <b-field label="Conclusión de trámite">
-                <b-field
-                  class="file is-primary"
-                  :class="{ 'has-name': !!fileTramite }"
-                >
-                  <b-upload
-                    v-model="fileTramite"
-                    :multiple="true"
-                    class="file-label"
-                    rounded
+              </div>
+              <div class="column is-flex is-justify-content-center">
+                <b-field label="Oficio de respuesta">
+                  <b-field
+                    class="file is-primary"
+                    :class="{ 'has-name': !!fileRespuesta }"
                   >
-                    <span class="file-cta">
-                      <b-icon class="file-icon" icon="upload" />
-                      <span class="file-label">{{
-                        fileTramite.name || 'Subir archivo'
-                      }}</span>
-                    </span>
-                  </b-upload>
+                    <b-upload
+                      v-model="fileRespuesta"
+                      class="file-label"
+                      rounded
+                    >
+                      <span class="file-cta">
+                        <b-icon class="file-icon" icon="upload" />
+                        <span class="file-label">{{
+                          fileRespuesta.name || 'Subir archivo'
+                        }}</span>
+                      </span>
+                    </b-upload>
+                  </b-field>
                 </b-field>
-              </b-field>
+              </div>
+              <div class="column is-flex is-justify-content-center">
+                <b-field label="Conclusión de trámite">
+                  <b-field
+                    class="file is-primary"
+                    :class="{ 'has-name': !!fileTramite }"
+                  >
+                    <b-upload
+                      v-model="fileTramite"
+                      class="file-label"
+                      rounded
+                    >
+                      <span class="file-cta">
+                        <b-icon class="file-icon" icon="upload" />
+                        <span class="file-label">{{
+                          fileTramite.name || 'Subir archivo'
+                        }}</span>
+                      </span>
+                    </b-upload>
+                  </b-field>
+                </b-field>
+              </div>
             </div>
-          </div>
-          -->
             <ButtonGroup
               :handle-submit="handleSubmit"
               saving
@@ -539,7 +534,11 @@ export default {
             this.form
           )
         }
-        if (this.fileDenuncia.name || this.fileRespuesta.name || this.fileTramite.name) {
+        if (
+          this.fileDenuncia.name ||
+          this.fileRespuesta.name ||
+          this.fileTramite.name
+        ) {
           await this.uploadFiles(res)
         }
         this.form = {}

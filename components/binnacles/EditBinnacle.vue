@@ -4,325 +4,321 @@
     <div class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title">
-          {{
-            isExtraordinary ? 'Nueva bitácora extraordinaria' : 'Nueva bitácora'
-          }}
+          Editar bitácora
         </p>
       </header>
       <section class="modal-card-body">
-        <ValidationObserver ref="form" v-slot="{ handleSubmit }">
-          <form @submit.prevent="handleSubmit">
-            <div class="divider">
-              <strong>Estado de la bítacora</strong>
+        <form>
+          <div class="divider">
+            <strong>Estado de la bítacora</strong>
+          </div>
+          <div class="columns">
+            <div class="column">
+              <BInputWithValidation
+                v-model="form.rapporteur"
+                label="Relatoría"
+                name="relatoría"
+                label-position="on-border"
+                type="textarea"
+                normal
+              />
             </div>
-            <div class="columns">
-              <div class="column">
-                <BInputWithValidation
-                  v-model="form.rapporteur"
-                  label="Relatoría"
-                  name="relatoría"
-                  label-position="on-border"
-                  rules="required"
-                  type="textarea"
-                  normal
-                />
-              </div>
+          </div>
+          <div class="divider">
+            <strong>Datos generales</strong>
+          </div>
+          <div class="columns">
+            <div class="column is-4">
+              <b-field label="Fecha">
+                <b-datepicker v-model="form.date" inline />
+              </b-field>
             </div>
-            <div class="divider">
-              <strong>Datos generales</strong>
-            </div>
-            <div class="columns">
-              <div class="column is-4">
-                <b-field label="Fecha">
-                  <b-datepicker v-model="form.date" inline />
-                </b-field>
-              </div>
-              <div
-                class="column is-3 is-flex is-flex-direction-column is-justify-content-center has-text-centered"
+            <div
+              class="column is-3 is-flex is-flex-direction-column is-justify-content-center has-text-centered"
+            >
+              <b-notification
+                v-model="validateHours"
+                aria-close-label="Close notification"
               >
-                <b-notification
-                  v-model="validateHours"
-                  aria-close-label="Close notification"
+                Es necesario que ingreses una hora de inicio y una hora de fin.
+              </b-notification>
+              <div>
+                <b-field label="Hora de inicio">
+                  <b-timepicker v-model="hourInit" inline />
+                </b-field>
+              </div>
+              <br>
+              <div>
+                <b-field label="Hora de finalización">
+                  <b-timepicker v-model="hourEnd" inline />
+                </b-field>
+              </div>
+            </div>
+            <div class="column">
+              <div class="divider">
+                <strong>Personal y vehiculos</strong>
+              </div>
+              <br>
+              <b-field label="Responsable">
+                <b-autocomplete
+                  :data="participantsFilter"
+                  icon="magnify"
+                  clearable
+                  field="name"
+                  open-on-focus
+                  @typing="filterParticipant"
+                  @select="selectParticipant"
                 >
-                  Es necesario que ingreses una hora de inicio y una hora de
-                  fin.
-                </b-notification>
-                <div>
-                  <b-field label="Hora de inicio">
-                    <b-timepicker v-model="hourInit" inline />
-                  </b-field>
-                </div>
-                <br>
-                <div>
-                  <b-field label="Hora de finalización">
-                    <b-timepicker v-model="hourEnd" inline />
-                  </b-field>
-                </div>
-              </div>
-              <div class="column">
-                <div class="divider">
-                  <strong>Personal y vehiculos</strong>
-                </div>
-                <br>
-                <b-field label="Responsable">
-                  <b-autocomplete
-                    :data="participantsFilter"
-                    icon="magnify"
-                    clearable
-                    field="name"
-                    open-on-focus
-                    @typing="filterParticipant"
-                    @select="selectParticipant"
-                  >
-                    <template #empty>
-                      No hay resultados
-                    </template>
-                  </b-autocomplete>
-                </b-field>
-                <b-field label="Vehículos utilizados">
-                  <b-taginput
-                    v-model="form.list_vehicle"
-                    :data="vehiclesFilter"
-                    field="number"
-                    autocomplete
-                    :open-on-focus="true"
-                    @typing="filterVehicles"
-                  >
-                    <template v-slot="props">
-                      <strong>{{ props.option.number }} -
-                        {{
-                          props.option.plates
-                            ? props.option.plates
-                            : 'sin placas reigstradas'
-                        }}</strong>
-                    </template>
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                  </b-taginput>
-                </b-field>
-                <b-field label="Participantes">
-                  <b-taginput
-                    v-model="form.participants"
-                    :data="participantsFilter"
-                    field="name"
-                    autocomplete
-                    :open-on-focus="true"
-                    @typing="filterParticipant"
-                  >
-                    <template slot-scope="props">
-                      <strong>{{ props.option.name }}
-                        {{ props.option.lastname }}</strong>
-                    </template>
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                    <template #selected>
-                      <b-tag
-                        v-for="(tag, index) in form.participants"
-                        :key="index"
-                        closable
-                        @close="removeParticipant(index)"
-                      >
-                        {{ tag.name }} {{ tag.lastname }}
-                      </b-tag>
-                    </template>
-                  </b-taginput>
-                </b-field>
-              </div>
+                  <template #empty>
+                    No hay resultados
+                  </template>
+                </b-autocomplete>
+              </b-field>
+              <b-field label="Vehículos utilizados">
+                <b-taginput
+                  v-model="form.list_vehicle"
+                  :data="vehiclesFilter"
+                  field="number"
+                  autocomplete
+                  :open-on-focus="true"
+                  @typing="filterVehicles"
+                  @remove="deleteVehicle"
+                >
+                  <template v-slot="props">
+                    <strong>{{ props.option.number }} -
+                      {{
+                        props.option.plates
+                          ? props.option.plates
+                          : 'sin placas reigstradas'
+                      }}</strong>
+                  </template>
+                  <template #empty>
+                    Sin resultados
+                  </template>
+                </b-taginput>
+              </b-field>
+              <b-field label="Participantes">
+                <b-taginput
+                  v-model="form.participants"
+                  :data="participantsFilter"
+                  field="name"
+                  autocomplete
+                  :open-on-focus="true"
+                  @typing="filterParticipant"
+                  @remove="deleteParticipant"
+                >
+                  <template slot-scope="props">
+                    <strong>{{ props.option.name }}
+                      {{ props.option.lastname }}</strong>
+                  </template>
+                  <template #empty>
+                    Sin resultados
+                  </template>
+                  <template #selected>
+                    <b-tag
+                      v-for="(tag, index) in form.participants"
+                      :key="index"
+                      closable
+                      @close="removeParticipant(index)"
+                    >
+                      {{ tag.name }} {{ tag.lastname }}
+                    </b-tag>
+                  </template>
+                </b-taginput>
+              </b-field>
             </div>
-            <div class="divider">
-              <strong>Vegetación y zonas</strong>
+          </div>
+          <div class="divider">
+            <strong>Vegetación y zonas</strong>
+          </div>
+          <div class="columns">
+            <div class="column">
+              <b-field label="Vegetación">
+                <b-taginput
+                  v-model="vegetableAffected"
+                  :data="vegetationFilter"
+                  field="description"
+                  autocomplete
+                  :open-on-focus="true"
+                  @typing="filterVegetation"
+                >
+                  <template v-slot="props">
+                    <strong>{{ props.option.description }}</strong>
+                  </template>
+                  <template #empty>
+                    Sin resultados
+                  </template>
+                </b-taginput>
+              </b-field>
             </div>
-            <div class="columns">
-              <div class="column">
-                <b-field label="Vegetación">
-                  <b-taginput
-                    v-model="vegetableAffected"
-                    :data="vegetationFilter"
-                    field="description"
-                    autocomplete
-                    :open-on-focus="true"
-                    @typing="filterVegetation"
-                  >
-                    <template v-slot="props">
-                      <strong>{{ props.option.description }}</strong>
-                    </template>
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                  </b-taginput>
-                </b-field>
-              </div>
-              <div class="column">
-                <b-field label="Zonas operativas">
-                  <b-taginput
-                    v-model="form.list_operative_zones"
-                    :data="opZonesFilter"
-                    field="description"
-                    autocomplete
-                    :open-on-focus="true"
-                    @typing="filterOpZone"
-                  >
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                  </b-taginput>
-                </b-field>
-              </div>
-              <div class="column">
-                <b-field label="Subzonificación PM">
-                  <b-taginput
-                    v-model="form.list_subzoning"
-                    :data="subZonesFilter"
-                    field="description"
-                    autocomplete
-                    :open-on-focus="true"
-                    @typing="filterSubZones"
-                  >
-                    <template #empty>
-                      Sin resultados
-                    </template>
-                  </b-taginput>
-                </b-field>
-              </div>
+            <div class="column">
+              <b-field label="Zonas operativas">
+                <b-taginput
+                  v-model="form.list_operative_zones"
+                  :data="opZonesFilter"
+                  field="description"
+                  autocomplete
+                  :open-on-focus="true"
+                  @typing="filterOpZone"
+                >
+                  <template #empty>
+                    Sin resultados
+                  </template>
+                </b-taginput>
+              </b-field>
             </div>
-            <div class="divider">
-              <strong>Coordenadas</strong>
+            <div class="column">
+              <b-field label="Subzonificación PM">
+                <b-taginput
+                  v-model="form.list_subzoning"
+                  :data="subZonesFilter"
+                  field="description"
+                  autocomplete
+                  :open-on-focus="true"
+                  @typing="filterSubZones"
+                >
+                  <template #empty>
+                    Sin resultados
+                  </template>
+                </b-taginput>
+              </b-field>
             </div>
-            <div class="columns">
-              <div class="column is-4">
-                <b-notification type="is-info" has-icon :closable="false">
-                  Ingrese las coordenadas en formato UTM.
-                </b-notification>
-                <div class="container">
-                  <b-field label="Descripción breve de la coordenada">
-                    <b-input v-model="formCoord.name" />
-                  </b-field>
-                  <!--
+          </div>
+          <div class="divider">
+            <strong>Coordenadas</strong>
+          </div>
+          <div class="columns">
+            <div class="column is-4">
+              <b-notification type="is-info" has-icon :closable="false">
+                Ingrese las coordenadas en formato UTM.
+              </b-notification>
+              <div class="container">
+                <b-field label="Descripción breve de la coordenada">
+                  <b-input v-model="formCoord.name" />
+                </b-field>
+                <!--
                   <b-switch v-model="isSwitched">
                     {{ isSwitched ? 'Formato UTM' : 'Coordenadas clasicas' }}
                   </b-switch>
                   -->
-                  <b-field :label="isSwitched ? 'Longitud' : 'Coordenada X'">
-                    <b-numberinput
-                      v-model="temporalPoint[0]"
-                      step="0.000000000000000001"
-                      :controls="false"
-                    />
-                  </b-field>
-                  <b-field :label="isSwitched ? 'Latitud' : 'Coordenada Y'">
-                    <b-numberinput
-                      v-model="temporalPoint[1]"
-                      step="0.000000000000000001"
-                      :controls="false"
-                    />
-                  </b-field>
-                </div>
-                <div class="container m-3 has-text-centered">
-                  <b-button type="is-success is-light" @click="addPoint">
-                    Agregar coordenada
-                  </b-button>
-                  <b-button type="is-info is-light" @click="viewPoint">
-                    Ver punto
-                  </b-button>
-                </div>
-                <div
-                  v-for="pointCoord in points"
-                  :key="pointCoord.name"
-                  class="container m-3"
-                >
-                  <div class="control">
-                    <b-tag
-                      type="is-primary"
-                      attached
-                      aria-close-label="Close tag"
-                      closable
-                      @close="deletePoint"
-                      @click="viewPoint(pointCoord)"
-                    >
-                      {{ pointCoord.name }}
-                    </b-tag>
-                  </div>
-                </div>
-              </div>
-              <div class="column is-8">
-                <vl-map
-                  :load-tiles-while-animating="true"
-                  :load-tiles-while-interacting="true"
-                  data-projection="EPSG:4326"
-                  style="height: 400px"
-                >
-                  <vl-view
-                    :zoom.sync="zoom"
-                    :center.sync="ViewPoint"
-                    :rotation.sync="rotation"
+                <b-field :label="isSwitched ? 'Longitud' : 'Coordenada X'">
+                  <b-numberinput
+                    v-model="temporalPoint[0]"
+                    step="0.000000000000000001"
+                    :controls="false"
                   />
-
-                  <vl-layer-tile>
-                    <vl-source-osm />
-                  </vl-layer-tile>
-
-                  <vl-feature
-                    v-if="viewActive"
+                </b-field>
+                <b-field :label="isSwitched ? 'Latitud' : 'Coordenada Y'">
+                  <b-numberinput
+                    v-model="temporalPoint[1]"
+                    step="0.000000000000000001"
+                    :controls="false"
+                  />
+                </b-field>
+              </div>
+              <div class="container m-3 has-text-centered">
+                <b-button type="is-success is-light" @click="addPoint">
+                  Agregar coordenada
+                </b-button>
+                <b-button type="is-info is-light" @click="viewPoint">
+                  Ver punto
+                </b-button>
+              </div>
+              <div
+                v-for="pointCoord in points"
+                :key="pointCoord.name"
+                class="container m-3"
+              >
+                <div class="control">
+                  <b-tag
+                    type="is-primary"
+                    attached
+                    aria-close-label="Close tag"
+                    closable
+                    @close="deletePoint"
+                    @click="viewPoint(pointCoord)"
                   >
-                    <vl-geom-point :coordinates="ViewPoint" />
-                  </vl-feature>
-
-                  <vl-feature>
-                    <vl-geom-multi-point :coordinates="pointsMap" />
-                  </vl-feature>
-
-                  <vl-layer-vector>
-                    <vl-source-vector :features.sync="features" />
-                  </vl-layer-vector>
-                </vl-map>
+                    {{ pointCoord.name }}
+                  </b-tag>
+                </div>
               </div>
             </div>
-            <div class="divider">
-              <strong>Evidencias</strong>
+            <div class="column is-8">
+              <vl-map
+                :load-tiles-while-animating="true"
+                :load-tiles-while-interacting="true"
+                data-projection="EPSG:4326"
+                style="height: 400px"
+              >
+                <vl-view
+                  :zoom.sync="zoom"
+                  :center.sync="ViewPoint"
+                  :rotation.sync="rotation"
+                />
+
+                <vl-layer-tile>
+                  <vl-source-osm />
+                </vl-layer-tile>
+
+                <vl-feature v-if="viewActive">
+                  <vl-geom-point :coordinates="ViewPoint" />
+                </vl-feature>
+
+                <vl-feature>
+                  <vl-geom-multi-point :coordinates="pointsMap" />
+                </vl-feature>
+
+                <vl-layer-vector>
+                  <vl-source-vector :features.sync="features" />
+                </vl-layer-vector>
+              </vl-map>
             </div>
-            <div class="columns">
-              <div class="column is-6">
-                <section>
-                  <b-field>
-                    <b-upload v-model="files" multiple drag-drop>
-                      <section class="section">
-                        <div class="content has-text-centered">
-                          <p>
-                            <b-icon icon="upload" size="is-large" />
-                          </p>
-                          <p>
-                            Arrastra aquí tus imágenes o has click aquí para
-                            subirlas.
-                          </p>
-                        </div>
-                      </section>
-                    </b-upload>
-                  </b-field>
-                  <div v-for="(file, index) in files" :key="file" class="tags">
-                    <b-tag
-                      type="is-primary"
-                      attached
-                      aria-close-label="Borrar elemento"
-                      closable
-                      @close="deleteDropFile(index)"
-                      @click="viewIamge(file)"
-                    >
-                      {{ index + 1 }} - {{ file.name }}
-                    </b-tag>
-                  </div>
-                </section>
-              </div>
+          </div>
+          <div class="divider">
+            <strong>Evidencias</strong>
+          </div>
+          <div class="columns">
+            <div class="column is-6">
+              <section>
+                <b-field>
+                  <b-upload v-model="files" multiple drag-drop>
+                    <section class="section">
+                      <div class="content has-text-centered">
+                        <p>
+                          <b-icon icon="upload" size="is-large" />
+                        </p>
+                        <p>
+                          Arrastra aquí tus imágenes o has click aquí para
+                          subirlas.
+                        </p>
+                      </div>
+                    </section>
+                  </b-upload>
+                </b-field>
+                <div v-for="(file, index) in files" :key="file" class="tags">
+                  <b-tag
+                    type="is-primary"
+                    attached
+                    aria-close-label="Borrar elemento"
+                    closable
+                    @close="deleteDropFile(index)"
+                    @click="viewIamge(file)"
+                  >
+                    {{ index + 1 }} - {{ file.name }}
+                  </b-tag>
+                </div>
+              </section>
             </div>
-            <ButtonGroup
-              :handle-submit="handleSubmit"
-              saving
-              @save="createOrUpdate"
-              @cancel="close"
-            />
-          </form>
-        </ValidationObserver>
+          </div>
+          <div class="has-text-centered m-2" style="width: 100%">
+            <b-button type="is-danger is-light" @click="close">
+              <strong>Cancelar</strong>
+            </b-button>
+            <b-button type="is-success is-light" @click="createOrUpdate">
+              <strong>Guardar</strong>
+            </b-button>
+          </div>
+        </form>
       </section>
     </div>
   </b-modal>
@@ -338,7 +334,7 @@ const utm = require('utm')
 export default {
   name: 'EditBinnacle',
   props: {
-    binnacle: {
+    binnacleObject: {
       type: Object,
       // eslint-disable-next-line vue/require-valid-default-prop
       default: {}
@@ -395,12 +391,9 @@ export default {
     }
   },
   watch: {
-    isActive (newVal, oldVal) {
-      if (newVal && !this.isExtraordinary) {
-        this.form.idplanification = this.plannification
-        // console.log(this.form)
-      } else if (this.isExtraordinary) {
-        this.form.isextraordinary = true
+    activeModal (newVal, oldVal) {
+      if (newVal) {
+        this.getOneMoment(this.binnacleObject.idbinnacle)
       }
     }
   },
@@ -451,8 +444,9 @@ export default {
       }
     },
     // Crear bitacora
-    async createOrUpdate () {
-      // console.log(this.form)
+    createOrUpdate () {
+      console.log(this.form)
+      /*
       this.isLoading = true
       this.form.hour_init = this.hourInit
       this.form.hour_end = this.hourEnd
@@ -476,12 +470,26 @@ export default {
           const formData = new FormData()
           this.files.map((file, index) => {
             if (file.type === 'image/png') {
-              const temporalName = 'evidencia_' + (index + 1) + '_bitácora_' + binnacle.number + '.png'
-              const temporalFile = new File([file], temporalName, { type: 'image/png' })
+              const temporalName =
+                'evidencia_' +
+                (index + 1) +
+                '_bitácora_' +
+                binnacle.number +
+                '.png'
+              const temporalFile = new File([file], temporalName, {
+                type: 'image/png'
+              })
               formData.append('binnacle_photo[]', temporalFile)
             } else if (file.type === 'image/jpeg') {
-              const temporalName = 'evidencia_' + (index + 1) + '_bitácora_' + binnacle.number + '.jpg'
-              const temporalFile = new File([file], temporalName, { type: 'image/jpeg' })
+              const temporalName =
+                'evidencia_' +
+                (index + 1) +
+                '_bitácora_' +
+                binnacle.number +
+                '.jpg'
+              const temporalFile = new File([file], temporalName, {
+                type: 'image/jpeg'
+              })
               formData.append('binnacle_photo[]', temporalFile)
             }
           })
@@ -499,11 +507,13 @@ export default {
           })
           await this.uploadEvidences(formData)
           if (this.vegetableAffected.length > 0) {
-          // console.log(this.vegetableAffected)
-            binnacle.list_vegetable_affected = this.vegetableAffected.map((x) => {
-              x.idbinnacle = idBinnacle
-              return x
-            })
+            // console.log(this.vegetableAffected)
+            binnacle.list_vegetable_affected = this.vegetableAffected.map(
+              (x) => {
+                x.idbinnacle = idBinnacle
+                return x
+              }
+            )
             await this.updateBinnacle(binnacle)
           }
         }
@@ -540,6 +550,7 @@ export default {
         this.buttonDisabled = false
         this.isLoading = false
       }
+      */
     },
     async getBinnacle (id) {
       try {
@@ -548,6 +559,94 @@ export default {
           id
         )
         return res
+      } catch (error) {
+        // // console.log(error)
+      }
+    },
+    async getOneMoment (id) {
+      try {
+        this.isLoading = true
+        const res = await this.$store.dispatch(
+          'modules/binnacles/getBinnacle',
+          id
+        )
+        console.log(res)
+        res.date = new Date(res.date)
+        // res.compare_vehicles = res.list_vehicle ? JSON.parse(JSON.strigify(res.list_vehicle)) : null
+        res.compare_vehicles = res.list_vehicle
+        res.compare_participants = res.participants ? JSON.parse(JSON.stringify(res.participants)) : null
+        // res.compare_va = res.list_vegetable_affected ? JSON.parse(JSON.stringify(res.list_vegetable_affected)) : null
+        res.compare_va = res.list_vegetable_affected
+        // res.compare_subzones = res.list_subzones ? JSON.parse(JSON.stringify(res.list_subzones)) : null
+        res.compare_subzones = res.list_subzones
+        // res.compare_opZones = res.list_operative_zones ? JSON.parse(JSON.stringify(res.list_operative_zones)) : null
+        res.compare_opZones = res.list_operative_zones
+        // res.compare_points = res.coordinates_binnacle ? JSON.parse(JSON.stringify(res.coordinates_binnacle)) : null
+        res.compare_points = res.coordinates_binnacle
+        console.log(res)
+        this.hourInit = new Date(res.hour_init)
+        this.hourEnd = new Date(res.hour_end)
+        /*
+        const participants = res.participants.map((participant) => {
+          const charge = this.charges.find(x => x.idcharge === participant.idcharge)
+          participant.charge = charge
+          return participant
+        })
+        res.temporalParticipants = participants
+        const objetoFiltrado = {}
+        const objetosUnicos = res.list_vegetable_affected.filter((obj) => {
+          const idva = obj.idva
+          if (!objetoFiltrado[idva]) {
+            objetoFiltrado[idva] = true
+            return true
+          }
+          return false
+        })
+        res.vegetableAffected = objetosUnicos
+        const zoning = res.list_subzones.map((zone) => {
+          const temporalZoning = this.zoning.find(x => x.idzoning === zone.idzoning)
+          zone.zoning = temporalZoning
+          return zone
+        })
+        res.temporalZoning = zoning
+        this.viewPoints = false
+        if (res.coordinates_binnacle && res.coordinates_binnacle.length > 0) {
+          const temporalPoints = res.coordinates_binnacle
+          temporalPoints.forEach((object) => {
+            const point = [object.x, object.y]
+            const pointConvert = this.convertCoordinatesToUtm(point)
+            // console.log(pointConvert)
+            res.points = []
+            res.points.push(pointConvert)
+          })
+          this.pointsMap = res.points
+          this.viewPoints = true
+        } else {
+          this.viewPoints = false
+        }
+        // console.log(res)
+        this.isLoading = false
+        /*
+        res.date = new Date(res.date)
+        res.hour_init = new Date(res.hour_init)
+        this.hourInit = res.hour_init
+        res.hour_end = new Date(res.hour_end)
+        this.hourEnd = res.hour_end
+        const objetoFiltrado = {}
+        const objetosUnicos = res.list_vegetable_affected.filter((obj) => {
+          const idva = obj.idva
+          if (!objetoFiltrado[idva]) {
+            objetoFiltrado[idva] = true
+            return true
+          }
+          return false
+        })
+        res.list_subzoning = res.list_subzones
+        this.vegetableAffected = objetosUnicos
+        res.participant = this.filterParticipantId(this.binnacleObject.idparticipants)
+        */
+        this.isLoading = false
+        this.form = res
       } catch (error) {
         // // console.log(error)
       }
@@ -587,6 +686,20 @@ export default {
         }
       })
     },
+    deleteVehicle (vehicle) {
+      if (this.form.list_vehicle_deleted) {
+        const vehicleDelete = this.form.compare_vehicles.find(x => x.idvehicle === vehicle.idvehicle)
+        if (vehicleDelete) {
+          this.form.list_vehicle_deleted.push(vehicleDelete)
+        }
+      } else {
+        const vehicleDelete = this.form.compare_vehicles.find(x => x.idvehicle === vehicle.idvehicle)
+        if (vehicleDelete) {
+          this.form.list_vehicle_deleted = []
+          this.form.list_vehicle_deleted.push(vehicleDelete)
+        }
+      }
+    },
     // Participantes
     async getParticipants () {
       try {
@@ -605,6 +718,19 @@ export default {
         : (this.form.idparticipants = null)
     },
     removeParticipant (index) {
+      const temporalParticipant = this.form.participants[index]
+      console.log(temporalParticipant)
+      const participant = this.form.compare_participants.find(x => x.idparticipants === temporalParticipant.idparticipants)
+      if (participant) {
+        if (this.form.list_participants_deleted && this.form.list_participants_deleted.length > 0) {
+          console.log(1)
+          this.form.list_participants_deleted.push(participant)
+        } else {
+          console.log(2)
+          this.form.list_participants_deleted = []
+          this.form.list_participants_deleted.push(participant)
+        }
+      }
       this.form.participants.splice(index, 1)
     },
     filterParticipant (text) {
@@ -617,10 +743,21 @@ export default {
         }
       })
     },
+    deleteParticipant (participant) {
+      console.log(participant)
+      if (this.form.list_participants_deleted) {
+        this.form.list_participants_deleted.push(participant)
+      } else {
+        this.form.list_participants_deleted = []
+        this.form.list_participants_deleted.push(participant)
+      }
+    },
     // Zonas operativas
     async getOpZones () {
       try {
-        const res = await this.$store.dispatch('modules/operativeZones/getZones')
+        const res = await this.$store.dispatch(
+          'modules/operativeZones/getZones'
+        )
         this.opZonesFilter = res
         this.opZones = res
       } catch (error) {
@@ -640,6 +777,7 @@ export default {
         }
       })
     },
+    deleteOpZone () {},
     // Subzonas
     async getSubZones () {
       try {
@@ -663,6 +801,7 @@ export default {
         }
       })
     },
+    deleteSubZone () {},
     // Vegetacion
     async getVegetation () {
       try {
@@ -688,6 +827,7 @@ export default {
         }
       })
     },
+    deleteVa () {},
     // Evidencia
     viewIamge (image) {
       this.imageUrl = URL.createObjectURL(image)

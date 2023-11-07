@@ -17,6 +17,23 @@
             </div>
             <div class="columns">
               <div class="column">
+                <b-field label="Estado de la bitácora">
+                  <b-select
+                    v-model="form.status"
+                  >
+                    <option
+                      v-for="option in estados"
+                      :key="option.value"
+                      :value="option.value"
+                    >
+                      {{ option.label }}
+                    </option>
+                  </b-select>
+                </b-field>
+              </div>
+            </div>
+            <div class="columns">
+              <div class="column">
                 <BInputWithValidation
                   v-model="form.rapporteur"
                   label="Relatoría"
@@ -354,7 +371,8 @@ export default {
   data () {
     return {
       form: {
-        date: new Date()
+        date: new Date(),
+        status: 'por-revisar'
       },
       isLoading: false,
       hourInit: new Date(),
@@ -394,6 +412,20 @@ export default {
             coordinates: data
           }
         }
+      ],
+      estados: [
+        {
+          label: 'Revisado',
+          value: 'revisado'
+        },
+        {
+          label: 'En revisión',
+          value: 'en-revisión'
+        },
+        {
+          label: 'Por revisar',
+          value: 'por-revisar'
+        }
       ]
     }
   },
@@ -425,7 +457,8 @@ export default {
     close () {
       this.form = {
         date: new Date(),
-        idplanification: this.plannification
+        status: 'por-revisar',
+        idplanification: this.plannification ? this.plannification : null
       }
       this.viewActive = false
       this.files = []
@@ -512,7 +545,8 @@ export default {
         }
         this.form = {
           date: new Date(),
-          idplanification: this.plannification
+          status: 'por-revisar',
+          idplanification: this.plannification ? this.plannification : null
         }
         this.viewActive = false
         this.files = []
