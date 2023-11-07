@@ -331,11 +331,13 @@
                   <vl-source-osm />
                 </vl-layer-tile>
 
+                <!--
                 <vl-feature>
                   <vl-geom-point :coordinates="ViewPoint" />
                 </vl-feature>
+                -->
 
-                <vl-feature>
+                <vl-feature v-if="viewCoords">
                   <vl-geom-multi-point :coordinates="pointsMap" />
                 </vl-feature>
 
@@ -495,6 +497,7 @@ export default {
       temporalPoint: [224190.791, 2311022.379],
       ViewPoint: [-89.60984537598705, 20.85610769792424],
       pointsMap: [[-89.60984537598705, 20.85610769792424]],
+      viewCoords: false,
       points: [],
       idPoints: [],
       zoom: 12,
@@ -534,6 +537,8 @@ export default {
   methods: {
     close () {
       this.form = {}
+      this.pointsMap = false
+      this.viewCoords = false
       this.$emit('close')
     },
     async getTechOp (object) {
@@ -542,6 +547,16 @@ export default {
         res.application_date = res.application_date ? new Date(res.application_date) : null
         res.response_date = res.response_date ? new Date(res.response_date) : null
         res.reception_date = res.reception_date ? new Date(res.reception_date) : null
+        if (res.list_coordinates) {
+          this.viewCoords = false
+          const temporalCoords = res.list_coordinates.map((x) => {
+            const point = [x.x, x.y]
+            const convertPoint = this.convertCoordinatesToUtm(point)
+            return convertPoint
+          })
+          this.pointsMap = temporalCoords
+          this.viewCoords = true
+        }
         this.form = res
         console.log(res)
       } catch (error) {}

@@ -331,11 +331,13 @@
                   <vl-source-osm />
                 </vl-layer-tile>
 
+                <!--
                 <vl-feature>
                   <vl-geom-point :coordinates="ViewPoint" />
                 </vl-feature>
+                -->
 
-                <vl-feature>
+                <vl-feature v-if="viewCoords">
                   <vl-geom-multi-point :coordinates="pointsMap" />
                 </vl-feature>
 
@@ -397,6 +399,9 @@
           <div class="columns has-text-centered">
             <div class="column is-flex is-justify-content-center">
               <b-field label="Oficio/escrito de solicitud">
+                <b-button v-if="form.request_doc" @click="downloadFile(form.request_doc, 'oficio')">Descargar archivo</b-button>
+                <b-tag v-else>Sin archivo</b-tag>
+                <!--
                 <b-field
                   class="file is-primary"
                   :class="{ 'has-name': !!fileOficio }"
@@ -410,10 +415,14 @@
                     </span>
                   </b-upload>
                 </b-field>
+              -->
               </b-field>
             </div>
             <div class="column is-flex is-justify-content-center">
               <b-field label="Oficio de respuesta">
+                <b-button v-if="form.response_doc" @click="downloadFile(form.response_doc, 'respuesta')">Descargar archivo</b-button>
+                <b-tag v-else>Sin archivo</b-tag>
+                <!--
                 <b-field
                   class="file is-primary"
                   :class="{ 'has-name': !!fileRespuesta }"
@@ -431,6 +440,7 @@
                     </span>
                   </b-upload>
                 </b-field>
+                  -->
               </b-field>
             </div>
           </div>
@@ -487,6 +497,7 @@ export default {
       temporalPoint: [224190.791, 2311022.379],
       ViewPoint: [-89.60984537598705, 20.85610769792424],
       pointsMap: [[-89.60984537598705, 20.85610769792424]],
+      viewCoords: false,
       points: [],
       idPoints: [],
       zoom: 12,
@@ -526,6 +537,8 @@ export default {
   methods: {
     close () {
       this.form = {}
+      this.pointsMap = false
+      this.viewCoords = false
       this.$emit('close')
     },
     async getTechOp (object) {
@@ -534,6 +547,16 @@ export default {
         res.application_date = res.application_date ? new Date(res.application_date) : null
         res.response_date = res.response_date ? new Date(res.response_date) : null
         res.reception_date = res.reception_date ? new Date(res.reception_date) : null
+        if (res.list_coordinates) {
+          this.viewCoords = false
+          const temporalCoords = res.list_coordinates.map((x) => {
+            const point = [x.x, x.y]
+            const convertPoint = this.convertCoordinatesToUtm(point)
+            return convertPoint
+          })
+          this.pointsMap = temporalCoords
+          this.viewCoords = true
+        }
         this.form = res
         console.log(res)
       } catch (error) {}
@@ -591,6 +614,23 @@ export default {
         await this.$store.dispatch('modules/technicalOp/uploadFiles', formData)
       } catch (error) {
         // console.log(error)
+      }
+    },
+    async downloadFile (urlFile, type) {
+      try {
+        const response = await fetch(urlFile) // Reemplaza 'URL_DEL_ARCHIVO' con la URL real del archivo que deseas descargar.
+        const blob = await response.blob()
+
+        // Crea un objeto URL para el blob y crea un enlace temporal para la descarga.
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = type // Especifica el nombre del archivo que se descargará.
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+      } catch (error) {
+        console.error('Error al descargar el archivo:', error)
       }
     },
     // Obtener catálogos

@@ -21,7 +21,6 @@
                   name="persona física"
                   rules="required"
                   normal
-                  disabled
                 />
               </div>
               <div class="column is-flex is-justify-content-center">
@@ -274,7 +273,7 @@
                 </div>
                 <div
                   v-for="pointCoord in points"
-                  :key="pointCoord.name"
+                  :key="pointCoord.description"
                   class="container m-3"
                 >
                   <div class="control">
@@ -286,7 +285,7 @@
                       @close="deletePoint"
                       @click="viewPoint(pointCoord)"
                     >
-                      {{ pointCoord.name }}
+                      {{ pointCoord.description }}
                     </b-tag>
                   </div>
                 </div>
@@ -504,16 +503,20 @@ export default {
       try {
         this.isLoading = true
         console.log(this.form)
+        this.form.list_coordinates = this.points ? this.points : null
         const id = await this.$store.dispatch('modules/technicalOp/createOrUpdateTechnicalOp', this.form)
+        /*
         if (this.points && this.points.length > 0) {
+          /*
           this.form.idtechnical_opinion = id
           const temporalPoints = this.points.map((x) => {
-            x.idtech_op_coordinates = id
+            x.idtech_op_coordinates = String(id)
             return x
           })
-          this.form.list_coordinates = temporalPoints
+          this.form.list_coordinates = this.points
           await this.$store.dispatch('modules/technicalOp/createOrUpdateTechnicalOp', this.form)
         }
+        */
         if (this.fileOficio.name || this.fileRespuesta.name) {
           await this.uploadFiles(id)
         }
