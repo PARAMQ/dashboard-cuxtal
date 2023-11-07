@@ -21,6 +21,7 @@
                   name="persona física"
                   rules="required"
                   normal
+                  disabled
                 />
               </div>
               <div class="column is-flex is-justify-content-center">

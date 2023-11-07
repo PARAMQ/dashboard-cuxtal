@@ -166,7 +166,7 @@ export default {
       }
     },
     getInfoDonnut () {
-      this.series = [Number(this.techOp), Number(this.complaints), Number(this.programmed.length)]
+      // this.series = [Number(this.techOp), Number(this.complaints), Number(this.programmed.length)]
       this.series = [Number(this.techOp), Number(this.complaint)]
     }
   },

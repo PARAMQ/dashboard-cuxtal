@@ -52,9 +52,11 @@
                   <div class="level">
                     <div class="level-left">
                       <div class="level-item">
+                        <!--
                         <p class="card-header-title">
                           ID: {{ vegetation.idva }}
                         </p>
+                        -->
                       </div>
                     </div>
                     <div class="level-right has-text-left">

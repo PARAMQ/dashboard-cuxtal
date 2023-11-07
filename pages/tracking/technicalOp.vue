@@ -270,15 +270,13 @@
                     </div>
                   </div>
                   <div class="level-right">
-                    <!--
                     <div class="level-item">
                       <b-button
                         type="is-info is-light"
                         icon-right="eye-outline"
-                        @click="openOp(technicalOp)"
+                        @click="viewTechOp(technicalOp)"
                       />
                     </div>
-                    -->
                     <div class="level-item">
                       <b-button
                         type="is-danger is-light"
@@ -342,6 +340,11 @@
       :active-modal="activeModal"
       @close="updateView"
       @save="updateView"
+    />
+    <view-opinion
+      :active-modal="activeViewModal"
+      :object-tech="techOpSelect"
+      @close="updateView"
     />
     <!--
     <new-binnacle
@@ -554,6 +557,8 @@ export default {
       data: [],
       viewOp: false,
       temporalPoints: [],
+      activeViewModal: false,
+      techOpSelect: {},
       zoom: 12,
       center: [-89.60984537598705, 20.85610769792424],
       rotation: 0,
@@ -593,7 +598,13 @@ export default {
     },
     updateView () {
       this.activeModal = false
+      this.activeViewModal = false
+      this.techOpSelect = {}
       this.getData()
+    },
+    viewTechOp (object) {
+      this.techOpSelect = object
+      this.activeViewModal = true
     },
     async deleteOp (techOp) {
       try {
