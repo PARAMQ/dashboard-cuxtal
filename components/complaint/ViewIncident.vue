@@ -552,16 +552,16 @@ export default {
         res.depto = res.iddepto ? this.dependences.find(x => x.idcoordination === res.iddepto) : null
         res.level = res.idgov_level ? this.govLevels.find(x => x.idgov_level === res.idgov_level) : null
         res.ilicit = res.idilicit_denounced ? this.ilicits.find(x => x.idilicit_denounced === res.idilicit_denounced) : null
-        if (res.complaint_coordinates) {
+        if (res.complaint_coordinates && res.complaint_coordinates.length > 0) {
           this.pointsMap = res.complaint_coordinates.map((x) => {
             const point = this.convertCoordinatesToUtm([x.x, x.y])
             return point
           })
-          console.log(this.pointsMap)
+          // console.log(this.pointsMap)
           this.activePoints = true
         }
         this.form = res
-        console.log(this.form)
+        // console.log(this.form)
         this.isLoading = false
       } catch (error) {
         console.log(error)

@@ -547,7 +547,7 @@ export default {
         res.application_date = res.application_date ? new Date(res.application_date) : null
         res.response_date = res.response_date ? new Date(res.response_date) : null
         res.reception_date = res.reception_date ? new Date(res.reception_date) : null
-        if (res.list_coordinates) {
+        if (res.list_coordinates && res.list_coordinates.length > 0) {
           this.viewCoords = false
           const temporalCoords = res.list_coordinates.map((x) => {
             const point = [x.x, x.y]
