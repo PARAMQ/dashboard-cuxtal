@@ -29,6 +29,23 @@
                 />
               </div>
               <div class="column">
+                <b-field label="Bitácora">
+                  <b-autocomplete
+                    :data="filterBinnacles"
+                    icon="magnify"
+                    clearable
+                    field="number"
+                    open-on-focus
+                    @typing="filterBinnacle"
+                    @select="selectBinnacle"
+                  >
+                    <template #empty>
+                      No hay resultados
+                    </template>
+                  </b-autocomplete>
+                </b-field>
+              </div>
+              <div class="column">
                 <b-field label="Fecha de oficio de denuncia">
                   <b-datepicker
                     v-model="form.date"
@@ -452,6 +469,8 @@ export default {
       filteredOpZone: [],
       filteredLegalZones: [],
       filteredSubZones: [],
+      binnacles: [],
+      filterBinnacles: [],
       ilicits: [],
       govLevels: [],
       tenures: [],
@@ -485,6 +504,7 @@ export default {
     }
   },
   mounted () {
+    this.getBinnacles()
     this.getVegetation()
     this.getDependences()
     this.getLegalZones()
@@ -796,6 +816,33 @@ export default {
     convertCoordinatesFromUtm (coords) {},
     viewPoint () {
       this.ViewPoint = this.convertCoordinatesToUtm(this.temporalPoint)
+    },
+    // bitácoras
+    async getBinnacles () {
+      try {
+        const res = await this.$store.dispatch('modules/binnacles/getBinnacles')
+        this.binnacles = res
+        this.filterBinnacles = res
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    filterBinnacle (text) {
+      this.filterBinnacles = this.binnacles.filter((option) => {
+        if (
+          option.number &&
+          option.number
+            .toString()
+            .toLowerCase()
+            .includes(text.toLowerCase())
+        ) {
+          return option
+        }
+      })
+    },
+    selectBinnacle (option) {
+      console.log(option)
+      this.form.idbinnacle = option.idbinnacle
     }
   }
 }

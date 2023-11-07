@@ -326,7 +326,7 @@
                   </div>
                 </div>
               </div>
-              <div class="card-content">
+              <div class="card-content" @click="viewInMap(complaint.complaint_coordinates)">
                 <p>
                   <strong>Denuncia presentada ante: </strong>
                   {{
@@ -781,20 +781,25 @@ export default {
       }
     },
     // Visualizar una bitácora en el mapa
-    async viewInMap (option) {
+    viewInMap (coords) {
+      /*
       this.viewComplaint = false
       this.temporalPoints = [[-89.60984537598705, 20.85610769792424]]
       const complaint = await this.getComplaint(option)
       complaint.points = []
-      if (complaint.complaint_coordinates && complaint.complaint_coordinates.length > 0) {
-        const temporalPoints = complaint.complaint_coordinates
+      */
+      this.viewPoints = false
+      if (coords && coords.length > 0) {
+        const temporalPoints = coords
+        const points = []
         temporalPoints.forEach((object) => {
           const point = [object.x, object.y]
           const pointConvert = this.convertCoordinatesToUtm(point)
-          complaint.points.push(pointConvert)
+          points.push(pointConvert)
         })
-        this.temporalPoints = complaint.points
-        this.viewComplaint = true
+        this.temporalPoints = points
+        this.viewPoints = true
+        console.log(this.temporalPoints)
       } else {
         this.$buefy.notification.open({
           message: 'La denuncia no contiene coordenadas.',
