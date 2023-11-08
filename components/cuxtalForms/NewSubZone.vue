@@ -26,7 +26,7 @@
                 clearable
                 field="description"
                 @typing="filteredDataArray"
-                @select="(option) => form.idzoning = option.idzoning"
+                @select="selectZone"
               >
                 <template #empty>
                   No hay resultados
@@ -83,6 +83,7 @@ export default {
           this.form
         )
         this.form = {}
+        this.text = ''
         this.isLoading = false
         this.$buefy.toast.open({
           message: 'Zona guardada!',
@@ -111,6 +112,11 @@ export default {
       this.options = this.legalZones.filter((option) => {
         return option.description.toString().toLowerCase().includes(this.text.toLowerCase())
       })
+    },
+    selectZone (option) {
+      if (option && option !== '') {
+        this.form.idzoning = option.idzoning
+      }
     }
   }
 }

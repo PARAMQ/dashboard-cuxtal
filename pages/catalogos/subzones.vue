@@ -18,11 +18,11 @@
               <div class="card">
                 <div class="card-content scroll">
                   <div
-                    v-for="subzona in subzonas"
-                    :key="subzona.idzoning"
+                    v-for="(subzona, index) in subzonas"
+                    :key="subzona.idsubzoning"
                     class="container"
                   >
-                    <div class="card" @click="viewSubZone(subzona)">
+                    <div class="card" @click="viewSubZone(subzona, index)">
                       <div class="card-content">
                         <div class="container">
                           <div class="columns">
@@ -53,7 +53,7 @@
                     <div class="level-left">
                       <div class="level-item">
                         <p class="card-header-title">
-                          ID: {{ subzone.idzoning }}
+                          ID: {{ subzone.index }}
                         </p>
                       </div>
                     </div>
@@ -86,7 +86,7 @@
                   </p>
                   <br>
                   <p class="is-size-2">
-                    Zona legal:
+                    Zonificación PM relacionada:
                   </p>
                   <p class="is-size-3">
                     {{ subzone.legalZone ? subzone.legalZone.description : 'No tiene relacionado una zona legal' }}
@@ -204,10 +204,13 @@ export default {
     this.getZones()
   },
   methods: {
-    async viewSubZone (subzone) {
+    async viewSubZone (subzone, index) {
       // console.log(subzone)
-      this.subzone = subzone
-      this.subzone.legalZone = await this.getLegalZone(subzone.idzoning)
+      this.subzone = {}
+      const temporal = subzone
+      temporal.legalZone = await this.getLegalZone(subzone.idzoning)
+      temporal.index = Number(index) + 1
+      this.subzone = temporal
       this.selectSub = true
     },
     cancelEdit () {
