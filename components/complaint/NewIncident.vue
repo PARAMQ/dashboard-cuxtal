@@ -44,7 +44,10 @@
                     </template>
                   </b-autocomplete>
                 </b-field>
-                <b-tooltip label="Si vinculas una bitácora, usará las zonas operativas, zonificación y subzonificación PM registrado en el." position="is-right">
+                <b-tooltip
+                  label="Si vinculas una bitácora, usará las zonas operativas, zonificación y subzonificación PM registrado en el."
+                  position="is-right"
+                >
                   <b-icon icon="help" size="is-small" />
                 </b-tooltip>
               </div>
@@ -153,7 +156,15 @@
                   @typing="filterVegetableFun"
                 >
                   <template v-slot="props">
-                    <strong>{{ props.option.description ? props.option.description : 'sin nombre' }}/{{ props.option.cientificName ? props.option.cientificName : 'sin nombre' }}</strong>
+                    <strong>{{
+                      props.option.description
+                        ? props.option.description
+                        : 'sin nombre'
+                    }}/{{
+                      props.option.cientificName
+                        ? props.option.cientificName
+                        : 'sin nombre'
+                    }}</strong>
                   </template>
                   <template #empty>
                     Sin resultados
@@ -187,6 +198,17 @@
                   </template>
                 </b-taginput>
               </b-field>
+              <b-field horizontal label="Zonificación PM">
+                <b-select v-model="legalZone" placeholder="Seleccciona una opción" @input="selectOption">
+                  <option
+                    v-for="option in legalZones"
+                    :key="option.idzoning"
+                    :value="option.idzoning"
+                  >
+                    {{ option.description }}
+                  </option>
+                </b-select>
+              </b-field>
               <b-field horizontal label="Subzoninifcación PM">
                 <b-taginput
                   v-model="form.list_subzoning_complaint"
@@ -204,9 +226,12 @@
                   </template>
                 </b-taginput>
               </b-field>
-              <b-tooltip label="La zonificación se obtiene de las subzonificaciones." position="is-right">
-                  <b-icon icon="help" size="is-small" />
-                </b-tooltip>
+              <b-tooltip
+                label="La zonificación se obtiene de las subzonificaciones."
+                position="is-right"
+              >
+                <b-icon icon="help" size="is-small" />
+              </b-tooltip>
             </div>
             <div class="divider">
               <strong>Coordenadas</strong>
@@ -279,9 +304,7 @@
                     <vl-source-osm />
                   </vl-layer-tile>
 
-                  <vl-feature
-                    v-if="activeViewPoint"
-                  >
+                  <vl-feature v-if="activeViewPoint">
                     <vl-geom-point :coordinates="ViewPoint" />
                   </vl-feature>
 
@@ -348,11 +371,7 @@
                     class="file is-primary"
                     :class="{ 'has-name': !!fileDenuncia }"
                   >
-                    <b-upload
-                      v-model="fileDenuncia"
-                      class="file-label"
-                      rounded
-                    >
+                    <b-upload v-model="fileDenuncia" class="file-label" rounded>
                       <span class="file-cta">
                         <b-icon class="file-icon" icon="upload" />
                         <span class="file-label">{{
@@ -390,11 +409,7 @@
                     class="file is-primary"
                     :class="{ 'has-name': !!fileTramite }"
                   >
-                    <b-upload
-                      v-model="fileTramite"
-                      class="file-label"
-                      rounded
-                    >
+                    <b-upload v-model="fileTramite" class="file-label" rounded>
                       <span class="file-cta">
                         <b-icon class="file-icon" icon="upload" />
                         <span class="file-label">{{
@@ -456,6 +471,7 @@ export default {
       filterVegetable: [],
       dependences: [],
       legalZones: [],
+      legalZone: {},
       subZones: [],
       opZones: [],
       filteredOpZone: [],
@@ -544,7 +560,10 @@ export default {
         )
         console.log(res)
         if (temporalVa && temporalVa.length > 0) {
-          const res2 = await this.$store.dispatch('modules/complaint/getInfoComplaint', res)
+          const res2 = await this.$store.dispatch(
+            'modules/complaint/getInfoComplaint',
+            res
+          )
           console.log(res2)
           res2.complaint_va = temporalVa.map((x) => {
             const temporal = {
@@ -594,20 +613,31 @@ export default {
         const formData = new FormData()
         formData.append('idcomplaint', id)
         if (this.fileDenuncia.name) {
-          const temporalName = 'oficioDenuncia_' + code + '_' + this.fileDenuncia.name
-          const temporalDenuncia = new File([this.fileDenuncia], temporalName, { type: this.fileDenuncia.type })
+          const temporalName =
+            'oficioDenuncia_' + code + '_' + this.fileDenuncia.name
+          const temporalDenuncia = new File([this.fileDenuncia], temporalName, {
+            type: this.fileDenuncia.type
+          })
           formData.append('complaint_doc', temporalDenuncia)
           this.fileDenuncia = {}
         }
         if (this.fileRespuesta.name) {
-          const temporalName = 'oficioRespuesta_' + code + '_' + this.fileRespuesta.name
-          const temporalRespuesta = new File([this.fileRespuesta], temporalName, { type: this.fileRespuesta.type })
+          const temporalName =
+            'oficioRespuesta_' + code + '_' + this.fileRespuesta.name
+          const temporalRespuesta = new File(
+            [this.fileRespuesta],
+            temporalName,
+            { type: this.fileRespuesta.type }
+          )
           formData.append('response_doc', temporalRespuesta)
           this.fileRespuesta = {}
         }
         if (this.fileTramite.name) {
-          const temporalName = 'oficioTramite_' + code + '_' + this.fileTramite.name
-          const temporalTramite = new File([this.fileTramite], temporalName, { type: this.fileTramite.type })
+          const temporalName =
+            'oficioTramite_' + code + '_' + this.fileTramite.name
+          const temporalTramite = new File([this.fileTramite], temporalName, {
+            type: this.fileTramite.type
+          })
           formData.append('tramit_conlusion', temporalTramite)
           this.fileTramite = {}
         }
@@ -839,25 +869,35 @@ export default {
       this.filterBinnacles = this.binnacles.filter((option) => {
         if (
           option.number &&
-          option.number
-            .toString()
-            .toLowerCase()
-            .includes(text.toLowerCase())
+          option.number.toString().toLowerCase().includes(text.toLowerCase())
         ) {
           return option
         }
       })
+    },
+    selectOption (legalZone) {
+      console.log(legalZone)
+      console.log(this.subZones)
+      this.filteredSubZones = this.subZones.filter((option) => {
+        if (
+          option.idzoning &&
+          option.idzoning === legalZone) {
+          return option
+        }
+      })
+      console.log(this.filteredSubZones)
     },
     selectBinnacle (option) {
       if (option) {
         console.log(option)
         this.form.idbinnacle = option.idbinnacle
         if (option.list_operative_zones) {
-          this.form.list_complaint_operative_zone = option.list_operative_zones.map((x) => {
-            delete x.idbinnacle
-            delete x.idoperative_zones_binnacle
-            return x
-          })
+          this.form.list_complaint_operative_zone =
+            option.list_operative_zones.map((x) => {
+              delete x.idbinnacle
+              delete x.idoperative_zones_binnacle
+              return x
+            })
         }
         if (option.list_subzones) {
           this.form.list_subzoning_complaint = option.list_subzones.map((x) => {
@@ -882,14 +922,24 @@ export default {
               point.description = point.name
               delete point.idbinnacle
               delete point.idcoordinates
-              const temporalPoint = this.convertCoordinatesToUtm([point.x, point.y])
+              const temporalPoint = this.convertCoordinatesToUtm([
+                point.x,
+                point.y
+              ])
               this.pointsMap = [temporalPoint]
               this.points.push(point)
-            } else if (!option.coordinates_binnacle.find(x => x.x === point.x && x.y === point.y)) {
+            } else if (
+              !option.coordinates_binnacle.find(
+                (x) => x.x === point.x && x.y === point.y
+              )
+            ) {
               point.description = point.name
               delete point.idbinnacle
               delete point.idcoordinates
-              const temporalPoint = this.convertCoordinatesToUtm([point.x, point.y])
+              const temporalPoint = this.convertCoordinatesToUtm([
+                point.x,
+                point.y
+              ])
               this.pointsMap.push(temporalPoint)
               this.points.push(point)
             }
