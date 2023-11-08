@@ -330,7 +330,7 @@
                 <p>
                   <strong>Denuncia presentada ante: </strong>
                   {{
-                    complaint.description ? complaint.description : 'Sin descripción'
+                    complaint.dependence ? complaint.dependence.description : 'Sin descripción'
                   }}
                 </p>
               </div>
@@ -727,6 +727,7 @@ export default {
   },
   mounted () {
     this.getData()
+    this.getDependences()
   },
   methods: {
     async getData () {

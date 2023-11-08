@@ -24,6 +24,18 @@
               </b-field>
             </div>
             <div class="column">
+              <p
+                v-if="form.binnacle"
+              >
+                <strong>Bitácora relacionada</strong>: {{ form.binnacle }}
+              </p>
+              <p
+                v-else
+              >
+                No hay relación con alguna bitácora
+              </p>
+            </div>
+            <div class="column">
               <b-field label="Fecha de oficio de denuncia">
                 <b-datepicker
                   v-model="form.date"
@@ -133,6 +145,7 @@
                 autocomplete
                 :open-on-focus="true"
                 @typing="filterVegetableFun"
+                :closable="false"
               >
                 <template v-slot="props">
                   <strong>{{ props.option.description }}</strong>
@@ -154,12 +167,13 @@
           <div>
             <b-field horizontal label="Zonas de vigilancia">
               <b-taginput
-                v-model="form.idoperative_zone"
+                v-model="form.list_complaint_operative_zone"
                 :data="filteredOpZone"
                 field="description"
                 autocomplete
                 :open-on-focus="true"
                 @typing="filterOpZone"
+                :closable="false"
               >
                 <template v-slot="props">
                   <strong>{{ props.option.description }}</strong>
@@ -171,12 +185,13 @@
             </b-field>
             <b-field horizontal label="Zonificación PM">
               <b-taginput
-                v-model="form.idzoning"
+                v-model="form.zoning"
                 :data="filteredLegalZones"
                 field="description"
                 autocomplete
                 :open-on-focus="true"
                 @typing="filterLegalZone"
+                :closable="false"
               >
                 <template v-slot="props">
                   <strong>{{ props.option.description }}</strong>
@@ -188,12 +203,13 @@
             </b-field>
             <b-field horizontal label="Subzoninifcación PM">
               <b-taginput
-                v-model="form.idsubzoning"
+                v-model="form.list_subzoning_complaint"
                 :data="filteredSubZones"
                 field="description"
                 autocomplete
                 :open-on-focus="true"
                 @typing="filterSubzone"
+                :closable="false"
               >
                 <template v-slot="props">
                   <strong>{{ props.option.description }}</strong>
@@ -552,14 +568,30 @@ export default {
         res.depto = res.iddepto ? this.dependences.find(x => x.idcoordination === res.iddepto) : null
         res.level = res.idgov_level ? this.govLevels.find(x => x.idgov_level === res.idgov_level) : null
         res.ilicit = res.idilicit_denounced ? this.ilicits.find(x => x.idilicit_denounced === res.idilicit_denounced) : null
+        if (res.list_subzoning_complaint && res.list_subzoning_complaint.length > 0) {
+          res.zoning = []
+          console.log(this.legalZones)
+          this.legalZones.forEach((zone) => {
+            console.log(zone)
+            const result = res.list_subzoning_complaint.find(x => x.idzoning === zone.idzoning)
+            if (result) {
+              res.zoning.push(zone)
+            }
+          })
+        }
         if (res.complaint_coordinates && res.complaint_coordinates.length > 0) {
           this.pointsMap = res.complaint_coordinates.map((x) => {
             const point = this.convertCoordinatesToUtm([x.x, x.y])
             return point
           })
-          // console.log(this.pointsMap)
+          if (res.idbinnacle) {
+            const binnacle = await this.$store.dispatch('modules/binnacles/getBinnacle', res.idbinnacle)
+            res.binnacle = binnacle.number
+          }
+          console.log(this.pointsMap)
           this.activePoints = true
         }
+        // this.viewPoints(object.idcomplaint)
         this.form = res
         // console.log(this.form)
         this.isLoading = false

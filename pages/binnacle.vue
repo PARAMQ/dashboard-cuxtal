@@ -316,6 +316,7 @@ export default {
     // Obtener archivo Word
     async getWord (binnacle, name) {
       try {
+        this.isLoadingBinnacles = true
         this.downloadFile = true
         const res = await this.$store.dispatch('modules/binnacles/getWordBinnacle', binnacle)
         // Ensure the response is an ArrayBuffer
@@ -333,6 +334,7 @@ export default {
 
         // Clean up
         window.URL.revokeObjectURL(blobURL)
+        this.isLoadingBinnacles = false
         this.downloadFile = false
       } catch (error) {
         this.downloadFile = false

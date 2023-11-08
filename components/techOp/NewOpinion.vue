@@ -220,7 +220,7 @@
             <div>
               <b-field label="Vegetación">
                 <b-taginput
-                  v-model="form.vegetable"
+                  v-model="form.list_va"
                   :data="filterVegetable"
                   field="description"
                   autocomplete

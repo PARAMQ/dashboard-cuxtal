@@ -112,6 +112,12 @@
       :object-tech="techOpSelect"
       @close="updateView"
     />
+    <edit-opinion
+      :active-modal="activeEditModal"
+      :object-tech="techOpSelect"
+      @close="updateView"
+      @update="updateView"
+    />
   </div>
 </template>
 
@@ -130,6 +136,7 @@ export default {
       viewOp: false,
       temporalPoints: [],
       activeViewModal: false,
+      activeEditModal: false,
       techOpSelect: {},
       zoom: 12,
       center: [-89.60984537598705, 20.85610769792424],
@@ -171,12 +178,20 @@ export default {
     updateView () {
       this.activeModal = false
       this.activeViewModal = false
+      this.activeEditModal = false
+      this.zoom = 12
+      this.center = [-89.60984537598705, 20.85610769792424]
+      this.rotation = 0
       this.techOpSelect = {}
       this.getData()
     },
     viewTechOp (object) {
       this.techOpSelect = object
       this.activeViewModal = true
+    },
+    editTechOp (object) {
+      this.techOpSelect = object
+      this.activeEditModal = true
     },
     async deleteOp (techOp) {
       try {

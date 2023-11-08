@@ -147,13 +147,13 @@
                 <b-taginput
                   v-model="form.complaint_va"
                   :data="filterVegetable"
-                  field="description"
+                  field="cientificName"
                   autocomplete
                   :open-on-focus="true"
                   @typing="filterVegetableFun"
                 >
                   <template v-slot="props">
-                    <strong>{{ props.option.description }}</strong>
+                    <strong>{{ props.option.description ? props.option.description : 'sin nombre' }}/{{ props.option.cientificName ? props.option.cientificName : 'sin nombre' }}</strong>
                   </template>
                   <template #empty>
                     Sin resultados
@@ -172,7 +172,7 @@
             <div>
               <b-field horizontal label="Zonas de vigilancia">
                 <b-taginput
-                  v-model="form.idoperative_zone"
+                  v-model="form.list_complaint_operative_zone"
                   :data="filteredOpZone"
                   field="description"
                   autocomplete
@@ -187,26 +187,9 @@
                   </template>
                 </b-taginput>
               </b-field>
-              <b-field horizontal label="Zonificación PM">
-                <b-taginput
-                  v-model="form.idzoning"
-                  :data="filteredLegalZones"
-                  field="description"
-                  autocomplete
-                  :open-on-focus="true"
-                  @typing="filterLegalZone"
-                >
-                  <template v-slot="props">
-                    <strong>{{ props.option.description }}</strong>
-                  </template>
-                  <template #empty>
-                    Sin resultados
-                  </template>
-                </b-taginput>
-              </b-field>
               <b-field horizontal label="Subzoninifcación PM">
                 <b-taginput
-                  v-model="form.idsubzoning"
+                  v-model="form.list_subzoning_complaint"
                   :data="filteredSubZones"
                   field="description"
                   autocomplete
@@ -221,6 +204,9 @@
                   </template>
                 </b-taginput>
               </b-field>
+              <b-tooltip label="La zonificación se obtiene de las subzonificaciones." position="is-right">
+                  <b-icon icon="help" size="is-small" />
+                </b-tooltip>
             </div>
             <div class="divider">
               <strong>Coordenadas</strong>
@@ -232,7 +218,7 @@
                 </b-notification>
                 <div class="container">
                   <b-field label="Descripción breve de la coordenada">
-                    <b-input v-model="formCoord.name" />
+                    <b-input v-model="formCoord.description" />
                   </b-field>
                   <b-field :label="isSwitched ? 'Longitud' : 'Coordenada X'">
                     <b-numberinput
@@ -259,7 +245,7 @@
                 </div>
                 <div
                   v-for="pointCoord in points"
-                  :key="pointCoord.name"
+                  :key="pointCoord.description"
                   class="container m-3"
                 >
                   <div class="control">
@@ -271,7 +257,7 @@
                       @close="deletePoint"
                       @click="viewPoint(pointCoord)"
                     >
-                      {{ pointCoord.name }}
+                      {{ pointCoord.description }}
                     </b-tag>
                   </div>
                 </div>
@@ -293,7 +279,9 @@
                     <vl-source-osm />
                   </vl-layer-tile>
 
-                  <vl-feature>
+                  <vl-feature
+                    v-if="activeViewPoint"
+                  >
                     <vl-geom-point :coordinates="ViewPoint" />
                   </vl-feature>
 
@@ -460,6 +448,7 @@ export default {
           description: 'Publico'
         }
       ],
+      activeViewPoint: false,
       fileRespuesta: {},
       fileTramite: {},
       fileDenuncia: {},
@@ -502,6 +491,7 @@ export default {
   watch: {
     activeModal (newVal, oldVal) {
       if (newVal) {
+        console.log(this.form)
         this.$buefy.snackbar.open('Recuerda subir los documentos en PDF.')
       }
     }
@@ -525,6 +515,9 @@ export default {
       this.fileDenuncia = {}
       this.fileRespuesta = {}
       this.fileTramite = {}
+      this.activeViewPoint = false
+      this.pointsMap = [[-89.60984537598705, 20.85610769792424]]
+      this.points = []
       this.$emit('close')
     },
     async getUser () {
@@ -540,24 +533,32 @@ export default {
         this.isLoading = true
         this.form.complaint_coordinates = this.points
         const temporalVa = this.form.complaint_va
+        // const temporalOp = this.form.list_complaint_operative_zone
+        // const temporalSubZones = this.form.list_subzoning_complaint
         delete this.form.complaint_va
+        // delete this.form.this.form.list_complaint_operative_zone
+        // delete this.form.list_subzoning_complaint
         const res = await this.$store.dispatch(
           'modules/complaint/createOrUpdateComplaint',
           this.form
         )
+        console.log(res)
         if (temporalVa && temporalVa.length > 0) {
-          this.form.complaint_va = temporalVa.map((x) => {
+          const res2 = await this.$store.dispatch('modules/complaint/getInfoComplaint', res)
+          console.log(res2)
+          res2.complaint_va = temporalVa.map((x) => {
             const temporal = {
               idva: x.idva,
               idcomplaint: res
             }
             return temporal
           })
-          this.form.idcomplaint = res
-          await this.$store.dispatch(
+          res2.idcomplaint = res
+          const resfinal = await this.$store.dispatch(
             'modules/complaint/createOrUpdateComplaint',
-            this.form
+            res2
           )
+          console.log(resfinal)
         }
         if (
           this.fileDenuncia.name ||
@@ -570,6 +571,7 @@ export default {
         this.fileDenuncia = {}
         this.fileRespuesta = {}
         this.fileTramite = {}
+        this.activeViewPoint = false
         this.isLoading = false
         this.$buefy.toast.open({
           message: 'Denuncia guardada!',
@@ -751,7 +753,8 @@ export default {
       })
     },
     addPoint () {
-      if (this.formCoord.name && this.formCoord.name !== '') {
+      this.activeViewPoint = false
+      if (this.formCoord.description && this.formCoord.description !== '') {
         if (this.points.length === 0) {
           const pointConvert = this.convertCoordinatesToUtm([
             this.temporalPoint[0],
@@ -818,7 +821,9 @@ export default {
     },
     convertCoordinatesFromUtm (coords) {},
     viewPoint () {
+      this.activeViewPoint = false
       this.ViewPoint = this.convertCoordinatesToUtm(this.temporalPoint)
+      this.activeViewPoint = true
     },
     // bitácoras
     async getBinnacles () {
@@ -844,8 +849,55 @@ export default {
       })
     },
     selectBinnacle (option) {
-      console.log(option)
-      this.form.idbinnacle = option.idbinnacle
+      if (option) {
+        console.log(option)
+        this.form.idbinnacle = option.idbinnacle
+        if (option.list_operative_zones) {
+          this.form.list_complaint_operative_zone = option.list_operative_zones.map((x) => {
+            delete x.idbinnacle
+            delete x.idoperative_zones_binnacle
+            return x
+          })
+        }
+        if (option.list_subzones) {
+          this.form.list_subzoning_complaint = option.list_subzones.map((x) => {
+            delete x.idbinnacle
+            delete x.idsubzoning_binnacle
+            return x
+          })
+        }
+        if (option.list_vegetable_affected) {
+          this.form.complaint_va = option.list_vegetable_affected.map((x) => {
+            delete x.idbinnacle
+            delete x.idva_binnacle
+            delete x.ischecked
+            return x
+          })
+        }
+        if (option.coordinates_binnacle) {
+          this.points = []
+          option.coordinates_binnacle.forEach((point) => {
+            console.log(point)
+            if (this.points.length === 0) {
+              point.description = point.name
+              delete point.idbinnacle
+              delete point.idcoordinates
+              const temporalPoint = this.convertCoordinatesToUtm([point.x, point.y])
+              this.pointsMap = [temporalPoint]
+              this.points.push(point)
+            } else if (!option.coordinates_binnacle.find(x => x.x === point.x && x.y === point.y)) {
+              point.description = point.name
+              delete point.idbinnacle
+              delete point.idcoordinates
+              const temporalPoint = this.convertCoordinatesToUtm([point.x, point.y])
+              this.pointsMap.push(temporalPoint)
+              this.points.push(point)
+            }
+          })
+          console.log(this.points)
+        }
+        console.log(this.form)
+      }
     }
   }
 }

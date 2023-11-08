@@ -242,12 +242,13 @@
           <div>
             <b-field label="Vegetación">
               <b-taginput
-                v-model="form.vegetable"
+                v-model="form.list_va"
                 :data="filterVegetable"
                 field="description"
                 autocomplete
                 :open-on-focus="true"
                 @typing="filterVegetableFun"
+                :closable="false"
               >
                 <template v-slot="props">
                   <strong>{{ props.option.description }}</strong>
@@ -354,7 +355,7 @@
             <div class="columns">
               <div class="column">
                 <b-field label="Respuesta">
-                  <b-tag size="is-medium">{{ form.tenure ? form.tenure : 'Dato no asignado' }}</b-tag>
+                  <b-tag size="is-medium">{{ form.response_op ? form.response_op : 'Dato no asignado' }}</b-tag>
                   <!--
                   <b-select
                     v-model="form.idresponse_op"

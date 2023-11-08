@@ -461,7 +461,7 @@ const utmObj = require('utm-latlng')
 const utm = require('utm')
 
 export default {
-  name: 'EditOpinion',
+  name: 'EditOpinionOld',
   props: {
     activeModal: {
       default: false,

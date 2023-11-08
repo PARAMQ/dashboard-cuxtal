@@ -4,7 +4,7 @@
     <div class="modal-card">
       <div class="modal-card-head">
         <p class="modal-card-title">
-          Nueva opinión técnica
+          Editar opinión técnica
         </p>
       </div>
       <div class="modal-card-body">
@@ -15,19 +15,17 @@
           <div class="columns">
             <div class="column is-4">
               <BInputWithValidation
-                v-model="form.individual"
+                v-model="formEdit.individual"
                 label="Nombre de la persona física"
                 name="persona física"
                 normal
-                disabled
               />
+              <b-tag size="is-small">Actualmente: {{ form.individual ? form.individual : 'Dato no asignado' }}</b-tag>
             </div>
-            <div class="column is-flex is-justify-content-center">
+            <div class="column">
               <b-field label="Nombre de la persona moral">
-                <b-tag size="is-medium">{{ form.legal_entity ? form.legal_entity : 'Dato no asignado' }}</b-tag>
-                <!--
                 <b-select
-                  v-model="form.idlegal_entity"
+                  v-model="formEdit.idlegal_entity"
                   placeholder="Seleccione una opción"
                 >
                   <option
@@ -38,15 +36,13 @@
                     {{ option.description }}
                   </option>
                 </b-select>
-                -->
               </b-field>
+              <b-tag size="is-small">Actualmente: {{ form.legal_entity ? form.legal_entity : 'Dato no asignado' }}</b-tag>
             </div>
-            <div class="column is-flex is-justify-content-center">
+            <div class="column">
               <b-field label="Tipo de persona moral">
-                <b-tag size="is-medium">{{ form.type_legal_entity ? form.type_legal_entity : 'Dato no asignado' }}</b-tag>
-                <!--
                 <b-select
-                  v-model="form.idtype_legal_entity"
+                  v-model="formEdit.idtype_legal_entity"
                   placeholder="Seleccione una opción"
                 >
                   <option
@@ -57,20 +53,20 @@
                     {{ option.description }}
                   </option>
                 </b-select>
-                -->
               </b-field>
+              <b-tag size="is-small">Actualmente: {{ form.type_legal_entity ? form.type_legal_entity : 'Dato no asignado' }}</b-tag>
             </div>
           </div>
           <div>
             <div class="columns">
               <div class="column">
                 <BInputWithValidation
-                  v-model="form.holder_name"
+                  v-model="formEdit.holder_name"
                   label="Nombre del titular/representante de la persona moral"
                   name="titular/representante de la persona moral"
                   normal
-                  disabled
                 />
+                <b-tag size="is-small">Actualmente: {{ form.holder_name ? form.holder_name : 'Dato no asignado' }}</b-tag>
               </div>
             </div>
           </div>
@@ -78,19 +74,17 @@
             <div class="columns">
               <div class="column">
                 <BInputWithValidation
-                  v-model="form.folium"
+                  v-model="formEdit.folium"
                   label="Número de oficio"
                   name="número de oficio"
                   normal
-                  disabled
                 />
+                <b-tag size="is-small">Actualmente: {{ form.folium ? form.folium : 'Dato no asignado' }}</b-tag>
               </div>
               <div class="column">
                 <b-field label="Medio de solicitud">
-                  <b-tag size="is-medium">{{ form.application_method ? form.application_method : 'Dato no asignado' }}</b-tag>
-                  <!--
                   <b-select
-                    v-model="form.idapplication_method"
+                    v-model="formEdit.idapplication_method"
                     placeholder="Seleccione una opción"
                   >
                     <option
@@ -101,13 +95,13 @@
                       {{ option.description }}
                     </option>
                   </b-select>
-                  -->
                 </b-field>
+                <b-tag size="is-small">Actualmente: {{ form.application_method ? form.application_method : 'Dato no asignado' }}</b-tag>
               </div>
               <div class="column">
                 <b-field label="Fecha de solicitud">
                   <b-datepicker
-                    v-model="form.application_date"
+                    v-model="formEdit.application_date"
                     placeholder="Selecciona una fecha"
                     icon="calendar-today"
                   />
@@ -116,7 +110,7 @@
               <div class="column">
                 <b-field label="Fecha de recepción de solicitud">
                   <b-datepicker
-                    v-model="form.reception_date"
+                    v-model="formEdit.reception_date"
                     placeholder="Selecciona una fecha"
                     icon="calendar-today"
                   />
@@ -130,19 +124,17 @@
           <div class="columns">
             <div class="column is-9">
               <BInputWithValidation
-                v-model="form.applicant_name"
+                v-model="formEdit.applicant_name"
                 label="Nombre del promovente"
                 name="nombre del promovente"
                 normal
-                disabled
               />
+              <b-tag size=is-small>Actualmente: {{ form.applicant_name ? form.applicant_name : 'Dato no asignado' }}</b-tag>
             </div>
             <div class="column">
               <b-field label="Tipo de promovente">
-                <b-tag size=is-medium>{{ form.applicant_type ? form.applicant_type : 'Dato no asignado' }}</b-tag>
-                <!--
                 <b-select
-                  v-model="form.idapplicant_type"
+                  v-model="formEdit.idapplicant_type"
                   placeholder="Seleccione una opción"
                 >
                   <option
@@ -153,17 +145,15 @@
                     {{ option.description }}
                   </option>
                 </b-select>
-                -->
               </b-field>
+              <b-tag size=is-small>Actualmente: {{ form.applicant_type ? form.applicant_type : 'Dato no asignado' }}</b-tag>
             </div>
           </div>
           <div class="columns">
             <div class="column">
               <b-field label="Motivo de la solicitud">
-                <b-tag size="is-medium">{{ form.request_motive ? form.request_motive : 'Dato no asignado' }}</b-tag>
-                <!--
                 <b-select
-                  v-model="form.idrequest_motive"
+                  v-model="formEdit.idrequest_motive"
                   placeholder="Seleccione una opción"
                 >
                   <option
@@ -174,15 +164,13 @@
                     {{ option.description }}
                   </option>
                 </b-select>
-                -->
               </b-field>
+              <b-tag size="is-small">Actualmente: {{ form.request_motive ? form.request_motive : 'Dato no asignado' }}</b-tag>
             </div>
             <div class="column">
               <b-field label="Descripción del motivo">
-                <b-tag size="is-medium">{{ form.motive_description ? form.motive_description : 'Dato no asignado' }}</b-tag>
-                <!--
                 <b-select
-                  v-model="form.idmotive_description"
+                  v-model="formEdit.idmotive_description"
                   placeholder="Seleccione una opción"
                 >
                   <option
@@ -193,35 +181,33 @@
                     {{ option.description }}
                   </option>
                 </b-select>
-                -->
               </b-field>
+              <b-tag size="is-small">Actualmente: {{ form.motive_description ? form.motive_description : 'Dato no asignado' }}</b-tag>
             </div>
             <div class="column">
               <BInputWithValidation
-                v-model="form.surface_affected"
+                v-model="formEdit.surface_affected"
                 label="Superficie solicitada(Ha)"
                 name="superficie solicitada(Ha)"
                 normal
-                disabled
               />
+              <b-tag size="is-small">Actualmente: {{ form.surface_affected ? form.surface_affected : 'Dato no asignado' }}</b-tag>
             </div>
           </div>
           <div class="columns">
             <div class="column is-9">
               <BInputWithValidation
-                v-model="form.address"
+                v-model="formEdit.address"
                 label="Dirección del predio"
                 name="dirección del predio"
                 normal
-                disabled
               />
+              <b-tag size="is-small">Actualmente: {{ form.address ? form.address : 'Dato no asignado' }}</b-tag>
             </div>
             <div class="column">
               <b-field label="Tenencia del predio">
-                <b-tag size="is-medium">{{ form.tenure ? form.tenure : 'Dato no asignado' }}</b-tag>
-                <!--
                 <b-select
-                  v-model="form.idtenure"
+                  v-model="formEdit.idtenure"
                   placeholder="Seleccione una opción"
                 >
                   <option
@@ -232,8 +218,8 @@
                     {{ option.description }}
                   </option>
                 </b-select>
-                -->
               </b-field>
+              <b-tag size="is-small">Actualmente: {{ form.tenure ? form.tenure : 'Dato no asignado' }}</b-tag>
             </div>
           </div>
           <div class="divider">
@@ -242,7 +228,7 @@
           <div>
             <b-field label="Vegetación">
               <b-taginput
-                v-model="form.vegetable"
+                v-model="formEdit.list_va"
                 :data="filterVegetable"
                 field="description"
                 autocomplete
@@ -262,7 +248,6 @@
             <strong>Coordenadas</strong>
           </div>
           <div class="columns">
-            <!--
             <div class="column is-4">
               <b-notification type="is-info" has-icon :closable="false">
                 Ingrese las coordenadas en formato UTM.
@@ -296,7 +281,7 @@
               </div>
               <div
                 v-for="pointCoord in points"
-                :key="pointCoord.name"
+                :key="pointCoord.description"
                 class="container m-3"
               >
                 <div class="control">
@@ -308,18 +293,37 @@
                     @close="deletePoint"
                     @click="viewPoint(pointCoord)"
                   >
-                    {{ pointCoord.name }}
+                    {{ pointCoord.description }}
+                  </b-tag>
+                </div>
+              </div>
+              <br>
+              <p>Puntos ya registrados</p>
+              <div
+                v-for="point in form.list_coordinates"
+                :key="point.description"
+                class="container m-3"
+              >
+                <div class="control">
+                  <b-tag
+                    type="is-primary"
+                    attached
+                    aria-close-label="Close tag"
+                    closable
+                    @close="deletePoint"
+                    @click="viewPoint(point)"
+                  >
+                    {{ point.description }}
                   </b-tag>
                 </div>
               </div>
             </div>
-            -->
             <div class="column">
               <vl-map
                 :load-tiles-while-animating="true"
                 :load-tiles-while-interacting="true"
                 data-projection="EPSG:4326"
-                style="height: 600px"
+                style="height: 400px"
               >
                 <vl-view
                   :zoom.sync="zoom"
@@ -331,11 +335,11 @@
                   <vl-source-osm />
                 </vl-layer-tile>
 
-                <!--
-                <vl-feature>
+                <vl-feature
+                  v-if="viewTemporalPoint"
+                >
                   <vl-geom-point :coordinates="ViewPoint" />
                 </vl-feature>
-                -->
 
                 <vl-feature v-if="viewCoords">
                   <vl-geom-multi-point :coordinates="pointsMap" />
@@ -354,10 +358,8 @@
             <div class="columns">
               <div class="column">
                 <b-field label="Respuesta">
-                  <b-tag size="is-medium">{{ form.tenure ? form.tenure : 'Dato no asignado' }}</b-tag>
-                  <!--
                   <b-select
-                    v-model="form.idresponse_op"
+                    v-model="formEdit.idresponse_op"
                     placeholder="Seleccione una opción"
                   >
                     <option
@@ -368,13 +370,13 @@
                       {{ option.description }}
                     </option>
                   </b-select>
-                  -->
                 </b-field>
+                <b-tag size="is-small">Actualmente: {{ form.response_op ? form.response_op : 'Dato no asignado' }}</b-tag>
               </div>
               <div class="column">
                 <b-field label="Fecha de respuesta">
                   <b-datepicker
-                    v-model="form.response_date"
+                    v-model="formEdit.response_date"
                     placeholder="Selecciona una fecha"
                     icon="calendar-today"
                   />
@@ -384,24 +386,21 @@
             <div class="columns">
               <div class="column">
                 <BInputWithValidation
-                  v-model="form.other"
+                  v-model="formEdit.other"
                   label="Otro"
                   name="otro"
                   normal
-                  disabled
                 />
               </div>
+              <b-tag size="is-small">Actualmente: {{ form.other ? form.other : 'Dato no asignado' }}</b-tag>
             </div>
           </div>
           <div class="divider">
             <strong>Documentos</strong>
           </div>
           <div class="columns has-text-centered">
-            <div class="column is-flex is-justify-content-center">
+            <div class="column">
               <b-field label="Oficio/escrito de solicitud">
-                <b-button v-if="form.request_doc" @click="downloadFile(form.request_doc, 'oficio')">Descargar archivo</b-button>
-                <b-tag v-else>Sin archivo</b-tag>
-                <!--
                 <b-field
                   class="file is-primary"
                   :class="{ 'has-name': !!fileOficio }"
@@ -415,14 +414,13 @@
                     </span>
                   </b-upload>
                 </b-field>
-              -->
+                <br>
               </b-field>
+              <b-button v-if="form.request_doc" @click="downloadFile(form.request_doc, 'oficio')">Descargar archivo existente</b-button>
+              <b-tag v-else>Sin archivo actualmente</b-tag>
             </div>
-            <div class="column is-flex is-justify-content-center">
+            <div class="column">
               <b-field label="Oficio de respuesta">
-                <b-button v-if="form.response_doc" @click="downloadFile(form.response_doc, 'respuesta')">Descargar archivo</b-button>
-                <b-tag v-else>Sin archivo</b-tag>
-                <!--
                 <b-field
                   class="file is-primary"
                   :class="{ 'has-name': !!fileRespuesta }"
@@ -440,14 +438,16 @@
                     </span>
                   </b-upload>
                 </b-field>
-                  -->
               </b-field>
+              <b-button v-if="form.response_doc" @click="downloadFile(form.response_doc, 'respuesta')">Descargar archivo existente</b-button>
+              <b-tag v-else>Sin archivo actualmente</b-tag>
             </div>
           </div>
           <br>
         </form>
         <div class="container m-2 has-text-centered">
           <b-button @click="close"><strong>Cerrar</strong></b-button>
+          <b-button type="is-success" @click="createOrUpdate"><strong>Guardar</strong></b-button>
         </div>
       </div>
     </div>
@@ -462,7 +462,7 @@ const utmObj = require('utm-latlng')
 const utm = require('utm')
 
 export default {
-  name: 'ViewOpinion',
+  name: 'EditOpinion',
   props: {
     activeModal: {
       default: false,
@@ -478,6 +478,7 @@ export default {
     return {
       isLoading: false,
       form: {},
+      formEdit: {},
       tenenciaPredio: [],
       dependences: [],
       fileOficio: {},
@@ -498,6 +499,10 @@ export default {
       ViewPoint: [-89.60984537598705, 20.85610769792424],
       pointsMap: [[-89.60984537598705, 20.85610769792424]],
       viewCoords: false,
+      viewTemporalPoint: false,
+      newPoints: [],
+      actualVa: [],
+      actualCoords: [],
       points: [],
       idPoints: [],
       zoom: 12,
@@ -517,6 +522,7 @@ export default {
   watch: {
     activeModal (newVal, oldVal) {
       if (newVal) {
+        console.log('hola')
         // this.$buefy.snackbar.open('Recuerda subir los documentos en PDF.')
         this.getTechOp(this.objectTech)
       }
@@ -524,7 +530,7 @@ export default {
   },
   mounted () {
     this.getVegetation()
-    // this.getDependences()
+    this.getDependences()
     this.getLegalEntity()
     this.getTypeLegalEntity()
     this.getAppMethod()
@@ -549,6 +555,7 @@ export default {
         res.reception_date = res.reception_date ? new Date(res.reception_date) : null
         if (res.list_coordinates) {
           this.viewCoords = false
+          this.actualCoords = res.list_coordinates
           const temporalCoords = res.list_coordinates.map((x) => {
             const point = [x.x, x.y]
             const convertPoint = this.convertCoordinatesToUtm(point)
@@ -556,6 +563,9 @@ export default {
           })
           this.pointsMap = temporalCoords
           this.viewCoords = true
+        }
+        if (res.list_va) {
+          this.actualVa = res.list_va
         }
         this.form = res
         console.log(res)
@@ -566,10 +576,12 @@ export default {
       try {
         this.isLoading = true
         console.log(this.form)
-        const id = await this.$store.dispatch('modules/technicalOp/createOrUpdateTechnicalOp', this.form)
-        if (this.points && this.points.length > 0) {
+        console.log(this.formEdit)
+        this.formEdit.idtechnical_opinion = this.form.idtechnical_opinion
+        const id = await this.$store.dispatch('modules/technicalOp/createOrUpdateTechnicalOp', this.formEdit)
+        if (this.newPoints && this.newPoints.length > 0) {
           this.form.idtechnical_opinion = id
-          const temporalPoints = this.points.map((x) => {
+          const temporalPoints = this.newPoints.map((x) => {
             x.idtech_op_coordinates = id
             return x
           })
@@ -722,6 +734,7 @@ export default {
     },
     // Coordenadas
     addPoint () {
+      this.viewTemporalPoint = false
       if (this.formCoord.description && this.formCoord.description !== '') {
         if (this.points.length === 0) {
           const pointConvert = this.convertCoordinatesToUtm([
@@ -789,7 +802,10 @@ export default {
     },
     convertCoordinatesFromUtm (coords) {},
     viewPoint () {
+      this.viewTemporalPoint = false
       this.ViewPoint = this.convertCoordinatesToUtm(this.temporalPoint)
+      console.log(this.ViewPoint)
+      this.viewTemporalPoint = true
     }
   }
 }
