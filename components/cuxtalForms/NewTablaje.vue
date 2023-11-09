@@ -8,31 +8,30 @@
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
-          Nueva persona jurídica
+          Nuevo tablaje
         </p>
       </div>
       <div class="card-content">
         <div class="content">
           <form @submit.prevent="submit">
-            <b-field horizontal label="Descripción breve">
+            <b-field horizontal label="Nombre">
               <b-input
-                v-model="form.description"
-                name="Descripción breve"
+                v-model="form.name"
+                name="descripción breve"
                 type="text"
                 required
               />
             </b-field>
-            <b-field horizontal label="Tipo de entidad">
-              <b-select v-model="form.idtype_legal_entity" placeholder="Selecciona una opción">
-                <option
-                  v-for="option in types"
-                  :value="option.idtype_legal_entity"
-                  :key="option.idtype_legal_entity"
-                  >
-                    {{ option.description }}
-                </option>
-              </b-select>
+            <!--
+            <b-field horizontal label="Nombre científico">
+              <b-input
+                v-model="form.cientificName"
+                name="nombre científico"
+                type="text"
+                required
+              />
             </b-field>
+            -->
           </form>
         </div>
         <div class="card-footer">
@@ -42,7 +41,7 @@
             </b-button>
           </div>
           <div class="card-footer-item">
-            <b-button type="is-success" @click="createZone">
+            <b-button type="is-success" @click="createOrUpdate">
               Guardar
             </b-button>
           </div>
@@ -54,7 +53,7 @@
 
 <script>
 export default {
-  name: 'NewLegalEntity',
+  name: 'NewTablaje',
   props: {
     activeModal: {
       default: false,
@@ -64,38 +63,30 @@ export default {
   data () {
     return {
       isLoading: false,
-      form: {},
-      types: []
+      form: {}
     }
   },
-  mounted () {
-    this.getTypes()
-  },
   methods: {
-    async createZone () {
+    async createOrUpdate () {
       try {
         this.isLoading = true
-        await this.$store.dispatch('modules/legalEntity/createOrUpdateLegalEntity', this.form)
+        await this.$store.dispatch('modules/tablaje/createOrUpdateTablaje', this.form)
         this.form = {}
         this.isLoading = false
         this.$buefy.toast.open({
-          message: 'Guardado!',
+          message: 'Tablaje guardado!',
           type: 'is-success'
         })
         this.$emit('create')
       } catch (error) {
+        this.isLoading = false
         this.$buefy.toast.open({
           message: 'Ocurrió un error, intente nuevamente',
           type: 'is-danger'
         })
         // console.log(error)
-      }
-    },
-    async getTypes () {
-      try {
-        this.types = await this.$store.dispatch('modules/legalEntity/getTypeLegalEntitys')
-      } catch (error) {
-        console.log(error)
+      } finally {
+        this.isLoading = false
       }
     }
   }

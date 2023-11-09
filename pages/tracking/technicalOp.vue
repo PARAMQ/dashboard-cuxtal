@@ -21,9 +21,7 @@
                 <div class="level m-1 full-w">
                   <div class="level-left">
                     <div class="level-item">
-                      <p>{{ technicalOp.number }}</p>
-                    </div>
-                    <div class="level-item">
+                      <p>Folio: {{ technicalOp.folium }}</p>
                     </div>
                   </div>
                   <div class="level-right">

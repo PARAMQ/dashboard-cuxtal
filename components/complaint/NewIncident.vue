@@ -143,6 +143,28 @@
               </b-field>
             </div>
             <div class="divider">
+              <strong>Tablajes</strong>
+            </div>
+            <div>
+              <b-field label="tablajes">
+                <b-taginput
+                  v-model="form.list_complaint_cadastral_record"
+                  :data="filterTablaje"
+                  field="name"
+                  autocomplete
+                  :open-on-focus="true"
+                  @typing="filterTablajeFun"
+                >
+                  <template v-slot="props">
+                    <strong>{{ props.option.name }}</strong>
+                  </template>
+                  <template #empty>
+                    Sin resultados
+                  </template>
+                </b-taginput>
+              </b-field>
+            </div>
+            <div class="divider">
               <strong>Vegetación</strong>
             </div>
             <div>
@@ -463,6 +485,8 @@ export default {
           description: 'Publico'
         }
       ],
+      tablaje: [],
+      filterTablaje: [],
       activeViewPoint: false,
       fileRespuesta: {},
       fileTramite: {},
@@ -524,8 +548,34 @@ export default {
     this.getIlicitsDenounced()
     this.getResponses()
     this.getUser()
+    this.getTablaje()
   },
   methods: {
+    async getTablaje () {
+      try {
+        this.tablaje = []
+        const res = await this.$store.dispatch(
+          'modules/tablaje/getTablajes'
+        )
+        this.tablaje = res
+        this.filterTablaje = res
+      } catch (error) {
+        // console.log(error)
+      }
+    },
+    filterTablajeFun (text) {
+      this.filterTablaje = this.tablaje.filter((option) => {
+        if (
+          option.name &&
+          option.name
+            .toString()
+            .toLowerCase()
+            .includes(text.toLowerCase())
+        ) {
+          return option
+        }
+      })
+    },
     close () {
       this.form = {}
       this.fileDenuncia = {}

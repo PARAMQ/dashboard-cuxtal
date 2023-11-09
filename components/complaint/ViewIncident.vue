@@ -134,6 +134,29 @@
             </b-field>
           </div>
           <div class="divider">
+              <strong>Tablajes</strong>
+            </div>
+            <div>
+              <b-field label="tablajes">
+                <b-taginput
+                  v-model="form.list_complaint_cadastral_record"
+                  :data="filterTablaje"
+                  field="name"
+                  autocomplete
+                  :open-on-focus="true"
+                  @typing="filterTablajeFun"
+                  :closable="false"
+                >
+                  <template v-slot="props">
+                    <strong>{{ props.option.name }}</strong>
+                  </template>
+                  <template #empty>
+                    Sin resultados
+                  </template>
+                </b-taginput>
+              </b-field>
+            </div>
+          <div class="divider">
             <strong>Vegetación</strong>
           </div>
           <div>
@@ -490,6 +513,7 @@ export default {
       opZones: [],
       filteredOpZone: [],
       filteredLegalZones: [],
+      tablaje: [],
       filteredSubZones: [],
       ilicits: [],
       govLevels: [],
@@ -504,6 +528,7 @@ export default {
       idPoints: [],
       activePoints: false,
       zoom: 12,
+      filterTablaje: [],
       center: [-89.60984537598705, 20.85610769792424],
       rotation: 0,
       features: [
@@ -526,6 +551,7 @@ export default {
     }
   },
   mounted () {
+    this.getTablaje()
     this.getVegetation()
     this.getDependences()
     this.getLegalZones()
@@ -579,6 +605,13 @@ export default {
             }
           })
         }
+        if (res.list_complaint_cadastral_record && res.list_complaint_cadastral_record.length > 0) {
+          const temporal = res.list_complaint_cadastral_record.map((object) => {
+            const cadastral = this.tablaje.find(x => x.idcadastral_record === object.idcadastral_record)
+            return cadastral
+          })
+          res.list_complaint_cadastral_record = temporal
+        }
         if (res.complaint_coordinates && res.complaint_coordinates.length > 0) {
           this.pointsMap = res.complaint_coordinates.map((x) => {
             const point = this.convertCoordinatesToUtm([x.x, x.y])
@@ -593,11 +626,37 @@ export default {
         }
         // this.viewPoints(object.idcomplaint)
         this.form = res
-        // console.log(this.form)
+        console.log(this.form)
         this.isLoading = false
       } catch (error) {
         console.log(error)
       }
+    },
+    async getTablaje () {
+      try {
+        this.tablaje = []
+        const res = await this.$store.dispatch(
+          'modules/tablaje/getTablajes'
+        )
+        this.tablaje = res
+        this.filterTablaje = res
+      } catch (error) {
+        // console.log(error)
+      }
+    },
+
+    filterTablajeFun (text) {
+      this.filterTablaje = this.tablaje.filter((option) => {
+        if (
+          option.name &&
+          option.name
+            .toString()
+            .toLowerCase()
+            .includes(text.toLowerCase())
+        ) {
+          return option
+        }
+      })
     },
     async createOrUpdate () {
       try {

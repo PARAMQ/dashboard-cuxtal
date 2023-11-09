@@ -17,6 +17,9 @@
         <b-navbar-item tag="router-link" :to="{ path: '/catalogos/vegetationAffected' }">
           Vegetación
         </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/catalogos/tablaje' }">
+          Tablaje
+        </b-navbar-item>
         <hr class="navbar-divider">
         <b-navbar-item tag="router-link" :to="{ path: '/catalogos/operativeZones' }">
           Zonas de vigilancia

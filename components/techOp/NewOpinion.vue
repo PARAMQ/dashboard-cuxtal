@@ -23,7 +23,9 @@
                   normal
                 />
               </div>
-              <div class="column is-flex is-justify-content-center">
+              <div>
+              </div>
+              <div v-if="!isParticular" class="column is-flex is-justify-content-center">
                 <b-field label="Nombre de la persona moral">
                   <b-select
                     v-model="form.idlegal_entity"
@@ -39,6 +41,7 @@
                   </b-select>
                 </b-field>
               </div>
+              <!---
               <div class="column is-flex is-justify-content-center">
                 <b-field label="Tipo de persona moral">
                   <b-select
@@ -55,6 +58,7 @@
                   </b-select>
                 </b-field>
               </div>
+              -->
             </div>
             <div>
               <div class="columns">
@@ -213,6 +217,28 @@
                   </b-select>
                 </b-field>
               </div>
+            </div>
+            <div class="divider">
+              <strong>Tablajes</strong>
+            </div>
+            <div>
+              <b-field label="tablajes">
+                <b-taginput
+                  v-model="form.list_techop_cadastral_record"
+                  :data="filterTablaje"
+                  field="name"
+                  autocomplete
+                  :open-on-focus="true"
+                  @typing="filterTablajeFun"
+                >
+                  <template v-slot="props">
+                    <strong>{{ props.option.name }}</strong>
+                  </template>
+                  <template #empty>
+                    Sin resultados
+                  </template>
+                </b-taginput>
+              </b-field>
             </div>
             <div class="divider">
               <strong>Vegetación</strong>
@@ -437,6 +463,7 @@ export default {
   },
   data () {
     return {
+      isParticular: false,
       isLoading: false,
       form: {},
       tenenciaPredio: [],
@@ -444,6 +471,8 @@ export default {
       fileOficio: {},
       fileRespuesta: {},
       vegetation: [],
+      tablaje: [],
+      filterTablaje: [],
       filterVegetable: [],
       legalEntity: [],
       typeLegalEntity: [],
@@ -484,6 +513,7 @@ export default {
   mounted () {
     this.getVegetation()
     // this.getDependences()
+    this.getTablaje()
     this.getLegalEntity()
     this.getTypeLegalEntity()
     this.getAppMethod()
@@ -706,6 +736,31 @@ export default {
           type: 'is-danger'
         })
       }
+    },
+    async getTablaje () {
+      try {
+        this.tablaje = []
+        const res = await this.$store.dispatch(
+          'modules/tablaje/getTablajes'
+        )
+        this.tablaje = res
+        this.filterTablaje = res
+      } catch (error) {
+        // console.log(error)
+      }
+    },
+    filterTablajeFun (text) {
+      this.filterTablaje = this.tablaje.filter((option) => {
+        if (
+          option.name &&
+          option.name
+            .toString()
+            .toLowerCase()
+            .includes(text.toLowerCase())
+        ) {
+          return option
+        }
+      })
     },
     convertCoordinatesToUtm (coords) {
       const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')

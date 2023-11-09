@@ -22,7 +22,10 @@
                 disabled
               />
             </div>
-            <div class="column is-flex is-justify-content-center">
+            <div v-if="!form.idlegal_entity" class="column m-2">
+              <b-tag size="is-medium">Persona física</b-tag>
+            </div>
+            <div v-if="form.idlegal_entity" class="column is-flex is-justify-content-center">
               <b-field label="Nombre de la persona moral">
                 <b-tag size="is-medium">{{ form.legal_entity ? form.legal_entity : 'Dato no asignado' }}</b-tag>
                 <!--
@@ -41,7 +44,7 @@
                 -->
               </b-field>
             </div>
-            <div class="column is-flex is-justify-content-center">
+            <div v-if="form.idlegal_entity" class="column is-flex is-justify-content-center">
               <b-field label="Tipo de persona moral">
                 <b-tag size="is-medium">{{ form.type_legal_entity ? form.type_legal_entity : 'Dato no asignado' }}</b-tag>
                 <!--
@@ -235,6 +238,29 @@
                 -->
               </b-field>
             </div>
+          </div>
+          <div class="divider">
+            <strong>Tablajes</strong>
+          </div>
+          <div>
+            <b-field label="tablajes">
+              <b-taginput
+                v-model="form.list_techop_cadastral_record"
+                :data="filterTablaje"
+                field="name"
+                autocomplete
+                :open-on-focus="true"
+                @typing="filterTablajeFun"
+                :closable="false"
+              >
+                <template v-slot="props">
+                  <strong>{{ props.option.name }}</strong>
+                </template>
+                <template #empty>
+                  Sin resultados
+                </template>
+              </b-taginput>
+            </b-field>
           </div>
           <div class="divider">
             <strong>Vegetación</strong>
@@ -504,6 +530,8 @@ export default {
       zoom: 12,
       center: [-89.60984537598705, 20.85610769792424],
       rotation: 0,
+      tablaje: [],
+      filterTablaje: [],
       features: [
         {
           type: 'Feature',
@@ -534,8 +562,34 @@ export default {
     this.getMotiveDescription()
     this.getTenure()
     this.getResponseOp()
+    this.getTablaje()
   },
   methods: {
+    async getTablaje () {
+      try {
+        this.tablaje = []
+        const res = await this.$store.dispatch(
+          'modules/tablaje/getTablajes'
+        )
+        this.tablaje = res
+        this.filterTablaje = res
+      } catch (error) {
+        // console.log(error)
+      }
+    },
+    filterTablajeFun (text) {
+      this.filterTablaje = this.tablaje.filter((option) => {
+        if (
+          option.name &&
+          option.name
+            .toString()
+            .toLowerCase()
+            .includes(text.toLowerCase())
+        ) {
+          return option
+        }
+      })
+    },
     close () {
       this.form = {}
       this.pointsMap = false
@@ -558,6 +612,15 @@ export default {
           this.pointsMap = temporalCoords
           this.viewCoords = true
         }
+        if (res.list_techop_cadastral_record && res.list_techop_cadastral_record.length > 0) {
+          const temporal = res.list_techop_cadastral_record.map((object) => {
+            const cadastral = this.tablaje.find(x => x.idcadastral_record === object.idcadastral_record)
+            return cadastral
+          })
+          res.list_techop_cadastral_record = temporal
+        }
+        const type = this.typeLegalEntity.find(x => x.idtype_legal_entity === res.idtype_legal_entity)
+        res.type_legal_entity = type ? type.description : null
         this.form = res
         console.log(res)
       } catch (error) {}

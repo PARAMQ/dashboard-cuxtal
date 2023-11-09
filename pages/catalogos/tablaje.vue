@@ -8,7 +8,7 @@
             <div class="level-right">
               <p class="level-item">
                 <b-button type="is-primary" outlined @click="isActive = true">
-                  Nueva entidad legal
+                  Nueva tablaje
                 </b-button>
               </p>
             </div>
@@ -18,18 +18,18 @@
               <div class="card">
                 <div class="card-content scroll">
                   <div
-                    v-for="veg in vegetacion"
-                    :key="veg.idlegal_entity"
+                    v-for="(veg, index) in tablaje"
+                    :key="veg.idcadastral_record"
                     class="container"
                   >
-                    <div class="card" @click="viewVeg(veg)">
+                    <div class="card" @click="viewVeg(veg, index)">
                       <div class="card-content">
                         <div class="container">
                           <div class="columns">
                             <div class="column has-text-centered">
                               <p>
-                                <b-icon icon="office-building" custom-size="default" />
-                                {{ veg.description }}
+                                <b-icon icon="pencil" custom-size="default" />
+                                {{ veg.name }}
                               </p>
                             </div>
                           </div>
@@ -53,7 +53,7 @@
                     <div class="level-left">
                       <div class="level-item">
                         <p class="card-header-title">
-                          ID: {{ vegetation.idlegal_entity }}
+                          ID: {{ vegetation.possition }}
                         </p>
                       </div>
                     </div>
@@ -83,17 +83,19 @@
                       Descripción:
                     </p>
                     <p class="is-size-3">
-                      {{ vegetation.description }}
+                      {{ vegetation.name }}
                     </p>
                   </div>
+                  <!--
                   <div>
                     <p class="is-size-2">
-                      Tipo de entidad:
+                      Nombre científico:
                     </p>
                     <p class="is-size-3">
-                      {{ vegetation.idtype_legal_entity && vegetation.type ? vegetation.type.description : 'Dato no asingado' }}
+                      {{ vegetation.cientificName ? vegetation.cientificName : 'No registrado' }}
                     </p>
                   </div>
+                  -->
                 </div>
               </div>
               <div
@@ -102,11 +104,11 @@
                 class="card"
               >
                 <div class="card-header">
-                  <div class="level full-w">
+                  <div class="level">
                     <div class="level-left">
                       <div class="level-item">
                         <p class="card-header-title">
-                          ID: {{ vegetation.idlegal_entity }}
+                          ID: {{ vegetation.idcadastral_record }}
                         </p>
                       </div>
                     </div>
@@ -135,23 +137,22 @@
                     <form @submit.prevent="submit">
                       <b-field horizontal label="Descripción breve">
                         <b-input
-                          v-model="vegetation.description"
-                          name="Descripción"
+                          v-model="vegetation.name"
+                          name="Descripcion del tablaje"
                           type="text"
                           required
                         />
                       </b-field>
-                      <b-field horizontal label="Tipo de entidad">
-                        <b-select v-model="vegetation.idtype_legal_entity" placeholder="Selecciona una opción">
-                          <option
-                            v-for="option in types"
-                            :key="option.idtype_legal_entity"
-                            :value="option.idtype_legal_entity"
-                            >
-                              {{ option.description }}
-                          </option>
-                        </b-select>
+                      <!--
+                      <b-field horizontal label="Nombre científico">
+                        <b-input
+                          v-model="vegetation.cientificName"
+                          name="nombre científico"
+                          type="text"
+                          required
+                        />
                       </b-field>
+                      -->
                     </form>
                   </div>
                 </div>
@@ -172,7 +173,7 @@
         </div>
       </div>
     </div>
-    <new-legal-entity
+    <new-tablaje
       :active-modal="isActive"
       @close="isActive = false"
       @create="updateView"
@@ -182,27 +183,26 @@
 
 <script>
 export default {
-  name: 'LegalEntity',
+  name: 'Tablaje',
   data () {
     return {
       selectVeg: false,
       isActive: false,
-      vegetacion: [],
+      tablaje: [],
       vegetation: {},
       hasEdit: false,
       params: {
         _t: Date.now()
-      },
-      types: []
+      }
     }
   },
-  async mounted () {
-    await this.getTypes()
+  mounted () {
     this.getData()
   },
   methods: {
-    viewVeg (vegetation) {
+    viewVeg (vegetation, index) {
       this.vegetation = vegetation
+      this.vegetation.possition = (Number(index) + 1)
       this.selectVeg = true
     },
     cancelEdit () {
@@ -214,14 +214,14 @@ export default {
       try {
         this.isLoading = true
         await this.$store.dispatch(
-          'modules/legalEntity/createOrUpdateLegalEntity',
+          'modules/tablaje/createOrUpdateTablaje',
           this.vegetation
         )
         this.vegetation = {}
         this.selectVeg = false
         this.hasEdit = false
         this.$buefy.toast.open({
-          message: 'Registro guardado!',
+          message: 'Tablaje guardado!',
           type: 'is-success'
         })
       } catch (error) {
@@ -234,7 +234,7 @@ export default {
     },
     deleteVeg (vegetation) {
       this.$swal({
-        title: '¿Deseas borrar este registro?',
+        title: '¿Deseas borrar este tablaje?',
         showDenyButton: true,
         confirmButtonText: 'Borrar',
         denyButtonText: 'Cancelar'
@@ -242,14 +242,14 @@ export default {
         if (result.isConfirmed) {
           try {
             await this.$store.dispatch(
-              'modules/legalEntity/deleteLegalEntity',
+              'modules/tablaje/deleteTablaje',
               vegetation
             )
             this.getData()
             this.vegetation = {}
             this.selectVeg = false
             this.$buefy.toast.open({
-              message: 'Registro eliminado!',
+              message: 'Tablaje eliminado!',
               type: 'is-success'
             })
           } catch (error) {
@@ -264,31 +264,19 @@ export default {
     edit () {
       this.hasEdit = true
     },
-    async updateView () {
+    updateView () {
       this.isActive = false
-      await this.getTypes()
       this.getData()
     },
     async getData () {
       try {
-        this.vegetacion = []
+        this.tablaje = []
         const res = await this.$store.dispatch(
-          'modules/legalEntity/getLegalEntitys'
+          'modules/tablaje/getTablajes'
         )
-        const temporal = res.map((object) => {
-          object.type = this.types.find(type => type.idtype_legal_entity === object.idtype_legal_entity)
-          return object
-        })
-        this.vegetacion = temporal
+        this.tablaje = res
       } catch (error) {
         // console.log(error)
-      }
-    },
-    async getTypes () {
-      try {
-        this.types = await this.$store.dispatch('modules/legalEntity/getTypeLegalEntitys')
-      } catch (error) {
-        console.log(error)
       }
     }
   }
