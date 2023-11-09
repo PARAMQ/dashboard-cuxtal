@@ -359,7 +359,7 @@
           <vl-source-osm />
         </vl-layer-tile>
 
-        <vl-feature v-if="viewPoints">
+        <vl-feature v-if="activatePoints">
           <vl-geom-multi-point :coordinates="temporalPoints" />
         </vl-feature>
 
@@ -708,6 +708,7 @@ export default {
       data: [],
       complaint: {},
       viewPoints: false,
+      activatePoints: false,
       activeViewModal: false,
       dependences: [],
       temporalPoints: [],
@@ -789,6 +790,7 @@ export default {
       const complaint = await this.getComplaint(option)
       complaint.points = []
       */
+      this.activatePoints = false
       this.viewPoints = false
       if (coords && coords.length > 0) {
         const temporalPoints = coords
@@ -800,6 +802,7 @@ export default {
         })
         this.temporalPoints = points
         this.viewPoints = true
+        this.activatePoints = true
         console.log(this.temporalPoints)
       } else {
         this.$buefy.notification.open({

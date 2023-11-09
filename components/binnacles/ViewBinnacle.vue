@@ -332,8 +332,8 @@
               <div class="divider">
                 <strong>Responsable</strong>
               </div>
-              <div v-if="form.participant" class="container">
-                <p><strong>Nombre completo: </strong>{{ form.participant }}</p>
+              <div v-if="form.responsable" class="container">
+                <p><strong>Nombre completo: </strong>{{ form.responsable.name + ' ' + form.responsable.lastname }}</p>
               </div>
               <div v-else class="container has-text-centered">
                 <p>No se registró el responsable</p>
@@ -597,6 +597,7 @@ export default {
   },
   mounted () {
     this.getCharges()
+    this.getParticipants()
     this.getZoning()
   },
   methods: {
@@ -606,6 +607,7 @@ export default {
         date: new Date(),
         participant: null,
         participants: [],
+        participantsTemp: [],
         hourInit: new Date(),
         hourEnd: new Date(),
         temporalZoning: [],
@@ -643,6 +645,9 @@ export default {
           }
           return false
         })
+        if (res.idparticipants) {
+          res.responsable = this.participants.find((x) => x.idparticipants === res.idparticipants)
+        }
         res.vegetableAffected = objetosUnicos
         const zoning = res.list_subzones.map((zone) => {
           const temporalZoning = this.zoning.find(x => x.idzoning === zone.idzoning)
