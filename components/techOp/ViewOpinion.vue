@@ -504,6 +504,7 @@ export default {
   data () {
     return {
       isLoading: false,
+      catastralRecord: [],
       form: {},
       tenenciaPredio: [],
       dependences: [],
@@ -612,8 +613,8 @@ export default {
           this.pointsMap = temporalCoords
           this.viewCoords = true
         }
-        if (res.list_techop_cadastral_record && res.list_techop_cadastral_record.length > 0) {
-          const temporal = res.list_techop_cadastral_record.map((object) => {
+        if (this.objectTech.list_techop_cadastral_record && this.objectTech.list_techop_cadastral_record.length > 0) {
+          const temporal = this.objectTech.list_techop_cadastral_record.map((object) => {
             const cadastral = this.tablaje.find(x => x.idcadastral_record === object.idcadastral_record)
             return cadastral
           })
@@ -622,7 +623,7 @@ export default {
         const type = this.typeLegalEntity.find(x => x.idtype_legal_entity === res.idtype_legal_entity)
         res.type_legal_entity = type ? type.description : null
         this.form = res
-        console.log(res)
+        // console.log(res)
       } catch (error) {}
     },
     // Crear opinión técnica

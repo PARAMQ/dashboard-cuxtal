@@ -335,10 +335,22 @@
 
                   <vl-feature>
                     <vl-geom-point :coordinates="ViewPoint" />
+                    <vl-style>
+                      <vl-style-circle :radius="5">
+                        <vl-style-fill color="red" />
+                        <vl-style-stroke color="red" />
+                      </vl-style-circle>
+                    </vl-style>
                   </vl-feature>
 
-                  <vl-feature>
+                  <vl-feature v-if="points.length > 0">
                     <vl-geom-multi-point :coordinates="pointsMap" />
+                    <vl-style>
+                      <vl-style-circle :radius="5">
+                        <vl-style-fill color="blue" />
+                        <vl-style-stroke color="green" />
+                      </vl-style-circle>
+                    </vl-style>
                   </vl-feature>
 
                   <vl-layer-vector>
