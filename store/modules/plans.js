@@ -1,8 +1,12 @@
-import { getPlans, createOrUpdatePlan, getInfoPlan, deletePlan, updatePlan } from '~/api/plans'
+import { getPlans, createOrUpdatePlan, getInfoPlan, deletePlan, updatePlan, getAllPlannifications } from '~/api/plans'
 
 export const actions = {
   async getPlans ({ commit }, data) {
     const res = await getPlans(data)
+    return res
+  },
+  async getAllPlans ({ commit }) {
+    const res = await getAllPlannifications()
     return res
   },
   async createOrUpdatePlan ({ commit }, data) {

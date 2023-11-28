@@ -9,6 +9,13 @@ export const getPlans = (data) => {
   })
 }
 
+export const getAllPlannifications = () => {
+  return request({
+    url: '/apiPlanning.php/plan',
+    method: 'GET'
+  })
+}
+
 export const createOrUpdatePlan = (data) => {
   return request({
     url: '/apiPlanning.php/plan',

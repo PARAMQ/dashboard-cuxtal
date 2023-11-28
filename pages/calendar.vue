@@ -70,27 +70,7 @@
                                 />
                               </b-tooltip>
                             </div>
-                            <!--
-                            <div class="column">
-                              <p>
-                                <b-icon
-                                  icon="file-document-edit-outline"
-                                  custom-size="default"
-                                />
-                                Bitácoras: {{ plan.binnacles.length }}
-                              </p>
-                            </div>
-                            -->
                             <div class="column m-2 has-text-centered">
-                              <!--
-                              <p>
-                                <b-icon
-                                  icon="calendar-today"
-                                  custom-size="default"
-                                />
-                                {{ plan.start_date }} - {{ plan.end_date }}
-                              </p>
-                              -->
                               <div class="m-2">
                                 <div>
                                   {{ plan.start_date }}
@@ -101,6 +81,11 @@
                               </div>
                             </div>
                           </div>
+                        </div>
+                      </div>
+                      <div class="card-footer">
+                        <div class="card-footer-item">
+                          <p>Creado el: {{ plan.date_register | shortDate }}</p>
                         </div>
                       </div>
                     </div>
@@ -129,7 +114,7 @@
                 </div>
                 <div class="card-footer">
                   <p class="card-footer-item has-text-grey">
-                    Puedes escoger un rango de fechas para ver más recorridos. Al principio verás recorridos programados 30 días antes y después del día de hoy.
+                    Puedes escoger un rango de fechas para ver más recorridos. Al principio verás todos los recorridos, ordenados por la fecha de registro, que se encuentran en el sistema.
                   </p>
                 </div>
               </div>
@@ -138,7 +123,7 @@
         </div>
       </div>
     </div>
-    <new-plan :active-modal="isActive" @close="isActive = false" />
+    <new-plan :active-modal="isActive" @close="updateView" />
   </section>
 </template>
 
@@ -160,6 +145,7 @@ export default {
   },
   mounted () {
     this.plans = []
+    /*
     const now = new Date()
     const day1 = new Date(now)
     day1.setDate(now.getDate() - 30)
@@ -167,13 +153,31 @@ export default {
     const day2 = new Date(now)
     day2.setDate(now.getDate() + 30)
     this.datesSelect.push(day2)
-    this.getData()
+    */
+    this.getAllPlans()
   },
   methods: {
     editPlan (plan) {
       this.$router.push(
         '/planification/editPlanification/?id=' + plan.idplanification
       )
+    },
+    async getAllPlans () {
+      try {
+        this.isLoadingPage = true
+        const res = await this.$store.dispatch('modules/plans/getAllPlans')
+        const temporal = res.map((x) => {
+          x.date_register = new Date(x.date_register)
+          return x
+        })
+        console.log(temporal)
+        temporal.sort((a, b) => b.date_register - a.date_register)
+        this.plans = []
+        this.plans = temporal
+        this.isLoadingPage = false
+      } catch (error) {
+        console.error(error)
+      }
     },
     async getData () {
       try {
@@ -188,6 +192,10 @@ export default {
       } catch (error) {
         // console.log(error)
       }
+    },
+    updateView () {
+      this.isActive = false
+      this.getAllPlans()
     }
   }
 }
