@@ -497,8 +497,9 @@ export default {
           'modules/binnacles/createOrUpdateBinnacle',
           this.form
         )
-        const binnacle = await this.getBinnacle(idBinnacle)
         if (this.points.length > 0) {
+          const binnacle = await this.getBinnacle(idBinnacle)
+          console.log(binnacle)
           this.points.map((point) => {
             const coord = point
             coord.idbinnacle = idBinnacle
@@ -509,6 +510,8 @@ export default {
           await this.updateBinnacle(binnacle)
         }
         if (this.files.length > 0) {
+          const binnacle = await this.getBinnacle(idBinnacle)
+          console.log(binnacle)
           const formData = new FormData()
           this.files.map((file, index) => {
             if (file.type === 'image/png') {
@@ -535,7 +538,8 @@ export default {
           })
           await this.uploadEvidences(formData)
           if (this.vegetableAffected.length > 0) {
-          // console.log(this.vegetableAffected)
+            const binnacle = await this.getBinnacle(idBinnacle)
+            console.log(binnacle)
             binnacle.list_vegetable_affected = this.vegetableAffected.map((x) => {
               x.idbinnacle = idBinnacle
               return x

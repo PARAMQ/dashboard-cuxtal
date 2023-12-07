@@ -28,7 +28,6 @@
                     <div class="level-item">
                       <p>{{ bitacora.number }}</p>
                     </div>
-                    <!--
                     <div class="level-item">
                       <b-tooltip
                         v-if="bitacora.status === 'revisado'"
@@ -63,7 +62,6 @@
                         <b-icon icon="alert" size="is-small" type="is-danger" />
                       </b-tooltip>
                     </div>
-                    -->
                   </div>
                   <div class="level-right">
                     <div class="level-item">

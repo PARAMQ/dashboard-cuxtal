@@ -291,6 +291,39 @@
           <div class="columns">
             <div class="column">
               <div class="divider">
+                <strong>Estado de la bitácora</strong>
+              </div>
+              <nav class="level">
+                <div class="level-left">
+                  <div>
+                    <b-label label="Cambiar estado del recorrido">
+                      <b-select v-model="form.status">
+                        <option
+                          v-for="option in options"
+                          :key="option.value"
+                          :value="option.value"
+                        >
+                          {{ option.label }}
+                        </option>
+                      </b-select>
+                    </b-label>
+                  </div>
+                  <div>
+                    <b-button
+                      size="is-small"
+                      type="is-success is-light"
+                      icon-right="content-save"
+                      @click="updateStatusBinnacle"
+                    />
+                  </div>
+                </div>
+                <div class="level-right"></div>
+              </nav>
+            </div>
+          </div>
+          <div class="columns">
+            <div class="column">
+              <div class="divider">
                 <strong>Relatoría</strong>
               </div>
               <div class="container">
@@ -585,6 +618,20 @@ export default {
             coordinates: data
           }
         }
+      ],
+      options: [
+        {
+          label: 'Revisado',
+          value: 'Revisado'
+        },
+        {
+          label: 'En revisión',
+          value: 'en-revision'
+        },
+        {
+          label: 'Por revisar',
+          value: 'por-revisar'
+        }
       ]
     }
   },
@@ -627,6 +674,7 @@ export default {
           'modules/binnacles/getBinnacle',
           id
         )
+        console.log(res)
         res.date = new Date(res.date)
         res.hourInit = new Date(res.hour_init)
         res.hourEnd = new Date(res.hour_end)
@@ -671,27 +719,7 @@ export default {
         } else {
           this.viewPoints = false
         }
-        // console.log(res)
         this.isLoading = false
-        /*
-        res.date = new Date(res.date)
-        res.hour_init = new Date(res.hour_init)
-        this.hourInit = res.hour_init
-        res.hour_end = new Date(res.hour_end)
-        this.hourEnd = res.hour_end
-        const objetoFiltrado = {}
-        const objetosUnicos = res.list_vegetable_affected.filter((obj) => {
-          const idva = obj.idva
-          if (!objetoFiltrado[idva]) {
-            objetoFiltrado[idva] = true
-            return true
-          }
-          return false
-        })
-        res.list_subzoning = res.list_subzones
-        this.vegetableAffected = objetosUnicos
-        res.participant = this.filterParticipantId(this.binnacleObject.idparticipants)
-        */
         this.form = res
       } catch (error) {
         // // console.log(error)
@@ -734,6 +762,24 @@ export default {
     // Evidencia
     viewIamge (image) {
       this.imageUrl = URL.createObjectURL(image)
+    },
+    async updateStatusBinnacle () {
+      // console.log(this.form)
+      try {
+        await this.$store.dispatch(
+          'modules/binnacles/createOrUpdateBinnacle',
+          this.form
+        )
+        this.$buefy.toast.open({
+          message: 'Actualizado correctamente',
+          type: 'is-success'
+        })
+      } catch (error) {
+        this.$buefy.toast.open({
+          message: 'Ocurrió un error, intente nuevamente',
+          type: 'is-danger'
+        })
+      }
     },
     convertCoordinatesFromUtm (coords) {},
     viewPoint () {
