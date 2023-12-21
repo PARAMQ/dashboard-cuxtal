@@ -61,5 +61,8 @@
     "node-sass": "^6",
     "sass-loader": "^10.0.2",
     "vue-particles": "^1.0.9"
+  },
+  "engines": {
+    "node": "14.17.3"
   }
 }
