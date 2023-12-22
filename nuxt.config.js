@@ -2,6 +2,7 @@ export default {
   /*
    ** Headers of the page
    */
+  target: 'static',
   head: {
     title: 'Cuxtal - admin',
     meta: [
@@ -115,7 +116,8 @@ export default {
    */
   router: {
     middleware: ['auth'],
-    mode: 'hash'
+    mode: 'hash',
+    base: '/dashboard-cuxtal/'
   },
   pwa: {
     icon: {
