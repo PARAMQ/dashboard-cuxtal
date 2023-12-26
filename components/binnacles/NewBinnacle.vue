@@ -31,6 +31,17 @@
                   </b-select>
                 </b-field>
               </div>
+              <div class="column">
+                <b-field label="¿Fue procesado?">
+                  <b-checkbox
+                    v-model="form.isprocessed"
+                    true-value="Si"
+                    false-value="No"
+                  >
+                    {{ form.isprocessed }}
+                  </b-checkbox>
+                </b-field>
+              </div>
             </div>
             <div class="columns">
               <div class="column">
@@ -284,10 +295,22 @@
                     v-if="viewActive"
                   >
                     <vl-geom-point :coordinates="ViewPoint" />
+                    <vl-style>
+                      <vl-style-circle :radius="5">
+                        <vl-style-fill color="green" />
+                        <vl-style-stroke color="green" />
+                      </vl-style-circle>
+                    </vl-style>
                   </vl-feature>
 
                   <vl-feature>
                     <vl-geom-multi-point :coordinates="pointsMap" />
+                    <vl-style>
+                      <vl-style-circle :radius="5">
+                        <vl-style-fill color="red" />
+                        <vl-style-stroke color="red" />
+                      </vl-style-circle>
+                    </vl-style>
                   </vl-feature>
 
                   <vl-layer-vector>
@@ -372,7 +395,8 @@ export default {
     return {
       form: {
         date: new Date(),
-        status: 'por-revisar'
+        status: 'por-revisar',
+        isprocessed: false
       },
       isLoading: false,
       hourInit: new Date(),
@@ -458,6 +482,7 @@ export default {
       this.form = {
         date: new Date(),
         status: 'por-revisar',
+        isprocessed: false,
         idplanification: this.plannification ? this.plannification : null
       }
       this.viewActive = false
@@ -550,6 +575,7 @@ export default {
         this.form = {
           date: new Date(),
           status: 'por-revisar',
+          isprocessed: false,
           idplanification: this.plannification ? this.plannification : null
         }
         this.viewActive = false

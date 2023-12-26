@@ -117,7 +117,7 @@ export default {
   router: {
     middleware: ['auth'],
     mode: 'hash',
-    base: '/dashboard-cuxtal/'
+    base: '/sistema-iv/'
   },
   pwa: {
     icon: {

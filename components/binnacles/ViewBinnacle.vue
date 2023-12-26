@@ -4,9 +4,7 @@
     <div class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title">
-          {{
-            'Bitácora ' + form.number
-          }}
+          {{ 'Bitácora ' + form.number }}
         </p>
       </header>
       <!--
@@ -293,32 +291,32 @@
               <div class="divider">
                 <strong>Estado de la bitácora</strong>
               </div>
-              <nav class="level">
-                <div class="level-left">
-                  <div>
-                    <b-label label="Cambiar estado del recorrido">
-                      <b-select v-model="form.status">
-                        <option
-                          v-for="option in options"
-                          :key="option.value"
-                          :value="option.value"
-                        >
-                          {{ option.label }}
-                        </option>
-                      </b-select>
-                    </b-label>
-                  </div>
-                  <div>
-                    <b-button
-                      size="is-small"
-                      type="is-success is-light"
-                      icon-right="content-save"
-                      @click="updateStatusBinnacle"
-                    />
-                  </div>
+              <div class="columns">
+                <div class="column">
+                  <b-field label="Estado de la bitácora">
+                    <b-select v-model="form.status">
+                      <option
+                        v-for="option in estados"
+                        :key="option.value"
+                        :value="option.value"
+                      >
+                        {{ option.label }}
+                      </option>
+                    </b-select>
+                  </b-field>
                 </div>
-                <div class="level-right"></div>
-              </nav>
+                <div class="column">
+                  <b-field label="¿Fue procesado?">
+                    <b-checkbox
+                      v-model="form.isprocessed"
+                      true-value="Si"
+                      false-value="No"
+                    >
+                      {{ form.isprocessed }}
+                    </b-checkbox>
+                  </b-field>
+                </div>
+              </div>
             </div>
           </div>
           <div class="columns">
@@ -366,7 +364,9 @@
                 <strong>Responsable</strong>
               </div>
               <div v-if="form.responsable" class="container">
-                <p><strong>Nombre completo: </strong>{{ form.responsable.name + ' ' + form.responsable.lastname }}</p>
+                <p>
+                  <strong>Nombre completo: </strong>{{ form.responsable.name + ' ' + form.responsable.lastname }}
+                </p>
               </div>
               <div v-else class="container has-text-centered">
                 <p>No se registró el responsable</p>
@@ -387,7 +387,11 @@
                       {{ participant.name + ' ' + participant.lastname }}
                     </b-tag>
                     <b-tag type="is-success is-light" size="is-medium">
-                      {{ participant.charge ? participant.charge.description : 'Sin cargo' }}
+                      {{
+                        participant.charge
+                          ? participant.charge.description
+                          : 'Sin cargo'
+                      }}
                     </b-tag>
                   </b-taglist>
                 </div>
@@ -407,8 +411,16 @@
                   class="m-2"
                 >
                   <b-taglist attached>
-                    <b-tag type="is-light" size="is-medium">{{ vehicle.number }}</b-tag>
-                    <b-tag type="is-info is-light" size="is-medium">{{ vehicle.plates }}</b-tag>
+                    <b-tag type="is-light" size="is-medium">
+                      {{
+                        vehicle.number
+                      }}
+                    </b-tag>
+                    <b-tag type="is-info is-light" size="is-medium">
+                      {{
+                        vehicle.plates
+                      }}
+                    </b-tag>
                   </b-taglist>
                 </div>
               </div>
@@ -435,7 +447,11 @@
                       {{ va.description }}
                     </b-tag>
                     <b-tag type="is-success is-light" size="is-medium">
-                      {{ va.cientificName ? va.cientificName : 'Sin nombre científico' }}
+                      {{
+                        va.cientificName
+                          ? va.cientificName
+                          : 'Sin nombre científico'
+                      }}
                     </b-tag>
                   </b-taglist>
                 </div>
@@ -448,7 +464,10 @@
               <div class="divider">
                 <strong>Zonas de vigilancia</strong>
               </div>
-              <div v-if="form.list_operative_zones.length > 0" class="container">
+              <div
+                v-if="form.list_operative_zones.length > 0"
+                class="container"
+              >
                 <div
                   v-for="opZone in form.list_operative_zones"
                   :key="opZone.idoperative_zones"
@@ -478,7 +497,11 @@
                       {{ subzone.description }}
                     </b-tag>
                     <b-tag type="is-info is-light" size="is-medium">
-                      {{ subzone.zoning ? subzone.zoning.description : 'Sin zoníficacion asignada' }}
+                      {{
+                        subzone.zoning
+                          ? subzone.zoning.description
+                          : 'Sin zoníficacion asignada'
+                      }}
                     </b-tag>
                   </b-taglist>
                 </div>
@@ -511,9 +534,7 @@
                   <vl-source-osm />
                 </vl-layer-tile>
 
-                <vl-feature
-                  v-if="viewPoints"
-                >
+                <vl-feature v-if="viewPoints">
                   <vl-geom-multi-point :coordinates="pointsMap" />
                 </vl-feature>
 
@@ -524,14 +545,27 @@
             </div>
           </div>
         </div>
-        <div v-if="form.list_image && form.list_image.length > 0" class="container">
+        <div v-if="form.list_image && form.list_image.length > 0">
           <div class="divider">
             <strong>Evidencias</strong>
           </div>
-          <div v-for="image in form.list_image" :key="image" class="columns">
-            <figure v-if="image.path" class="image is-128x128">
-              <img :src="image.path">
-            </figure>
+          <div
+            v-for="(image, index) in form.list_image"
+            :key="index"
+            class="columns"
+          >
+            <div class="column is-2">
+              <figure v-if="image.path" class="image is-128x128">
+                <img :src="image.path">
+              </figure>
+            </div>
+            <div class="column">
+              <b-button
+                type="is-danger"
+                icon-right="delete"
+                @click="deleteImage(index)"
+              />
+            </div>
           </div>
         </div>
         <div v-else class="container">
@@ -542,7 +576,7 @@
             <p>Sin evidencias</p>
           </div>
         </div>
-        <div class="has-text-centered m-2" style="width: 100%;">
+        <div class="has-text-centered m-2" style="width: 100%">
           <b-button @click="close">
             <strong>Cerrar</strong>
           </b-button>
@@ -619,14 +653,14 @@ export default {
           }
         }
       ],
-      options: [
+      estados: [
         {
           label: 'Revisado',
-          value: 'Revisado'
+          value: 'revisado'
         },
         {
           label: 'En revisión',
-          value: 'en-revision'
+          value: 'en-revisión'
         },
         {
           label: 'Por revisar',
@@ -679,7 +713,9 @@ export default {
         res.hourInit = new Date(res.hour_init)
         res.hourEnd = new Date(res.hour_end)
         const participants = res.participants.map((participant) => {
-          const charge = this.charges.find(x => x.idcharge === participant.idcharge)
+          const charge = this.charges.find(
+            (x) => x.idcharge === participant.idcharge
+          )
           participant.charge = charge
           return participant
         })
@@ -694,11 +730,15 @@ export default {
           return false
         })
         if (res.idparticipants) {
-          res.responsable = this.participants.find((x) => x.idparticipants === res.idparticipants)
+          res.responsable = this.participants.find(
+            (x) => x.idparticipants === res.idparticipants
+          )
         }
         res.vegetableAffected = objetosUnicos
         const zoning = res.list_subzones.map((zone) => {
-          const temporalZoning = this.zoning.find(x => x.idzoning === zone.idzoning)
+          const temporalZoning = this.zoning.find(
+            (x) => x.idzoning === zone.idzoning
+          )
           zone.zoning = temporalZoning
           return zone
         })
@@ -720,6 +760,7 @@ export default {
           this.viewPoints = false
         }
         this.isLoading = false
+        res.isprocessed = res.isprocessed ? res.isprocessed : 'No'
         this.form = res
       } catch (error) {
         // // console.log(error)
@@ -762,6 +803,26 @@ export default {
     // Evidencia
     viewIamge (image) {
       this.imageUrl = URL.createObjectURL(image)
+    },
+    deleteImage (index) {
+      console.log(index)
+      this.$swal
+        .fire({
+          title: '¿Deseas eliminar esta evidencia?',
+          text: 'No podrás revertir el cambio',
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Eliminar',
+          cancelButtonText: 'Cancelar'
+        })
+        .then((result) => {
+          // // console.log(result)
+          if (result.isConfirmed) {
+            // this.$router.push('/tracking/technicalOp/')
+          } else if (result.isDismissed) {
+            // this.$router.push('/tracking/programmed/')
+          }
+        })
     },
     async updateStatusBinnacle () {
       // console.log(this.form)

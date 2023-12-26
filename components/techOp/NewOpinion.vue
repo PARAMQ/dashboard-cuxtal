@@ -19,7 +19,6 @@
                   v-model="form.individual"
                   label="Nombre de la persona física"
                   name="persona física"
-                  rules="required"
                   normal
                 />
               </div>
