@@ -22,12 +22,11 @@
                 disabled
               />
             </div>
-            <div v-if="!form.idlegal_entity" class="column m-2">
-              <b-tag size="is-medium">Persona física</b-tag>
-            </div>
-            <div v-if="form.idlegal_entity" class="column is-flex is-justify-content-center">
+            <div class="column is-flex is-justify-content-center">
               <b-field label="Nombre de la persona moral">
-                <b-tag size="is-medium">{{ form.legal_entity ? form.legal_entity : 'Dato no asignado' }}</b-tag>
+                <b-tag size="is-medium">
+                  {{ form.legal_entity ? form.legal_entity : 'Dato no asignado' }}
+                </b-tag>
                 <!--
                 <b-select
                   v-model="form.idlegal_entity"

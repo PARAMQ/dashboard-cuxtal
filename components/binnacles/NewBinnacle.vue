@@ -444,7 +444,7 @@ export default {
         },
         {
           label: 'En revisión',
-          value: 'en-revisión'
+          value: 'en-revision'
         },
         {
           label: 'Por revisar',

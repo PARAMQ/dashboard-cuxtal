@@ -308,13 +308,16 @@
                 <div class="column">
                   <b-field label="¿Fue procesado?">
                     <b-checkbox
-                      v-model="form.isprocessed"
+                      v-model="form.is_processed"
                       true-value="Si"
                       false-value="No"
                     >
-                      {{ form.isprocessed }}
+                      {{ form.is_processed }}
                     </b-checkbox>
                   </b-field>
+                </div>
+                <div class="column">
+                  <b-button type="is-success" @click="updateStatusBinnacle">Guardar</b-button>
                 </div>
               </div>
             </div>
@@ -514,6 +517,25 @@
         </div>
         <div class="container">
           <div class="columns">
+            <div class="columns">
+              <div
+                  v-for="pointCoord in points"
+                  :key="pointCoord.name"
+                  class="container m-3"
+                >
+                  <div class="control">
+                    <b-tag
+                      type="is-primary"
+                      attached
+                      aria-close-label="Close tag"
+                      closable
+                      @close="deletePoint"
+                    >
+                      {{ pointCoord.name }}
+                    </b-tag>
+                  </div>
+                </div>
+            </div>
             <div class="column">
               <div class="divider">
                 <strong>Coordenadas registradas</strong>
@@ -536,6 +558,12 @@
 
                 <vl-feature v-if="viewPoints">
                   <vl-geom-multi-point :coordinates="pointsMap" />
+                  <vl-style>
+                    <vl-style-circle :radius="5">
+                      <vl-style-fill color="red" />
+                      <vl-style-stroke color="red" />
+                    </vl-style-circle>
+                  </vl-style>
                 </vl-feature>
 
                 <vl-layer-vector>
@@ -563,7 +591,7 @@
               <b-button
                 type="is-danger"
                 icon-right="delete"
-                @click="deleteImage(index)"
+                @click="deleteImage(image, index)"
               />
             </div>
           </div>
@@ -660,7 +688,7 @@ export default {
         },
         {
           label: 'En revisión',
-          value: 'en-revisión'
+          value: 'en-revision'
         },
         {
           label: 'Por revisar',
@@ -760,8 +788,9 @@ export default {
           this.viewPoints = false
         }
         this.isLoading = false
-        res.isprocessed = res.isprocessed ? res.isprocessed : 'No'
+        res.is_processed = res.is_processed && res.is_processed === 1 ? 'Si' : (res.is_processed && res.is_processed === 0 ? 'No' : 'No')
         this.form = res
+        console.log(this.form)
       } catch (error) {
         // // console.log(error)
       }
@@ -804,8 +833,7 @@ export default {
     viewIamge (image) {
       this.imageUrl = URL.createObjectURL(image)
     },
-    deleteImage (index) {
-      console.log(index)
+    deleteImage (object, index) {
       this.$swal
         .fire({
           title: '¿Deseas eliminar esta evidencia?',
@@ -815,22 +843,53 @@ export default {
           confirmButtonText: 'Eliminar',
           cancelButtonText: 'Cancelar'
         })
-        .then((result) => {
+        .then(async (result) => {
           // // console.log(result)
           if (result.isConfirmed) {
+            if (this.form.list_image_deleted && this.list_image_deleted.length > 0) {
+              this.form.list_image_deleted.push(object)
+              this.form.list_image.splice(index, 1)
+            } else {
+              this.form.list_image_deleted = []
+              this.form.list_image_deleted.push(object)
+              this.form.list_image.splice(index, 1)
+            }
+            console.log(this.form)
+            try {
+              await this.$store.dispatch(
+                'modules/binnacles/createOrUpdateBinnacle',
+                this.form
+              )
+              this.getOneMoment(this.binnacleObject.idbinnacle)
+              this.$buefy.toast.open({
+                message: 'Imágen borrada correctamente',
+                type: 'is-success'
+              })
+            } catch (error) {
+              this.$buefy.toast.open({
+                message: 'Ocurrió un error, intente nuevamente',
+                type: 'is-danger'
+              })
+            }
             // this.$router.push('/tracking/technicalOp/')
           } else if (result.isDismissed) {
             // this.$router.push('/tracking/programmed/')
           }
         })
     },
+    deletePoint (index) {
+      console.log(index)
+    },
     async updateStatusBinnacle () {
       // console.log(this.form)
+      this.form.isprocessed = this.form.is_processed === 'Si' ? 1 : 0
+      console.log(this.form)
       try {
         await this.$store.dispatch(
           'modules/binnacles/createOrUpdateBinnacle',
           this.form
         )
+        this.getOneMoment(this.binnacleObject.idbinnacle)
         this.$buefy.toast.open({
           message: 'Actualizado correctamente',
           type: 'is-success'

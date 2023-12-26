@@ -361,10 +361,12 @@
 
         <vl-feature v-if="activatePoints">
           <vl-geom-multi-point :coordinates="temporalPoints" />
-          <vl-style-circle :radius="5">
-            <vl-style-fill color="red" />
-            <vl-style-stroke color="red" />
-          </vl-style-circle>
+          <vl-style>
+            <vl-style-circle :radius="5">
+              <vl-style-fill color="red" />
+              <vl-style-stroke color="red" />
+            </vl-style-circle>
+          </vl-style>
         </vl-feature>
 
         <vl-layer-vector>

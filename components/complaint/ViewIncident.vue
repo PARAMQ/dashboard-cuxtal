@@ -319,6 +319,12 @@
 
                 <vl-feature v-if="activePoints">
                   <vl-geom-multi-point :coordinates="pointsMap" />
+                  <vl-style>
+                    <vl-style-circle :radius="5">
+                      <vl-style-fill color="red" />
+                      <vl-style-stroke color="red" />
+                    </vl-style-circle>
+                  </vl-style>
                 </vl-feature>
 
                 <vl-layer-vector>
