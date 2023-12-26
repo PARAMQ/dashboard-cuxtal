@@ -308,11 +308,11 @@
                 <div class="column">
                   <b-field label="¿Fue procesado?">
                     <b-checkbox
-                      v-model="form.is_processed"
+                      v-model="form.isprocessed"
                       true-value="Si"
                       false-value="No"
                     >
-                      {{ form.is_processed }}
+                      {{ form.isprocessed }}
                     </b-checkbox>
                   </b-field>
                 </div>
@@ -788,7 +788,7 @@ export default {
           this.viewPoints = false
         }
         this.isLoading = false
-        res.is_processed = res.is_processed && res.is_processed === 1 ? 'Si' : (res.is_processed && res.is_processed === 0 ? 'No' : 'No')
+        res.isprocessed = res.isprocessed && res.isprocessed === '1' ? 'Si' : (res.isprocessed && res.isprocessed === '0' ? 'No' : 'No')
         this.form = res
         console.log(this.form)
       } catch (error) {
@@ -882,7 +882,7 @@ export default {
     },
     async updateStatusBinnacle () {
       // console.log(this.form)
-      this.form.isprocessed = this.form.is_processed === 'Si' ? 1 : 0
+      this.form.isprocessed = this.form.isprocessed === 'Si' ? 1 : 0
       console.log(this.form)
       try {
         await this.$store.dispatch(
