@@ -537,7 +537,6 @@ export default {
         }
         if (this.files.length > 0) {
           const binnacle = await this.getBinnacle(idBinnacle)
-          console.log(binnacle)
           const formData = new FormData()
           const temporalNumber = binnacle.number.replace('/', '-')
           this.files.map((file, index) => {
@@ -545,10 +544,12 @@ export default {
               const temporalName = 'evidencia_' + (index + 1) + '_bitacora_' + temporalNumber + '.png'
               const temporalFile = new File([file], temporalName, { type: 'image/png' })
               formData.append('binnacle_photo[]', temporalFile)
+              console.log(temporalFile)
             } else if (file.type === 'image/jpeg') {
               const temporalName = 'evidencia_' + (index + 1) + '_bitacora_' + temporalNumber + '.jpg'
               const temporalFile = new File([file], temporalName, { type: 'image/jpeg' })
               formData.append('binnacle_photo[]', temporalFile)
+              console.log(temporalFile)
             }
           })
           this.files.forEach((files, index) => {

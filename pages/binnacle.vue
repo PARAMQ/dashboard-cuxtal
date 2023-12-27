@@ -18,9 +18,28 @@
           />
         </b-tooltip>
       </section>
+      <section class="m-2 has-text-centered">
+        <b-field label="Buscar bitácoras por folio">
+          <b-autocomplete
+            placeholder="Ejemplo: CIV/0012023"
+            :data="binnaclesFilter"
+            :clearable="clearable"
+            @typing="filterBinnacle"
+            @select="(option) => openBinnacle(option)"
+          >
+            <template slot-scope="props">
+              <div class="media">
+                <div class="media-content">
+                  <h1>{{ props.option.number }}</h1>
+                </div>
+              </div>
+            </template>
+          </b-autocomplete>
+        </b-field>
+      </section>
       <div class="columns m-2 binnalces">
         <div class="column">
-          <div v-for="bitacora in binnacles" :key="bitacora.idbinnacle">
+          <div v-for="bitacora in binnaclesFilter" :key="bitacora.idbinnacle">
             <div class="card">
               <div class="card-header">
                 <div class="level m-1 full-w">
@@ -116,7 +135,11 @@
               </div>
               <div class="m-2">
                 <p class="has-text-grey">
-                  {{ bitacora.isextraordinary ? 'Bitácora extraordinaria' : 'Bitácora relacionada a un recorrido programado' }}
+                  {{
+                    bitacora.isextraordinary
+                      ? 'Bitácora extraordinaria'
+                      : 'Bitácora relacionada a un recorrido programado'
+                  }}
                 </p>
               </div>
             </div>
@@ -141,9 +164,7 @@
           <vl-source-osm />
         </vl-layer-tile>
 
-        <vl-feature
-          v-if="viewBinnacle"
-        >
+        <vl-feature v-if="viewBinnacle">
           <vl-geom-multi-point :coordinates="temporalPoints" />
         </vl-feature>
 
@@ -199,6 +220,7 @@ export default {
       isActive: false,
       isLoadingBinnacles: false,
       binnacles: [],
+      binnaclesFilter: [],
       dateSelect: new Date(),
       zoom: 12,
       center: [-89.60984537598705, 20.85610769792424],
@@ -265,6 +287,7 @@ export default {
         this.binnacles = await this.$store.dispatch(
           'modules/binnacles/getBinnacles'
         )
+        this.binnaclesFilter = this.binnacles
         // \this.getCoordinates(this.binnacles)
         this.isLoadingBinnacles = false
       } catch (error) {
@@ -274,10 +297,26 @@ export default {
     // Obtener la información por bitácora
     async getBinnacle (idBinnacle) {
       try {
-        const res = await this.$store.dispatch('modules/binnacles/getBinnacle', idBinnacle)
+        const res = await this.$store.dispatch(
+          'modules/binnacles/getBinnacle',
+          idBinnacle
+        )
         return res
       } catch (error) {
         // console.log(error)
+      }
+    },
+    // filtar bitácoras
+    filterBinnacle (text) {
+      if (text && text.length > 0) {
+        this.binnaclesFilter = this.binnacles.filter((x) => {
+          if (x.number.toUpperCase().includes(text.toUpperCase())) {
+            console.log(x)
+            return x
+          }
+        })
+      } else {
+        this.binnaclesFilter = this.binnacles
       }
     },
     // Visualizar una bitácora en el mapa
@@ -316,13 +355,18 @@ export default {
       try {
         this.isLoadingBinnacles = true
         this.downloadFile = true
-        const res = await this.$store.dispatch('modules/binnacles/getWordBinnacle', binnacle)
+        const res = await this.$store.dispatch(
+          'modules/binnacles/getWordBinnacle',
+          binnacle
+        )
         // Ensure the response is an ArrayBuffer
-        const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })
+        const blob = new Blob([res], {
+          type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        })
         const blobURL = window.URL.createObjectURL(blob)
         const link = document.createElement('a')
-        const secondPart = name.substring((name.length - 4), name.length)
-        const firstPart = name.substring(0, (name.length - 4))
+        const secondPart = name.substring(name.length - 4, name.length)
+        const firstPart = name.substring(0, name.length - 4)
         const filename = 'bitácora_' + firstPart + '-' + secondPart + '.docx'
         link.href = blobURL
         link.setAttribute('download', filename)

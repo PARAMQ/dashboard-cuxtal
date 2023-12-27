@@ -13,9 +13,28 @@
           @click="activeModal = true"
         />
       </section>
+      <section class="m-2 has-text-centered">
+        <b-field label="Buscar opinión técnica por folio">
+          <b-autocomplete
+            placeholder="Ejemplo: 1234"
+            :data="techOpFilter"
+            :clearable="clearable"
+            @typing="filterTechOp"
+            @select="(option) => viewTechOp(option)"
+          >
+            <template slot-scope="props">
+              <div class="media">
+                <div class="media-content">
+                  <h1>{{ props.option.folium }}</h1>
+                </div>
+              </div>
+            </template>
+          </b-autocomplete>
+        </b-field>
+      </section>
       <div class="columns m-2 binnalces">
         <div v-if="data.length > 0" class="column">
-          <div v-for="technicalOp in data" :key="technicalOp.idtechnical_opinion">
+          <div v-for="technicalOp in techOpFilter" :key="technicalOp.idtechnical_opinion">
             <div class="card">
               <div class="card-header">
                 <div class="level m-1 full-w">
@@ -137,6 +156,7 @@ export default {
       isLoadingData: false,
       activeModal: false,
       data: [],
+      techOpFilter: [],
       viewOp: false,
       temporalPoints: [],
       activeViewModal: false,
@@ -164,6 +184,7 @@ export default {
       try {
         this.isLoadingData = true
         this.data = await this.$store.dispatch('modules/technicalOp/getTechnicalOps')
+        this.techOpFilter = this.data
         this.isLoadingData = false
       } catch (error) {
         // console.log(error)
@@ -177,6 +198,18 @@ export default {
         return res
       } catch (error) {
         console.log(error)
+      }
+    },
+    filterTechOp (text) {
+      if (text && text.length > 0) {
+        this.techOpFilter = this.data.filter((x) => {
+          if (x.folium.toUpperCase().includes(text.toUpperCase())) {
+            console.log(x)
+            return x
+          }
+        })
+      } else {
+        this.techOpFilter = this.data
       }
     },
     updateView () {
