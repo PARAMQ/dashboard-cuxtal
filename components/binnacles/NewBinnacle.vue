@@ -396,7 +396,7 @@ export default {
       form: {
         date: new Date(),
         status: 'por-revisar',
-        isprocessed: false
+        isprocessed: 'No'
       },
       isLoading: false,
       hourInit: new Date(),
@@ -482,7 +482,7 @@ export default {
       this.form = {
         date: new Date(),
         status: 'por-revisar',
-        isprocessed: false,
+        isprocessed: 'No',
         idplanification: this.plannification ? this.plannification : null
       }
       this.viewActive = false
@@ -517,6 +517,7 @@ export default {
       this.isLoading = true
       this.form.hour_init = this.hourInit
       this.form.hour_end = this.hourEnd
+      this.form.isprocessed = this.form.isprocessed === 'Si' ? 1 : 0
       try {
         const idBinnacle = await this.$store.dispatch(
           'modules/binnacles/createOrUpdateBinnacle',
@@ -538,20 +539,21 @@ export default {
           const binnacle = await this.getBinnacle(idBinnacle)
           console.log(binnacle)
           const formData = new FormData()
+          const temporalNumber = binnacle.number.replace('/', '-')
           this.files.map((file, index) => {
             if (file.type === 'image/png') {
-              const temporalName = 'evidencia_' + (index + 1) + '_bitácora_' + binnacle.number + '.png'
+              const temporalName = 'evidencia_' + (index + 1) + '_bitacora_' + temporalNumber + '.png'
               const temporalFile = new File([file], temporalName, { type: 'image/png' })
               formData.append('binnacle_photo[]', temporalFile)
             } else if (file.type === 'image/jpeg') {
-              const temporalName = 'evidencia_' + (index + 1) + '_bitácora_' + binnacle.number + '.jpg'
+              const temporalName = 'evidencia_' + (index + 1) + '_bitacora_' + temporalNumber + '.jpg'
               const temporalFile = new File([file], temporalName, { type: 'image/jpeg' })
               formData.append('binnacle_photo[]', temporalFile)
             }
           })
           this.files.forEach((files, index) => {
             this.temporalFiles.push({
-              description: 'evidencia_' + (index + 1) + '_' + binnacle.number,
+              description: 'evidencia_' + (index + 1) + '_' + temporalNumber,
               idbinnacle: idBinnacle,
               position: index + 1
             })

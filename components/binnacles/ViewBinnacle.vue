@@ -317,7 +317,12 @@
                   </b-field>
                 </div>
                 <div class="column">
-                  <b-button type="is-success" @click="updateStatusBinnacle">Guardar</b-button>
+                  <b-button
+                    type="is-success"
+                    @click="updateStatusBinnacle"
+                  >
+                    Guardar
+                  </b-button>
                 </div>
               </div>
             </div>
@@ -415,14 +420,10 @@
                 >
                   <b-taglist attached>
                     <b-tag type="is-light" size="is-medium">
-                      {{
-                        vehicle.number
-                      }}
+                      {{ vehicle.number }}
                     </b-tag>
                     <b-tag type="is-info is-light" size="is-medium">
-                      {{
-                        vehicle.plates
-                      }}
+                      {{ vehicle.plates }}
                     </b-tag>
                   </b-taglist>
                 </div>
@@ -516,30 +517,30 @@
           </div>
         </div>
         <div class="container">
+          <div class="divider">
+            <strong>Coordenadas registradas</strong>
+          </div>
           <div class="columns">
-            <div class="columns">
+            <div class="column is-3">
               <div
-                  v-for="pointCoord in points"
-                  :key="pointCoord.name"
-                  class="container m-3"
-                >
-                  <div class="control">
-                    <b-tag
-                      type="is-primary"
-                      attached
-                      aria-close-label="Close tag"
-                      closable
-                      @close="deletePoint"
-                    >
-                      {{ pointCoord.name }}
-                    </b-tag>
-                  </div>
+                v-for="pointCoord in form.coordinates_binnacle"
+                :key="pointCoord.name"
+                class="container m-3"
+              >
+                <div class="control">
+                  <b-tag
+                    type="is-primary"
+                    attached
+                    aria-close-label="Close tag"
+                    closable
+                    @close="deletePoint(pointCoord)"
+                  >
+                    {{ pointCoord.name }}
+                  </b-tag>
                 </div>
+              </div>
             </div>
             <div class="column">
-              <div class="divider">
-                <strong>Coordenadas registradas</strong>
-              </div>
               <vl-map
                 :load-tiles-while-animating="true"
                 :load-tiles-while-interacting="true"
@@ -788,7 +789,12 @@ export default {
           this.viewPoints = false
         }
         this.isLoading = false
-        res.isprocessed = res.isprocessed && res.isprocessed === '1' ? 'Si' : (res.isprocessed && res.isprocessed === '0' ? 'No' : 'No')
+        res.isprocessed =
+          res.isprocessed && res.isprocessed === '1'
+            ? 'Si'
+            : res.isprocessed && res.isprocessed === '0'
+              ? 'No'
+              : 'No'
         this.form = res
         console.log(this.form)
       } catch (error) {
@@ -846,7 +852,10 @@ export default {
         .then(async (result) => {
           // // console.log(result)
           if (result.isConfirmed) {
-            if (this.form.list_image_deleted && this.list_image_deleted.length > 0) {
+            if (
+              this.form.list_image_deleted &&
+              this.list_image_deleted.length > 0
+            ) {
               this.form.list_image_deleted.push(object)
               this.form.list_image.splice(index, 1)
             } else {
@@ -877,8 +886,52 @@ export default {
           }
         })
     },
-    deletePoint (index) {
-      console.log(index)
+    deletePoint (object, index) {
+      this.$swal
+        .fire({
+          title: '¿Deseas eliminar esta coordenada?',
+          text: 'No podrás revertir el cambio',
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Eliminar',
+          cancelButtonText: 'Cancelar'
+        })
+        .then(async (result) => {
+          // // console.log(result)
+          if (result.isConfirmed) {
+            if (
+              this.form.list_coordinates_deleted &&
+              this.list_coordinates_deleted.length > 0
+            ) {
+              this.form.list_coordinates_deleted.push(object)
+              // this.form.coordinates_binnacle.splice(index, 1)
+            } else {
+              this.form.list_coordinates_deleted = []
+              this.form.list_coordinates_deleted.push(object)
+              // this.form.coordinates_binnacle.splice(index, 1)
+            }
+            console.log(this.form)
+            try {
+              await this.$store.dispatch(
+                'modules/binnacles/createOrUpdateBinnacle',
+                this.form
+              )
+              this.getOneMoment(this.binnacleObject.idbinnacle)
+              this.$buefy.toast.open({
+                message: 'Imágen borrada correctamente',
+                type: 'is-success'
+              })
+            } catch (error) {
+              this.$buefy.toast.open({
+                message: 'Ocurrió un error, intente nuevamente',
+                type: 'is-danger'
+              })
+            }
+            // this.$router.push('/tracking/technicalOp/')
+          } else if (result.isDismissed) {
+            // this.$router.push('/tracking/programmed/')
+          }
+        })
     },
     async updateStatusBinnacle () {
       // console.log(this.form)
