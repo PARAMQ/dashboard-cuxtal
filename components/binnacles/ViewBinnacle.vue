@@ -521,7 +521,7 @@
             <strong>Coordenadas registradas</strong>
           </div>
           <div class="columns">
-            <div class="column is-3">
+            <div class="column is-2">
               <div
                 v-for="pointCoord in form.coordinates_binnacle"
                 :key="pointCoord.name"

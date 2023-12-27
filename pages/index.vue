@@ -3,14 +3,17 @@
     <div class="hero-body">
       <div class="columns">
         <div class="column">
-          <div class="card" style="heigth: 100%;">
+          <div class="card">
             <header class="card-header">
               <p class="card-header-title">
-                Vegetación registrada
+                Recorridos del año {{ dateNow.getFullYear() }} (año actual)
               </p>
             </header>
-            <div class="card-content has-text-centered">
-              <h1><strong>{{ vegetation.length > 0 ? vegetation.length : 'Sin vegetación registrada' }}</strong></h1>
+            <div v-if="seriesPlanification.length > 0" class="card-content is-flex is-justify-content-center">
+              <apexchart width="380" type="donut" :options="optionsPlanification" :series="seriesPlanification" />
+            </div>
+            <div v-else class="card-content has-text-centered">
+              <p>No hay datos por mostrar</p>
             </div>
           </div>
         </div>
@@ -18,16 +21,24 @@
           <div class="card">
             <header class="card-header">
               <p class="card-header-title">
-                Recorridos programados en {{ dateNow.getFullYear() }} (año actual)
+                Bitácoras del año {{ dateNow.getFullYear() }} (año actual)
               </p>
             </header>
-            <div class="card-content has-text-centered">
-              <h1><strong>{{ planification.length > 0 ? planification.length : 'Sin recorridos programados' }}</strong></h1>
+            <div v-if="seriesBinnacles.length > 0" class="card-content is-flex is-justify-content-center">
+              <apexchart width="380" type="donut" :options="optionsBinnacle" :series="seriesBinnacles" />
+            </div>
+            <div v-else class="card-content has-text-centered">
+              <p>No hay datos por mostrar</p>
             </div>
           </div>
         </div>
         <div class="column">
           <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Segumiento
+              </p>
+            </header>
             <div v-if="series.length > 0" class="card-content is-flex is-justify-content-center">
               <apexchart width="380" type="donut" :options="options" :series="series" />
             </div>
@@ -80,14 +91,22 @@ export default {
     this.$store.commit('setTitleStack', ['Inicio'])
   },
   async created () {
-    await this.getData()
-    this.getInfoDonnut()
+    // await this.getData()
+    // this.getInfoDonnut()
   },
   data () {
     return {
       series: [],
+      seriesBinnacles: [],
+      seriesPlanification: [],
       options: {
         labels: ['Opiniones técnicas', 'Denuncias']
+      },
+      optionsBinnacle: {
+        labels: ['Revisado', 'En revisión', 'Por revisar']
+      },
+      optionsPlanification: {
+        labels: ['En proceso', 'Finalizado', 'Por comenzar']
       },
       dateNow: new Date(),
       techOps: [],
@@ -96,28 +115,34 @@ export default {
       complaints: [],
       programmed: [],
       planification: [],
-      binnaclesIsExtraordinary: [],
-      binnaclesProgrammed: []
+      binnacles: []
     }
   },
   async mounted () {
     await this.getComplaints()
     await this.getTechOp()
+    await this.getBinnacles()
+    await this.getPlanifications()
     this.getVegetation()
     this.getInfoDonnut()
-    this.getPlanifications()
   },
   methods: {
-    async getData () {
+    async getBinnacles () {
       try {
         const res = await this.$store.dispatch(
           'modules/binnacles/getBinnacles'
         )
-        this.binnaclesIsExtraordinary = res.filter(x => x.isextraordinary)
-        this.binnaclesProgrammed = res.filter(x => !x.isextraordinary)
-        this.techOp = res.filter((x) => x.type === 'techOp')
-        this.complaint = res.filter((x) => x.type === 'complaint')
-        this.programmed = res.filter((x) => x.type === 'programmed')
+        const nowDate = new Date()
+        this.binnacles = res.filter((x) => {
+          const temporalDate = new Date(x.date)
+          if (temporalDate.getFullYear() === nowDate.getFullYear()) {
+            return x
+          }
+        })
+        const revisado = this.binnacles.filter(x => x.status === 'revisado')
+        const enRevision = this.binnacles.filter(x => x.status === 'en-revision')
+        const porRevisar = this.binnacles.filter(x => x.status === 'por-revisar')
+        this.seriesBinnacles = [Number(revisado.length), Number(enRevision.length), Number(porRevisar.length)]
       } catch (error) {
         // console.log(error)
       }
@@ -161,6 +186,10 @@ export default {
       try {
         const res = await this.$store.dispatch('modules/plans/getPlans', [firstDayOfYear, lastDayOfYear])
         this.planification = res
+        const processPlanification = res.filter(x => x.estatus === 'process')
+        const finallyPlanification = res.filter(x => x.estatus === 'finally')
+        const activePlanification = res.filter(x => x.estatus === 'active')
+        this.seriesPlanification = [Number(processPlanification.length), Number(finallyPlanification.length), Number(activePlanification.length)]
       } catch (error) {
         console.log(error)
       }

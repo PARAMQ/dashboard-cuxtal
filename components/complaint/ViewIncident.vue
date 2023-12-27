@@ -24,14 +24,10 @@
               </b-field>
             </div>
             <div class="column">
-              <p
-                v-if="form.binnacle"
-              >
+              <p v-if="form.binnacle">
                 <strong>Bitácora relacionada</strong>: {{ form.binnacle }}
               </p>
-              <p
-                v-else
-              >
+              <p v-else>
                 No hay relación con alguna bitácora
               </p>
             </div>
@@ -63,99 +59,67 @@
               </div>
               <div class="column">
                 <b-field label="Tenencia del predio">
-                  <b-tag size="is-medium">{{ form.idtenure ? form.tenure.description : 'Sin tenencia de predio' }}</b-tag>
-                  <!--
-                  <b-select
-                    v-model="form.idtenure"
-                    placeholder="Selecciona una opción"
-                  >
-                    <option
-                      v-for="option in tenures"
-                      :key="option.idtenure"
-                      :value="option.idtenure"
-                    >
-                      {{ option.description }}
-                    </option>
-                  </b-select>
-                  -->
+                  <b-tag size="is-medium">
+                    {{
+                      form.idtenure
+                        ? form.tenure.description
+                        : 'Sin tenencia de predio'
+                    }}
+                  </b-tag>
                 </b-field>
               </div>
             </div>
             <b-field horizontal label="Denuncia presentada ante">
-              <b-tag size="is-medium">{{ form.iddepto ? form.depto.description : 'Sin dependencia seleccionada' }}</b-tag>
-              <!--
-              <b-select
-                v-model="form.iddepto"
-                placeholder="Seleccione una opción"
-              >
-                <option
-                  v-for="option in dependences"
-                  :key="option.idcoordination"
-                  :value="option.idcoordination"
-                >
-                  {{ option.description }}
-                </option>
-              </b-select>
-              -->
+              <b-tag size="is-medium">
+                {{
+                  form.iddepto
+                    ? form.depto.description
+                    : 'Sin dependencia seleccionada'
+                }}
+              </b-tag>
             </b-field>
             <b-field horizontal label="Nivel de gobierno">
-              <b-tag size="is-medium">{{ form.idgov_level ? form.level.description : 'Sin dependencia seleccionada' }}</b-tag>
-              <!--
-              <b-select
-                v-model="form.idgov_level"
-                placeholder="Seleccione una opción"
-              >
-                <option
-                  v-for="option in govLevels"
-                  :key="option.idgov_level"
-                  :value="option.idgov_level"
-                >
-                  {{ option.description }}
-                </option>
-              </b-select>
-              -->
+              <b-tag size="is-medium">
+                {{
+                  form.idgov_level
+                    ? form.level.description
+                    : 'Sin dependencia seleccionada'
+                }}
+              </b-tag>
             </b-field>
             <b-field horizontal label="Ilícito ambiental denunciado">
-              <b-tag size="is-medium">{{ form.idilicit_denounced ? form.ilicit.description : 'Sin dependencia seleccionada' }}</b-tag>
-              <!--
-              <b-select
-                v-model="form.idilicit_denounced"
-                placeholder="Seleccione una opción"
-              >
-                <option
-                  v-for="option in ilicits"
-                  :key="option.idilicit_denounced"
-                  :value="option.idilicit_denounced"
-                >
-                  {{ option.description }}
-                </option>
-              </b-select>
-              -->
+              <b-tag size="is-medium">
+                {{
+                  form.idilicit_denounced
+                    ? form.ilicit.description
+                    : 'Sin dependencia seleccionada'
+                }}
+              </b-tag>
             </b-field>
           </div>
           <div class="divider">
-              <strong>Tablajes</strong>
-            </div>
-            <div>
-              <b-field label="tablajes">
-                <b-taginput
-                  v-model="form.list_complaint_cadastral_record"
-                  :data="filterTablaje"
-                  field="name"
-                  autocomplete
-                  :open-on-focus="true"
-                  @typing="filterTablajeFun"
-                  :closable="false"
-                >
-                  <template v-slot="props">
-                    <strong>{{ props.option.name }}</strong>
-                  </template>
-                  <template #empty>
-                    Sin resultados
-                  </template>
-                </b-taginput>
-              </b-field>
-            </div>
+            <strong>Tablajes</strong>
+          </div>
+          <div>
+            <b-field label="tablajes">
+              <b-taginput
+                v-model="form.list_complaint_cadastral_record"
+                :data="filterTablaje"
+                field="name"
+                autocomplete
+                :open-on-focus="true"
+                :closable="false"
+                @typing="filterTablajeFun"
+              >
+                <template v-slot="props">
+                  <strong>{{ props.option.name }}</strong>
+                </template>
+                <template #empty>
+                  Sin resultados
+                </template>
+              </b-taginput>
+            </b-field>
+          </div>
           <div class="divider">
             <strong>Vegetación</strong>
           </div>
@@ -167,8 +131,8 @@
                 field="description"
                 autocomplete
                 :open-on-focus="true"
-                @typing="filterVegetableFun"
                 :closable="false"
+                @typing="filterVegetableFun"
               >
                 <template v-slot="props">
                   <strong>{{ props.option.description }}</strong>
@@ -179,11 +143,6 @@
               </b-taginput>
             </b-field>
           </div>
-          <!--
-        <div class="divider">
-          <strong>Alcances</strong>
-        </div>
-        -->
           <div class="divider">
             <strong>Zonas</strong>
           </div>
@@ -195,8 +154,8 @@
                 field="description"
                 autocomplete
                 :open-on-focus="true"
-                @typing="filterOpZone"
                 :closable="false"
+                @typing="filterOpZone"
               >
                 <template v-slot="props">
                   <strong>{{ props.option.description }}</strong>
@@ -213,8 +172,8 @@
                 field="description"
                 autocomplete
                 :open-on-focus="true"
-                @typing="filterLegalZone"
                 :closable="false"
+                @typing="filterLegalZone"
               >
                 <template v-slot="props">
                   <strong>{{ props.option.description }}</strong>
@@ -231,8 +190,8 @@
                 field="description"
                 autocomplete
                 :open-on-focus="true"
-                @typing="filterSubzone"
                 :closable="false"
+                @typing="filterSubzone"
               >
                 <template v-slot="props">
                   <strong>{{ props.option.description }}</strong>
@@ -247,7 +206,6 @@
             <strong>Coordenadas</strong>
           </div>
           <div class="columns">
-            <!--
             <div class="column is-4">
               <b-notification type="is-info" has-icon :closable="false">
                 Ingrese las coordenadas en formato UTM.
@@ -268,7 +226,6 @@
                     v-model="temporalPoint[1]"
                     step="0.000000000000000001"
                     :controls="false"
-                    disabled
                   />
                 </b-field>
               </div>
@@ -299,7 +256,6 @@
                 </div>
               </div>
             </div>
-            -->
             <div class="column">
               <vl-map
                 :load-tiles-while-animating="true"
@@ -383,91 +339,49 @@
           <div class="columns has-text-centered">
             <div class="column is-flex is-justify-content-center">
               <b-field label="Oficio de denuncia">
-                <b-button v-if="form.complaint_doc" @click="downloadFile(form.complaint_doc, 'denuncia')">Descargar archivo</b-button>
-                <b-tag v-else>Sin archivo</b-tag>
-                <!--
-                <b-field
-                  class="file is-primary"
-                  :class="{ 'has-name': !!fileDenuncia }"
+                <b-button
+                  v-if="form.complaint_doc"
+                  @click="downloadFile(form.complaint_doc, 'denuncia')"
                 >
-                  <b-upload
-                    v-model="fileDenuncia"
-                    class="file-label"
-                    rounded
-                  >
-                    <span class="file-cta">
-                      <b-icon class="file-icon" icon="upload" />
-                      <span class="file-label">{{
-                        fileDenuncia.name || 'Subir archivo'
-                      }}</span>
-                    </span>
-                  </b-upload>
-                </b-field>
-                -->
+                  Descargar archivo
+                </b-button>
+                <b-tag v-else>
+                  Sin archivo
+                </b-tag>
               </b-field>
             </div>
             <div class="column is-flex is-justify-content-center">
               <b-field label="Oficio de respuesta">
-                <b-button v-if="form.response_doc" @click="downloadFile(form.response_doc, 'respuesta')">Descargar archivo</b-button>
-                <b-tag v-else>Sin archivo</b-tag>
-                <!--
-                <b-field
-                  class="file is-primary"
-                  :class="{ 'has-name': !!fileRespuesta }"
+                <b-button
+                  v-if="form.response_doc"
+                  @click="downloadFile(form.response_doc, 'respuesta')"
                 >
-                  <b-upload
-                    v-model="fileRespuesta"
-                    class="file-label"
-                    rounded
-                  >
-                    <span class="file-cta">
-                      <b-icon class="file-icon" icon="upload" />
-                      <span class="file-label">{{
-                        fileRespuesta.name || 'Subir archivo'
-                      }}</span>
-                    </span>
-                  </b-upload>
-                </b-field>
-                -->
+                  Descargar archivo
+                </b-button>
+                <b-tag v-else>
+                  Sin archivo
+                </b-tag>
               </b-field>
             </div>
             <div class="column is-flex is-justify-content-center">
               <b-field label="Conclusión de trámite">
-                <b-button v-if="form.tramit_conclusion" @click="downloadFile(form.tramit_conclusion, 'tramite')">Descargar archivo</b-button>
-                <b-tag v-else>Sin archivo</b-tag>
-                <!--
-                <b-field
-                  class="file is-primary"
-                  :class="{ 'has-name': !!fileTramite }"
+                <b-button
+                  v-if="form.tramit_conclusion"
+                  @click="downloadFile(form.tramit_conclusion, 'tramite')"
                 >
-                  <b-upload
-                    v-model="fileTramite"
-                    class="file-label"
-                    rounded
-                  >
-                    <span class="file-cta">
-                      <b-icon class="file-icon" icon="upload" />
-                      <span class="file-label">{{
-                        fileTramite.name || 'Subir archivo'
-                      }}</span>
-                    </span>
-                  </b-upload>
-                </b-field>
-                -->
+                  Descargar archivo
+                </b-button>
+                <b-tag v-else>
+                  Sin archivo
+                </b-tag>
               </b-field>
             </div>
           </div>
           <div class="container m-2 has-text-centered">
-            <b-button @click="close"><strong>Cerrar</strong></b-button>
+            <b-button @click="close">
+              <strong>Cerrar</strong>
+            </b-button>
           </div>
-          <!--
-          <ButtonGroup
-            :handle-submit="handleSubmit"
-            saving
-            @save="createOrUpdate"
-            @cancel="close"
-          />
-          -->
         </form>
       </div>
     </div>
@@ -590,30 +504,55 @@ export default {
     async getIncident (object) {
       try {
         this.isLoading = true
-        console.log(object)
-        const res = await this.$store.dispatch('modules/complaint/getInfoComplaint', object.idcomplaint)
-        console.log(res)
+        const res = await this.$store.dispatch(
+          'modules/complaint/getInfoComplaint',
+          object.idcomplaint
+        )
         res.date = res.date ? new Date(res.date) : null
-        res.date_reception = res.date_reception ? new Date(res.date_reception) : null
-        res.response_date = res.response_date ? new Date(res.response_date) : null
-        res.tenure = res.idtenure ? this.tenures.find(x => x.idtenure === res.idtenure) : null
-        res.depto = res.iddepto ? this.dependences.find(x => x.idcoordination === res.iddepto) : null
-        res.level = res.idgov_level ? this.govLevels.find(x => x.idgov_level === res.idgov_level) : null
-        res.ilicit = res.idilicit_denounced ? this.ilicits.find(x => x.idilicit_denounced === res.idilicit_denounced) : null
-        if (res.list_subzoning_complaint && res.list_subzoning_complaint.length > 0) {
+        res.date_reception = res.date_reception
+          ? new Date(res.date_reception)
+          : null
+        res.response_date = res.response_date
+          ? new Date(res.response_date)
+          : null
+        res.tenure = res.idtenure
+          ? this.tenures.find((x) => x.idtenure === res.idtenure)
+          : null
+        res.depto = res.iddepto
+          ? this.dependences.find((x) => x.idcoordination === res.iddepto)
+          : null
+        res.level = res.idgov_level
+          ? this.govLevels.find((x) => x.idgov_level === res.idgov_level)
+          : null
+        res.ilicit = res.idilicit_denounced
+          ? this.ilicits.find(
+            (x) => x.idilicit_denounced === res.idilicit_denounced
+          )
+          : null
+        if (
+          res.list_subzoning_complaint &&
+          res.list_subzoning_complaint.length > 0
+        ) {
           res.zoning = []
           console.log(this.legalZones)
           this.legalZones.forEach((zone) => {
             console.log(zone)
-            const result = res.list_subzoning_complaint.find(x => x.idzoning === zone.idzoning)
+            const result = res.list_subzoning_complaint.find(
+              (x) => x.idzoning === zone.idzoning
+            )
             if (result) {
               res.zoning.push(zone)
             }
           })
         }
-        if (res.list_complaint_cadastral_record && res.list_complaint_cadastral_record.length > 0) {
+        if (
+          res.list_complaint_cadastral_record &&
+          res.list_complaint_cadastral_record.length > 0
+        ) {
           const temporal = res.list_complaint_cadastral_record.map((object) => {
-            const cadastral = this.tablaje.find(x => x.idcadastral_record === object.idcadastral_record)
+            const cadastral = this.tablaje.find(
+              (x) => x.idcadastral_record === object.idcadastral_record
+            )
             return cadastral
           })
           res.list_complaint_cadastral_record = temporal
@@ -624,7 +563,10 @@ export default {
             return point
           })
           if (res.idbinnacle) {
-            const binnacle = await this.$store.dispatch('modules/binnacles/getBinnacle', res.idbinnacle)
+            const binnacle = await this.$store.dispatch(
+              'modules/binnacles/getBinnacle',
+              res.idbinnacle
+            )
             res.binnacle = binnacle.number
           }
           console.log(this.pointsMap)
@@ -641,9 +583,7 @@ export default {
     async getTablaje () {
       try {
         this.tablaje = []
-        const res = await this.$store.dispatch(
-          'modules/tablaje/getTablajes'
-        )
+        const res = await this.$store.dispatch('modules/tablaje/getTablajes')
         this.tablaje = res
         this.filterTablaje = res
       } catch (error) {
@@ -655,10 +595,7 @@ export default {
       this.filterTablaje = this.tablaje.filter((option) => {
         if (
           option.name &&
-          option.name
-            .toString()
-            .toLowerCase()
-            .includes(text.toLowerCase())
+          option.name.toString().toLowerCase().includes(text.toLowerCase())
         ) {
           return option
         }
@@ -721,20 +658,31 @@ export default {
         const formData = new FormData()
         formData.append('idcomplaint', id)
         if (this.fileDenuncia.name) {
-          const temporalName = 'oficioDenuncia_' + code + '_' + this.fileDenuncia.name
-          const temporalDenuncia = new File([this.fileDenuncia], temporalName, { type: this.fileDenuncia.type })
+          const temporalName =
+            'oficioDenuncia_' + code + '_' + this.fileDenuncia.name
+          const temporalDenuncia = new File([this.fileDenuncia], temporalName, {
+            type: this.fileDenuncia.type
+          })
           formData.append('complaint_doc', temporalDenuncia)
           this.fileDenuncia = {}
         }
         if (this.fileRespuesta.name) {
-          const temporalName = 'oficioRespuesta_' + code + '_' + this.fileRespuesta.name
-          const temporalRespuesta = new File([this.fileRespuesta], temporalName, { type: this.fileRespuesta.type })
+          const temporalName =
+            'oficioRespuesta_' + code + '_' + this.fileRespuesta.name
+          const temporalRespuesta = new File(
+            [this.fileRespuesta],
+            temporalName,
+            { type: this.fileRespuesta.type }
+          )
           formData.append('response_doc', temporalRespuesta)
           this.fileRespuesta = {}
         }
         if (this.fileTramite.name) {
-          const temporalName = 'oficioTramite_' + code + '_' + this.fileTramite.name
-          const temporalTramite = new File([this.fileTramite], temporalName, { type: this.fileTramite.type })
+          const temporalName =
+            'oficioTramite_' + code + '_' + this.fileTramite.name
+          const temporalTramite = new File([this.fileTramite], temporalName, {
+            type: this.fileTramite.type
+          })
           formData.append('tramit_conlusion', temporalTramite)
           this.fileTramite = {}
         }
@@ -963,7 +911,10 @@ export default {
       this.temporalPoints = [[-89.60984537598705, 20.85610769792424]]
       const complaint = await this.getComplaint(option)
       complaint.points = []
-      if (complaint.complaint_coordinates && complaint.complaint_coordinates.length > 0) {
+      if (
+        complaint.complaint_coordinates &&
+        complaint.complaint_coordinates.length > 0
+      ) {
         const temporalPoints = complaint.complaint_coordinates
         temporalPoints.forEach((object) => {
           const point = [object.x, object.y]

@@ -611,16 +611,11 @@ export default {
         this.isLoading = true
         this.form.complaint_coordinates = this.points
         const temporalVa = this.form.complaint_va
-        // const temporalOp = this.form.list_complaint_operative_zone
-        // const temporalSubZones = this.form.list_subzoning_complaint
         delete this.form.complaint_va
-        // delete this.form.this.form.list_complaint_operative_zone
-        // delete this.form.list_subzoning_complaint
         const res = await this.$store.dispatch(
           'modules/complaint/createOrUpdateComplaint',
           this.form
         )
-        console.log(res)
         if (temporalVa && temporalVa.length > 0) {
           const res2 = await this.$store.dispatch(
             'modules/complaint/getInfoComplaint',

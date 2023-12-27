@@ -4,7 +4,7 @@
     <div class="modal-card">
       <div class="modal-card-head">
         <p class="modal-card-title">
-          Nueva opinión técnica
+          Opinión técnica {{ form.folium }}
         </p>
       </div>
       <div class="modal-card-body">
@@ -27,39 +27,11 @@
                 <b-tag size="is-medium">
                   {{ form.legal_entity ? form.legal_entity : 'Dato no asignado' }}
                 </b-tag>
-                <!--
-                <b-select
-                  v-model="form.idlegal_entity"
-                  placeholder="Seleccione una opción"
-                >
-                  <option
-                    v-for="option in legalEntity"
-                    :key="option.idlegal_entity"
-                    :value="option.idlegal_entity"
-                  >
-                    {{ option.description }}
-                  </option>
-                </b-select>
-                -->
               </b-field>
             </div>
             <div v-if="form.idlegal_entity" class="column is-flex is-justify-content-center">
               <b-field label="Tipo de persona moral">
                 <b-tag size="is-medium">{{ form.type_legal_entity ? form.type_legal_entity : 'Dato no asignado' }}</b-tag>
-                <!--
-                <b-select
-                  v-model="form.idtype_legal_entity"
-                  placeholder="Seleccione una opción"
-                >
-                  <option
-                    v-for="option in typeLegalEntity"
-                    :key="option.idtype_legal_entity"
-                    :value="option.idtype_legal_entity"
-                  >
-                    {{ option.description }}
-                  </option>
-                </b-select>
-                -->
               </b-field>
             </div>
           </div>
