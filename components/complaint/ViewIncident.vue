@@ -9,7 +9,7 @@
     <div class="modal-card">
       <div class="modal-card-head">
         <p class="modal-card-title">
-          Visualizar Denuncia
+          Denuncia {{ form.code }}
         </p>
       </div>
       <div class="modal-card-body">
@@ -212,35 +212,35 @@
               </b-notification>
               <div class="container">
                 <b-field label="Descripción breve de la coordenada">
-                  <b-input v-model="formCoord.name" />
+                  <b-input v-model="formCoord.description" />
                 </b-field>
                 <b-field :label="isSwitched ? 'Longitud' : 'Coordenada X'">
                   <b-numberinput
-                    v-model="temporalPoint[0]"
+                    v-model="formCoord.x"
                     step="0.000000000000000001"
                     :controls="false"
                   />
                 </b-field>
                 <b-field :label="isSwitched ? 'Latitud' : 'Coordenada Y'">
                   <b-numberinput
-                    v-model="temporalPoint[1]"
+                    v-model="formCoord.y"
                     step="0.000000000000000001"
                     :controls="false"
                   />
                 </b-field>
               </div>
               <div class="container m-3 has-text-centered">
-                <b-button type="is-success is-light" @click="addPoint">
-                  Agregar coordenada
+                <b-button type="is-success is-light" @click="updatePoint">
+                  Actualizar coordenada
                 </b-button>
                 <b-button type="is-info is-light" @click="viewPoint">
                   Ver punto
                 </b-button>
               </div>
               <div
-                v-for="pointCoord in points"
-                :key="pointCoord.name"
-                class="container m-3"
+                v-for="pointCoord in form.complaint_coordinates"
+                :key="pointCoord.idcomplaint_coordinates"
+                class="container m-4"
               >
                 <div class="control">
                   <b-tag
@@ -249,9 +249,9 @@
                     aria-close-label="Close tag"
                     closable
                     @close="deletePoint"
-                    @click="viewPoint(pointCoord)"
+                    @click="editPoint(pointCoord)"
                   >
-                    {{ pointCoord.name }}
+                    {{ pointCoord.description }}
                   </b-tag>
                 </div>
               </div>
@@ -279,6 +279,16 @@
                     <vl-style-circle :radius="5">
                       <vl-style-fill color="red" />
                       <vl-style-stroke color="red" />
+                    </vl-style-circle>
+                  </vl-style>
+                </vl-feature>
+
+                <vl-feature v-if="activeViewEdit">
+                  <vl-geom-point :coordinates="ViewPoint" />
+                  <vl-style>
+                    <vl-style-circle :radius="5">
+                      <vl-style-fill color="green" />
+                      <vl-style-stroke color="green" />
                     </vl-style-circle>
                   </vl-style>
                 </vl-feature>
@@ -435,6 +445,7 @@ export default {
       filteredLegalZones: [],
       tablaje: [],
       filteredSubZones: [],
+      activeViewEdit: false,
       ilicits: [],
       govLevels: [],
       tenures: [],
@@ -569,7 +580,6 @@ export default {
             )
             res.binnacle = binnacle.number
           }
-          console.log(this.pointsMap)
           this.activePoints = true
         }
         // this.viewPoints(object.idcomplaint)
@@ -939,7 +949,37 @@ export default {
     },
     convertCoordinatesFromUtm (coords) {},
     viewPoint () {
-      this.ViewPoint = this.convertCoordinatesToUtm(this.temporalPoint)
+      this.activeViewEdit = false
+      this.ViewPoint = this.convertCoordinatesToUtm([this.formCoord.x, this.formCoord.y])
+      this.activeViewEdit = true
+    },
+    editPoint (point) {
+      this.activeViewEdit = false
+      this.ViewPoint = this.convertCoordinatesToUtm([point.x, point.y])
+      this.formCoord = point
+      this.activeViewEdit = true
+    },
+    async updatePoint () {
+      this.activeViewEdit = false
+      this.isLoading = true
+      const tempCoords = this.form.complaint_coordinates
+      this.form.complaint_coordinates = tempCoords.map((x) => {
+        if (x.idcomplaint_coordinates === this.form.idcomplaint_coordinates) {
+          return this.form
+        } else {
+          return x
+        }
+      })
+      try {
+        await this.$store.dispatch(
+          'modules/complaint/createOrUpdateComplaint',
+          this.form
+        )
+        this.getIncident(this.incidentObject)
+        this.isLoading = false
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }
