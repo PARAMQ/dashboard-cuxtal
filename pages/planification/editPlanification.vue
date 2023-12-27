@@ -1,292 +1,4 @@
 <template>
-  <!--
-  <section class="hero is-cuxtal">
-    <div v-if="!hasEdit" class="cont">
-      <div class="card is-principal m-2">
-        <div class="card-header">
-          <div class="card-header-title">
-            <p class="subtitle">
-              Recorrido del <strong>{{ plan.start_date }}</strong> al <strong>{{ plan.end_date }}</strong>
-            </p>
-          </div>
-        </div>
-        <div class="card-content">
-          <div class="level">
-            <div class="level-left">
-              <div class="level-item">
-                <b-select v-model="plan.estatus">
-                  <option
-                    v-for="option in options"
-                    :key="option.value"
-                    :value="option.value"
-                  >
-                    {{ option.label }}
-                  </option>
-                </b-select>
-              </div>
-              <div class="level-item">
-                <b-button
-                  size="is-small"
-                  type="is-success is-light"
-                  icon-right="content-save"
-                  @click="updateStatus"
-                />
-              </div>
-            </div>
-            <div class="level-right">
-              <div class="level-item">
-                <b-button @click="isActive = true">
-                  Nueva bitácora
-                </b-button>
-              </div>
-              <div class="level-item">
-                <b-button type="is-danger" @click="deletePlan">
-                  Eliminar recorrido
-                </b-button>
-              </div>
-            </div>
-          </div>
-          <div class="columns">
-            <div class="column is-4">
-              <div class="card">
-                <div class="card-header">
-                  <div class="card-header-title">
-                    <p class="subtitle">
-                      Bitácoras
-                    </p>
-                  </div>
-                </div>
-                <div class="card-content scroll">
-                  <div
-                    v-for="(binnacle, index) in plan.binnacles"
-                    :key="binnacle.idbinnacle"
-                    class="container"
-                  >
-                    <div class="card" @click="viewBinnacle(binnacle, index)">
-                      <div class="card-content">
-                        <p><strong>Folio:</strong> {{ binnacle.number }}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="column is-8 has-text-centered">
-              <div v-if="hasSelect" class="card is-card-binnacle">
-                <div class="card-header">
-                  <div class="level">
-                    <div class="level-left">
-                      <div class="level-item">
-                        <p class="card-header-title">
-                          {{ binaccleSelect.number }}
-                        </p>
-                      </div>
-                    </div>
-                    <div class="level-right m-1">
-                      <div class="level-item">
-                        <b-button
-                          size="is-small"
-                          type="is-info is-light"
-                          icon-right="pencil-outline"
-                          @click="editBinnacle"
-                        />
-                      </div>
-                      <div class="level-item">
-                        <b-button
-                          size="is-small"
-                          type="is-danger is-light"
-                          icon-right="delete"
-                          @click="deleteBinnacle"
-                        />
-                      </div>
-                      <div class="level-item">
-                        <b-button
-                          size="is-small"
-                          type="is-info is-light"
-                          icon-right="file-word"
-                          @click="getWord"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="card-content">
-                  <div>
-                    <div class="divider">
-                      <p>Datos generales</p>
-                    </div>
-                    <p>
-                      <strong>Estado actual de la bitácora:</strong> {{ binaccleSelect.status | statusBinnacle }}
-                    </p>
-                    <p>
-                      <strong>Fecha:</strong> {{ binaccleSelect.date }}
-                    </p>
-                    <p>
-                      <strong>Hora de inicio:</strong> {{ binaccleSelect.hour_init | getTime }}
-                    </p>
-                    <p>
-                      <strong>Hora de finalización</strong> {{ binaccleSelect.hour_end | getTime }}
-                    </p>
-                  </div>
-                  <div class="divider">
-                    <p>Vehículos</p>
-                  </div>
-                  <div>
-                    <div
-                      v-if="
-                        binaccleSelect.list_vehicle &&
-                          binaccleSelect.list_vehicle.length > 0
-                      "
-                    >
-                      <p class="subtitle">
-                        Vehículos:
-                      </p>
-                      <div
-                        v-for="vehicle in binaccleSelect.list_vehicle"
-                        :key="vehicle.idvehicle"
-                      >
-                        <b-taglist attached class="m-2">
-                          <b-tag type="is-light">
-                            {{ vehicle.number }}
-                          </b-tag>
-                          <b-tag
-                            type="is-info"
-                          >
-                            {{ vehicle.model }} - {{ vehicle.brand }}
-                          </b-tag>
-                        </b-taglist>
-                      </div>
-                    </div>
-                    <div v-else>
-                      No hay vehiculos asociados
-                    </div>
-                  </div>
-                  <div class="divider">
-                    <p>Participantes</p>
-                  </div>
-                  <div>
-                    <div
-                      v-if="
-                        binaccleSelect.participants &&
-                          binaccleSelect.participants.length > 0
-                      "
-                    >
-                      <p class="subtitle">
-                        Participantes:
-                      </p>
-                      <div
-                        v-for="participant in binaccleSelect.participants"
-                        :key="participant.idparticipant"
-                        class="has-text-centered"
-                      >
-                        <p>{{ participant.name }} {{ participant.lastname }}</p>
-                      </div>
-                    </div>
-                    <div v-else>
-                      No hay participantes asociados
-                    </div>
-                  </div>
-                  <div class="divider">
-                    <p>Coordenadas</p>
-                  </div>
-                  <div>
-                    <div v-if="binaccleSelect.coordinates_binnacle">
-                      <div class="columns">
-                        <div class="column is-3">
-                          <div
-                            v-for="coordinate in binaccleSelect.coordinates_binnacle"
-                            :key="coordinate.idcoordinates"
-                          >
-                            <b-tag class="m-2" @click="viewPoint(coordinate)">
-                              {{ coordinate.name }}
-                            </b-tag>
-                          </div>
-                        </div>
-                        <div class="column is-9">
-                          <vl-map
-                            :load-tiles-while-animating="true"
-                            :load-tiles-while-interacting="true"
-                            data-projection="EPSG:4326"
-                            style="height: 400px"
-                          >
-                            <vl-view
-                              :zoom="zoom"
-                              :center.sync="point"
-                              :rotation="rotation"
-                            />
-
-                            <vl-layer-tile id="osm">
-                              <vl-source-osm />
-                            </vl-layer-tile>
-
-                            <vl-feature
-                              id="point"
-                              :properties="{ prop: 'value', prop2: 'value' }"
-                            >
-                              <vl-geom-point :coordinates="point" />
-                            </vl-feature>
-                          </vl-map>
-                        </div>
-                      </div>
-                    </div>
-                    <div v-else>
-                      sd No hay coordenadas asociadas
-                    </div>
-                  </div>
-                  <div class="divider">
-                    <p>Evidencias</p>
-                  </div>
-                  <div>
-                    <div
-                      v-if="
-                        binaccleSelect.list_image &&
-                          binaccleSelect.list_image.length > 0
-                      "
-                    >
-                      <b-carousel :indicator-inside="false">
-                        <b-carousel-item v-for="item in binaccleSelect.list_image " :key="item.idimage">
-                          <b-image class="image" :src="item.path" />
-                        </b-carousel-item>
-                        <template #indicators="props">
-                          <b-image
-                            class="al image"
-                            :src="props.path"
-                            :title="props.description"
-                          />
-                        </template>
-                      </b-carousel>
-                    </div>
-                    <div v-else>
-                      No hay evidencias
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div v-else>
-                <p>Selecciona una bitácora</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <new-binnacle
-      :active-modal="isActive"
-      :plannification="idPlanification"
-      :is-extraordinary="false"
-      @save="refresh"
-      @close="refresh"
-    />
-    <edit-binnacle
-      :active-modal="isActiveEdit"
-      :binnacle-object="binaccleSelect"
-      :is-extraordinary="false"
-      @save="refresh"
-      @close="refresh"
-    />
-  </section>
-  -->
   <div class="container">
     <div class="section">
       <div class="columns">
@@ -342,9 +54,28 @@
         :can-cancel="false"
       />
       <div class="column is-4">
+        <section class="m-2 has-text-centered">
+          <b-field label="Buscar bitácoras por folio">
+            <b-autocomplete
+              placeholder="Ejemplo: CIV/0012023"
+              :data="binnaclesFilter"
+              :clearable="clearable"
+              @typing="filterBinnacle"
+              @select="(option) => viewBinnalceObject(option)"
+            >
+              <template slot-scope="props">
+                <div class="media">
+                  <div class="media-content">
+                    <h1>{{ props.option.number }}</h1>
+                  </div>
+                </div>
+              </template>
+            </b-autocomplete>
+          </b-field>
+        </section>
         <div class="columns m-2">
           <div class="column">
-            <div v-for="bitacora in plan.binnacles" :key="bitacora.idbinnacle">
+            <div v-for="bitacora in binnaclesFilter" :key="bitacora.idbinnacle">
               <div class="card">
                 <div class="card-header">
                   <div class="level m-1 full-w">
@@ -395,15 +126,6 @@
                           @click="viewBinnalceObject(bitacora)"
                         />
                       </div>
-                      <!--
-                      <div class="level-item">
-                        <b-button
-                          type="is-link is-light"
-                          icon-right="pencil"
-                          @click="editBinnacle(bitacora)"
-                        />
-                      </div>
-                      -->
                       <div class="level-item">
                         <b-button
                           type="is-danger is-light"
@@ -515,6 +237,7 @@ export default {
       activeViewModal: false,
       activeModal: false,
       plan: {},
+      binnaclesFilter: [],
       hasEdit: false,
       indexBinnacle: 0,
       idBinnacle: '',
@@ -564,6 +287,7 @@ export default {
           this.idPlanification
         )
         this.plan = res
+        this.binnaclesFilter = this.plan.binnacles
         this.isLoadingBinnacles = false
       } catch (error) {
         this.isLoadingBinnacles = false
@@ -578,6 +302,19 @@ export default {
       this.binnacleSelect = {}
       this.plan = {}
       this.getPlan()
+    },
+    // filtar bitácoras
+    filterBinnacle (text) {
+      if (text && text.length > 0) {
+        this.binnaclesFilter = this.plan.binnacles.filter((x) => {
+          if (x.number.toUpperCase().includes(text.toUpperCase())) {
+            console.log(x)
+            return x
+          }
+        })
+      } else {
+        this.binnaclesFilter = this.binnacles
+      }
     },
     editBinnacle () {
     },
