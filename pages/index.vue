@@ -1,7 +1,7 @@
 <template>
   <div id="home">
     <b-loading :is-full-page="true" v-model="isLoading" :can-cancel="false" />
-    <div class="columns m-2">
+    <div class="columns mt-2">
       <div class="column">
         <div class="card">
           <div class="card-content">
@@ -52,24 +52,20 @@
                 type="text"
                 expanded
               />
-            </b-field>
-          </div>
-          <footer class="card-footer">
-            <div class="card-footer-item">
               <b-button
                 type="is-success is-light"
                 @click="createMeta"
               >
                 Guardar
               </b-button>
-            </div>
-          </footer>
+            </b-field>
+          </div>
         </div>
       </div>
     </div>
-    <div v-if="selectYear" class="columns m-2">
+    <div v-if="selectYear" class="columns">
       <div class="column">
-        <div class="card">
+        <div id="card-info" class="card">
           <header class="card-header">
             <p class="card-header-title">
               Recorridos del año {{ selectYear ? selectYear.fecha_captura : dateNow.getFullYear() }}
@@ -91,11 +87,11 @@
           </div>
           <footer class="card-footer">
             <div class="card-footer-item">
-              <p>Meta de recorridos del año: {{ selectYear.dato }}</p>
+              <p>Meta de recorridos: <strong>{{ selectYear.dato }}</strong></p>
             </div>
             <div class="card-footer-item">
               <p>
-                Total de recorridos registrados para el año:
+                Recorridos registrados:
                 <strong>{{ planification.length }}</strong>
               </p>
             </div>
@@ -103,7 +99,7 @@
         </div>
       </div>
       <div class="column">
-        <div class="card">
+        <div id="card-info" class="card">
           <header class="card-header">
             <p class="card-header-title">
               Bitácoras del año {{ selectYear ? selectYear.fecha_captura : dateNow.getFullYear() }}
@@ -134,8 +130,8 @@
         </div>
       </div>
     </div>
-    <div v-if="selectYear" class="columns m-2">
-      <div class="column">
+    <div v-if="selectYear" class="columns">
+      <div class="column is-6 is-offset-3">
         <div class="card">
           <header class="card-header">
             <p class="card-header-title">
@@ -459,9 +455,12 @@ tr.is-warning {
   width: 100%;
   background-color: #0403039a;
   background-image: url('assets/cuxtal/background.jpg');
-  background-repeat: no-repeat;
-  background-size: 120%;
+  background-repeat: repeat;
+  background-size: 100%;
   background-origin: content-box;
-  background-position: center;
+  background-position: center center;
+}
+#card-info {
+  height: 400px;
 }
 </style>
