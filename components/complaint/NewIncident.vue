@@ -695,7 +695,7 @@ export default {
           const temporalTramite = new File([this.fileTramite], temporalName, {
             type: this.fileTramite.type
           })
-          formData.append('tramit_conlusion', temporalTramite)
+          formData.append('tramit_conclusion', temporalTramite)
           this.fileTramite = {}
         }
         await this.$store.dispatch(
