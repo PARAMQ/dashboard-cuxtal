@@ -205,7 +205,7 @@ export default {
   },
   methods: {
     async viewSubZone (subzone, index) {
-      // console.log(subzone)
+      // // console.log(subzone)
       this.subzone = {}
       const temporal = subzone
       temporal.legalZone = await this.getLegalZone(subzone.idzoning)
@@ -223,7 +223,7 @@ export default {
         const res = await this.$store.dispatch('modules/zones/getInfoZone', id)
         return res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async saveEdit () {
@@ -245,7 +245,7 @@ export default {
           message: 'Ocurrió un error, intente nuevamente',
           type: 'is-danger'
         })
-        // console.log(error)
+        // // console.log(error)
       }
     },
     deleteSubZone (subzone) {
@@ -290,23 +290,23 @@ export default {
         const res = await this.$store.dispatch(
           'modules/zones/getSubZones'
         )
-        // console.log(res)
+        // // console.log(res)
         this.subzonas = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getZones () {
       try {
         const res = await this.$store.dispatch('modules/zones/getZones')
         this.legalZones = res
-        // // console.log(this.legalZones)
+        // // // console.log(this.legalZones)
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     filteredDataArray () {
-      // // console.log(this.text)
+      // // // console.log(this.text)
       this.options = this.legalZones.filter((option) => {
         return option.description.toString().toLowerCase().includes(this.text.toLowerCase())
       })

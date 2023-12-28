@@ -543,7 +543,7 @@ export default {
   watch: {
     activeModal (newVal, oldVal) {
       if (newVal) {
-        console.log(this.form)
+        // console.log(this.form)
         this.$buefy.snackbar.open('Recuerda subir los documentos en PDF.')
       }
     }
@@ -572,7 +572,7 @@ export default {
         this.tablaje = res
         this.filterTablaje = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     filterTablajeFun (text) {
@@ -603,7 +603,7 @@ export default {
         const res = await this.$store.dispatch('modules/users/getData')
         this.form.iduser = res.idusers
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async createOrUpdate () {
@@ -621,7 +621,7 @@ export default {
             'modules/complaint/getInfoComplaint',
             res
           )
-          console.log(res2)
+          // console.log(res2)
           res2.complaint_va = temporalVa.map((x) => {
             const temporal = {
               idva: x.idva,
@@ -630,11 +630,11 @@ export default {
             return temporal
           })
           res2.idcomplaint = res
-          const resfinal = await this.$store.dispatch(
+          await this.$store.dispatch(
             'modules/complaint/createOrUpdateComplaint',
             res2
           )
-          console.log(resfinal)
+          // console.log(resfinal)
         }
         if (
           this.fileDenuncia.name ||
@@ -660,7 +660,7 @@ export default {
           message: 'Ocurrió un error, intente nuevamente',
           type: 'is-danger'
         })
-        // console.log(error)
+        // // console.log(error)
       } finally {
         this.isLoading = false
       }
@@ -703,7 +703,7 @@ export default {
           formData
         )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getVegetation () {
@@ -711,10 +711,10 @@ export default {
         this.vegetation = await this.$store.dispatch(
           'modules/vegetation/getVegetations'
         )
-        // // console.log(this.vegetation)
+        // // // console.log(this.vegetation)
         this.filterVegetable = this.vegetation
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getDependences () {
@@ -722,9 +722,9 @@ export default {
         this.dependences = await this.$store.dispatch(
           'modules/coordinations/getCoordinations'
         )
-        // // console.log(this.dependences)
+        // // // console.log(this.dependences)
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getResponses () {
@@ -733,14 +733,14 @@ export default {
           'modules/response/getResponses'
         )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getTenures () {
       try {
         this.tenures = await this.$store.dispatch('modules/tenure/getTenures')
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getGovLevels () {
@@ -749,7 +749,7 @@ export default {
           'modules/gobLevel/getGobLevels'
         )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getIlicitsDenounced () {
@@ -758,7 +758,7 @@ export default {
           'modules/ilicitDenounced/getIlicitDenounceds'
         )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getLegalZones () {
@@ -766,7 +766,7 @@ export default {
         this.legalZones = await this.$store.dispatch('modules/zones/getZones')
         this.filteredLegalZones = this.legalZones
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getSubZones () {
@@ -774,7 +774,7 @@ export default {
         this.subZones = await this.$store.dispatch('modules/zones/getSubZones')
         this.filteredSubZones = this.subZones
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getOpZones () {
@@ -784,7 +784,7 @@ export default {
         )
         this.filteredOpZone = this.opZones
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     filterVegetableFun (text) {
@@ -919,7 +919,7 @@ export default {
         this.binnacles = res
         this.filterBinnacles = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterBinnacle (text) {
@@ -933,8 +933,8 @@ export default {
       })
     },
     selectOption (legalZone) {
-      console.log(legalZone)
-      console.log(this.subZones)
+      // console.log(legalZone)
+      // console.log(this.subZones)
       this.filteredSubZones = this.subZones.filter((option) => {
         if (
           option.idzoning &&
@@ -942,11 +942,11 @@ export default {
           return option
         }
       })
-      console.log(this.filteredSubZones)
+      // console.log(this.filteredSubZones)
     },
     selectBinnacle (option) {
       if (option) {
-        console.log(option)
+        // console.log(option)
         this.form.idbinnacle = option.idbinnacle
         if (option.list_operative_zones) {
           this.form.list_complaint_operative_zone =
@@ -974,7 +974,7 @@ export default {
         if (option.coordinates_binnacle) {
           this.points = []
           option.coordinates_binnacle.forEach((point) => {
-            console.log(point)
+            // console.log(point)
             if (this.points.length === 0) {
               point.description = point.name
               delete point.idbinnacle
@@ -1001,9 +1001,9 @@ export default {
               this.points.push(point)
             }
           })
-          console.log(this.points)
+          // console.log(this.points)
         }
-        console.log(this.form)
+        // console.log(this.form)
       }
     }
   }

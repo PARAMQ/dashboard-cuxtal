@@ -440,12 +440,12 @@ export default {
         const res = await this.$store.dispatch('modules/users/getData')
         this.form.iduser = res.idusers
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     // Crear bitacora
     createOrUpdate () {
-      console.log(this.form)
+      // console.log(this.form)
       /*
       this.isLoading = true
       this.form.hour_init = this.hourInit
@@ -507,7 +507,7 @@ export default {
           })
           await this.uploadEvidences(formData)
           if (this.vegetableAffected.length > 0) {
-            // console.log(this.vegetableAffected)
+            // // console.log(this.vegetableAffected)
             binnacle.list_vegetable_affected = this.vegetableAffected.map(
               (x) => {
                 x.idbinnacle = idBinnacle
@@ -545,7 +545,7 @@ export default {
         this.$emit('save')
       } catch (error) {
         this.isLoading = false
-        // console.log(error)
+        // // console.log(error)
       } finally {
         this.buttonDisabled = false
         this.isLoading = false
@@ -560,7 +560,7 @@ export default {
         )
         return res
       } catch (error) {
-        // // console.log(error)
+        // // // console.log(error)
       }
     },
     async getOneMoment (id) {
@@ -570,7 +570,7 @@ export default {
           'modules/binnacles/getBinnacle',
           id
         )
-        console.log(res)
+        // console.log(res)
         res.date = new Date(res.date)
         // res.compare_vehicles = res.list_vehicle ? JSON.parse(JSON.strigify(res.list_vehicle)) : null
         res.compare_vehicles = res.list_vehicle
@@ -583,7 +583,7 @@ export default {
         res.compare_opZones = res.list_operative_zones
         // res.compare_points = res.coordinates_binnacle ? JSON.parse(JSON.stringify(res.coordinates_binnacle)) : null
         res.compare_points = res.coordinates_binnacle
-        console.log(res)
+        // console.log(res)
         this.hourInit = new Date(res.hour_init)
         this.hourEnd = new Date(res.hour_end)
         /*
@@ -615,7 +615,7 @@ export default {
           temporalPoints.forEach((object) => {
             const point = [object.x, object.y]
             const pointConvert = this.convertCoordinatesToUtm(point)
-            // console.log(pointConvert)
+            // // console.log(pointConvert)
             res.points = []
             res.points.push(pointConvert)
           })
@@ -624,7 +624,7 @@ export default {
         } else {
           this.viewPoints = false
         }
-        // console.log(res)
+        // // console.log(res)
         this.isLoading = false
         /*
         res.date = new Date(res.date)
@@ -648,7 +648,7 @@ export default {
         this.isLoading = false
         this.form = res
       } catch (error) {
-        // // console.log(error)
+        // // // console.log(error)
       }
     },
     // Actualizar bitacora
@@ -673,7 +673,7 @@ export default {
         this.vehicles = res
         this.vehiclesFilter = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     filterVehicles (text) {
@@ -709,7 +709,7 @@ export default {
         this.participants = res
         this.participantsFilter = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     selectParticipant (option) {
@@ -719,14 +719,14 @@ export default {
     },
     removeParticipant (index) {
       const temporalParticipant = this.form.participants[index]
-      console.log(temporalParticipant)
+      // console.log(temporalParticipant)
       const participant = this.form.compare_participants.find(x => x.idparticipants === temporalParticipant.idparticipants)
       if (participant) {
         if (this.form.list_participants_deleted && this.form.list_participants_deleted.length > 0) {
-          console.log(1)
+          // console.log(1)
           this.form.list_participants_deleted.push(participant)
         } else {
-          console.log(2)
+          // console.log(2)
           this.form.list_participants_deleted = []
           this.form.list_participants_deleted.push(participant)
         }
@@ -744,7 +744,7 @@ export default {
       })
     },
     deleteParticipant (participant) {
-      console.log(participant)
+      // console.log(participant)
       if (this.form.list_participants_deleted) {
         this.form.list_participants_deleted.push(participant)
       } else {
@@ -761,7 +761,7 @@ export default {
         this.opZonesFilter = res
         this.opZones = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterOpZone (text) {
@@ -785,7 +785,7 @@ export default {
         this.subZones = res
         this.subZonesFilter = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     filterSubZones (text) {
@@ -811,7 +811,7 @@ export default {
         this.vegetation = res
         this.vegetationFilter = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     filterVegetation (text) {
@@ -901,7 +901,7 @@ export default {
             'modules/coordinates/createOrUpdateCoordinate',
             point
           )
-          // // console.log(this.idPoints)
+          // // // console.log(this.idPoints)
           this.idPoints.push({
             idcoordinates: res,
             idbinnacle: binnacle
@@ -920,10 +920,10 @@ export default {
     },
     convertCoordinatesFromUtm (coords) {},
     viewPoint () {
-      // console.log(this.temporalPoint)
+      // // console.log(this.temporalPoint)
       this.ViewPoint = this.convertCoordinatesToUtm(this.temporalPoint)
       this.viewActive = true
-      // console.log(this.ViewPoint)
+      // // console.log(this.ViewPoint)
     }
   }
 }

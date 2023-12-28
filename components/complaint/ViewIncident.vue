@@ -509,7 +509,7 @@ export default {
         const res = await this.$store.dispatch('modules/users/getData')
         this.form.iduser = res.idusers
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getIncident (object) {
@@ -545,9 +545,9 @@ export default {
           res.list_subzoning_complaint.length > 0
         ) {
           res.zoning = []
-          console.log(this.legalZones)
+          // console.log(this.legalZones)
           this.legalZones.forEach((zone) => {
-            console.log(zone)
+            // console.log(zone)
             const result = res.list_subzoning_complaint.find(
               (x) => x.idzoning === zone.idzoning
             )
@@ -584,10 +584,10 @@ export default {
         }
         // this.viewPoints(object.idcomplaint)
         this.form = res
-        console.log(this.form)
+        // console.log(this.form)
         this.isLoading = false
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getTablaje () {
@@ -597,7 +597,7 @@ export default {
         this.tablaje = res
         this.filterTablaje = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
 
@@ -658,7 +658,7 @@ export default {
           message: 'Ocurrió un error, intente nuevamente',
           type: 'is-danger'
         })
-        // console.log(error)
+        // // console.log(error)
       } finally {
         this.isLoading = false
       }
@@ -701,7 +701,7 @@ export default {
           formData
         )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async downloadFile (urlFile, type) {
@@ -726,10 +726,10 @@ export default {
         this.vegetation = await this.$store.dispatch(
           'modules/vegetation/getVegetations'
         )
-        // // console.log(this.vegetation)
+        // // // console.log(this.vegetation)
         this.filterVegetable = this.vegetation
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getDependences () {
@@ -737,9 +737,9 @@ export default {
         this.dependences = await this.$store.dispatch(
           'modules/coordinations/getCoordinations'
         )
-        // // console.log(this.dependences)
+        // // // console.log(this.dependences)
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getResponses () {
@@ -748,14 +748,14 @@ export default {
           'modules/response/getResponses'
         )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getTenures () {
       try {
         this.tenures = await this.$store.dispatch('modules/tenure/getTenures')
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getGovLevels () {
@@ -764,7 +764,7 @@ export default {
           'modules/gobLevel/getGobLevels'
         )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getIlicitsDenounced () {
@@ -773,7 +773,7 @@ export default {
           'modules/ilicitDenounced/getIlicitDenounceds'
         )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getLegalZones () {
@@ -781,7 +781,7 @@ export default {
         this.legalZones = await this.$store.dispatch('modules/zones/getZones')
         this.filteredLegalZones = this.legalZones
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getSubZones () {
@@ -789,7 +789,7 @@ export default {
         this.subZones = await this.$store.dispatch('modules/zones/getSubZones')
         this.filteredSubZones = this.subZones
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getOpZones () {
@@ -799,7 +799,7 @@ export default {
         )
         this.filteredOpZone = this.opZones
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     filterVegetableFun (text) {
@@ -978,7 +978,7 @@ export default {
         this.getIncident(this.incidentObject)
         this.isLoading = false
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     }
   }

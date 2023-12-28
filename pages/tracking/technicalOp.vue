@@ -187,7 +187,7 @@ export default {
         this.techOpFilter = this.data
         this.isLoadingData = false
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       } finally {
         this.isLoadingData = false
       }
@@ -197,14 +197,14 @@ export default {
         const res = await this.$store.dispatch('modules/technicalOp/getInfoTechnicalOp', id)
         return res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterTechOp (text) {
       if (text && text.length > 0) {
         this.techOpFilter = this.data.filter((x) => {
           if (x.folium.toUpperCase().includes(text.toUpperCase())) {
-            console.log(x)
+            // console.log(x)
             return x
           }
         })
@@ -242,7 +242,7 @@ export default {
         })
         this.getData()
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     // Visualizar una bitácora en el mapa
@@ -259,9 +259,9 @@ export default {
           points.push(pointConvert)
         })
         this.temporalPoints = points
-        console.log(this.temporalPoints)
+        // console.log(this.temporalPoints)
         this.viewOp = true
-        console.log(this.viewOp)
+        // console.log(this.viewOp)
       } else {
         this.$buefy.notification.open({
           message: 'La opinión técnica no contiene coordenadas.',
@@ -273,7 +273,7 @@ export default {
       }
     },
     convertCoordinatesToUtm (coords) {
-      // console.log(coords)
+      // // console.log(coords)
       const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')
       return [latLng.longitude, latLng.latitude]
     }

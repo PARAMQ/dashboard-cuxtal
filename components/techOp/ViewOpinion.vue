@@ -1,5 +1,10 @@
 <template>
-  <b-modal v-model="activeModal" :full-screen="true" :destroy-on-hide="false" :can-cancel="false">
+  <b-modal
+    v-model="activeModal"
+    :full-screen="true"
+    :destroy-on-hide="false"
+    :can-cancel="false"
+  >
     <b-loading v-model="isLoading" :is-full-page="true" :can-cancel="false" />
     <div class="modal-card">
       <div class="modal-card-head">
@@ -25,13 +30,24 @@
             <div class="column is-flex is-justify-content-center">
               <b-field label="Nombre de la persona moral">
                 <b-tag size="is-medium">
-                  {{ form.legal_entity ? form.legal_entity : 'Dato no asignado' }}
+                  {{
+                    form.legal_entity ? form.legal_entity : 'Dato no asignado'
+                  }}
                 </b-tag>
               </b-field>
             </div>
-            <div v-if="form.idlegal_entity" class="column is-flex is-justify-content-center">
+            <div
+              v-if="form.idlegal_entity"
+              class="column is-flex is-justify-content-center"
+            >
               <b-field label="Tipo de persona moral">
-                <b-tag size="is-medium">{{ form.type_legal_entity ? form.type_legal_entity : 'Dato no asignado' }}</b-tag>
+                <b-tag size="is-medium">
+                  {{
+                    form.type_legal_entity
+                      ? form.type_legal_entity
+                      : 'Dato no asignado'
+                  }}
+                </b-tag>
               </b-field>
             </div>
           </div>
@@ -61,21 +77,13 @@
               </div>
               <div class="column">
                 <b-field label="Medio de solicitud">
-                  <b-tag size="is-medium">{{ form.application_method ? form.application_method : 'Dato no asignado' }}</b-tag>
-                  <!--
-                  <b-select
-                    v-model="form.idapplication_method"
-                    placeholder="Seleccione una opción"
-                  >
-                    <option
-                      v-for="option in appMethod"
-                      :key="option.idapplication_method"
-                      :value="option.idapplication_method"
-                    >
-                      {{ option.description }}
-                    </option>
-                  </b-select>
-                  -->
+                  <b-tag size="is-medium">
+                    {{
+                      form.application_method
+                        ? form.application_method
+                        : 'Dato no asignado'
+                    }}
+                  </b-tag>
                 </b-field>
               </div>
               <div class="column">
@@ -113,61 +121,33 @@
             </div>
             <div class="column">
               <b-field label="Tipo de promovente">
-                <b-tag size=is-medium>{{ form.applicant_type ? form.applicant_type : 'Dato no asignado' }}</b-tag>
-                <!--
-                <b-select
-                  v-model="form.idapplicant_type"
-                  placeholder="Seleccione una opción"
-                >
-                  <option
-                    v-for="option in appType"
-                    :key="option.idapplicant_type"
-                    :value="option.idapplicant_type"
-                  >
-                    {{ option.description }}
-                  </option>
-                </b-select>
-                -->
+                <b-tag size="is-medium">
+                  {{
+                    form.applicant_type ? form.applicant_type : 'Dato no asignado'
+                  }}
+                </b-tag>
               </b-field>
             </div>
           </div>
           <div class="columns">
             <div class="column">
               <b-field label="Motivo de la solicitud">
-                <b-tag size="is-medium">{{ form.request_motive ? form.request_motive : 'Dato no asignado' }}</b-tag>
-                <!--
-                <b-select
-                  v-model="form.idrequest_motive"
-                  placeholder="Seleccione una opción"
-                >
-                  <option
-                    v-for="option in requestMotive"
-                    :key="option.idrequest_motive"
-                    :value="option.idrequest_motive"
-                  >
-                    {{ option.description }}
-                  </option>
-                </b-select>
-                -->
+                <b-tag size="is-medium">
+                  {{
+                    form.request_motive ? form.request_motive : 'Dato no asignado'
+                  }}
+                </b-tag>
               </b-field>
             </div>
             <div class="column">
               <b-field label="Descripción del motivo">
-                <b-tag size="is-medium">{{ form.motive_description ? form.motive_description : 'Dato no asignado' }}</b-tag>
-                <!--
-                <b-select
-                  v-model="form.idmotive_description"
-                  placeholder="Seleccione una opción"
-                >
-                  <option
-                    v-for="option in motiveDescription"
-                    :key="option.idmotive_description"
-                    :value="option.idmotive_description"
-                  >
-                    {{ option.description }}
-                  </option>
-                </b-select>
-                -->
+                <b-tag size="is-medium">
+                  {{
+                    form.motive_description
+                      ? form.motive_description
+                      : 'Dato no asignado'
+                  }}
+                </b-tag>
               </b-field>
             </div>
             <div class="column">
@@ -192,21 +172,11 @@
             </div>
             <div class="column">
               <b-field label="Tenencia del predio">
-                <b-tag size="is-medium">{{ form.tenure ? form.tenure : 'Dato no asignado' }}</b-tag>
-                <!--
-                <b-select
-                  v-model="form.idtenure"
-                  placeholder="Seleccione una opción"
-                >
-                  <option
-                    v-for="option in tenure"
-                    :key="option.idtenure"
-                    :value="option.idtenure"
-                  >
-                    {{ option.description }}
-                  </option>
-                </b-select>
-                -->
+                <b-tag size="is-medium">
+                  {{
+                    form.tenure ? form.tenure : 'Dato no asignado'
+                  }}
+                </b-tag>
               </b-field>
             </div>
           </div>
@@ -221,8 +191,8 @@
                 field="name"
                 autocomplete
                 :open-on-focus="true"
-                @typing="filterTablajeFun"
                 :closable="false"
+                @typing="filterTablajeFun"
               >
                 <template v-slot="props">
                   <strong>{{ props.option.name }}</strong>
@@ -244,8 +214,8 @@
                 field="description"
                 autocomplete
                 :open-on-focus="true"
-                @typing="filterVegetableFun"
                 :closable="false"
+                @typing="filterVegetableFun"
               >
                 <template v-slot="props">
                   <strong>{{ props.option.description }}</strong>
@@ -260,7 +230,6 @@
             <strong>Coordenadas</strong>
           </div>
           <div class="columns">
-            <!--
             <div class="column is-4">
               <b-notification type="is-info" has-icon :closable="false">
                 Ingrese las coordenadas en formato UTM.
@@ -271,31 +240,31 @@
                 </b-field>
                 <b-field :label="isSwitched ? 'Longitud' : 'Coordenada X'">
                   <b-numberinput
-                    v-model="temporalPoint[0]"
+                    v-model="formCoord.x"
                     step="0.000000000000000001"
                     :controls="false"
                   />
                 </b-field>
                 <b-field :label="isSwitched ? 'Latitud' : 'Coordenada Y'">
                   <b-numberinput
-                    v-model="temporalPoint[1]"
+                    v-model="formCoord.y"
                     step="0.000000000000000001"
                     :controls="false"
                   />
                 </b-field>
               </div>
               <div class="container m-3 has-text-centered">
-                <b-button type="is-success is-light" @click="addPoint">
-                  Agregar coordenada
+                <b-button type="is-success is-light" @click="updatePoint">
+                  Actualizar coordenada
                 </b-button>
                 <b-button type="is-info is-light" @click="viewPoint">
                   Ver punto
                 </b-button>
               </div>
               <div
-                v-for="pointCoord in points"
-                :key="pointCoord.name"
-                class="container m-3"
+                v-for="pointCoord in form.list_coordinates"
+                :key="pointCoord.idtech_op_coordinates"
+                class="container m-4"
               >
                 <div class="control">
                   <b-tag
@@ -304,14 +273,13 @@
                     aria-close-label="Close tag"
                     closable
                     @close="deletePoint"
-                    @click="viewPoint(pointCoord)"
+                    @click="editPoint(pointCoord)"
                   >
-                    {{ pointCoord.name }}
+                    {{ pointCoord.description }}
                   </b-tag>
                 </div>
               </div>
             </div>
-            -->
             <div class="column">
               <vl-map
                 :load-tiles-while-animating="true"
@@ -329,18 +297,22 @@
                   <vl-source-osm />
                 </vl-layer-tile>
 
-                <!--
-                <vl-feature>
-                  <vl-geom-point :coordinates="ViewPoint" />
-                </vl-feature>
-                -->
-
                 <vl-feature v-if="viewCoords">
                   <vl-geom-multi-point :coordinates="pointsMap" />
                   <vl-style>
                     <vl-style-circle :radius="5">
                       <vl-style-fill color="red" />
                       <vl-style-stroke color="red" />
+                    </vl-style-circle>
+                  </vl-style>
+                </vl-feature>
+
+                <vl-feature v-if="activeViewEdit">
+                  <vl-geom-point :coordinates="ViewPoint" />
+                  <vl-style>
+                    <vl-style-circle :radius="5">
+                      <vl-style-fill color="green" />
+                      <vl-style-stroke color="green" />
                     </vl-style-circle>
                   </vl-style>
                 </vl-feature>
@@ -358,21 +330,11 @@
             <div class="columns">
               <div class="column">
                 <b-field label="Respuesta">
-                  <b-tag size="is-medium">{{ form.response_op ? form.response_op : 'Dato no asignado' }}</b-tag>
-                  <!--
-                  <b-select
-                    v-model="form.idresponse_op"
-                    placeholder="Seleccione una opción"
-                  >
-                    <option
-                      v-for="option in responseOp"
-                      :key="option.idresponse_op"
-                      :value="option.idresponse_op"
-                    >
-                      {{ option.description }}
-                    </option>
-                  </b-select>
-                  -->
+                  <b-tag size="is-medium">
+                    {{
+                      form.response_op ? form.response_op : 'Dato no asignado'
+                    }}
+                  </b-tag>
                 </b-field>
               </div>
               <div class="column">
@@ -403,55 +365,37 @@
           <div class="columns has-text-centered">
             <div class="column is-flex is-justify-content-center">
               <b-field label="Oficio/escrito de solicitud">
-                <b-button v-if="form.request_doc" @click="downloadFile(form.request_doc, 'oficio')">Descargar archivo</b-button>
-                <b-tag v-else>Sin archivo</b-tag>
-                <!--
-                <b-field
-                  class="file is-primary"
-                  :class="{ 'has-name': !!fileOficio }"
+                <b-button
+                  v-if="form.request_doc"
+                  @click="downloadFile(form.request_doc, 'oficio')"
                 >
-                  <b-upload v-model="fileOficio" class="file-label" rounded>
-                    <span class="file-cta">
-                      <b-icon class="file-icon" icon="upload" />
-                      <span class="file-label">{{
-                        fileOficio.name || 'Subir archivo'
-                      }}</span>
-                    </span>
-                  </b-upload>
-                </b-field>
-              -->
+                  Descargar archivo
+                </b-button>
+                <b-tag v-else>
+                  Sin archivo
+                </b-tag>
               </b-field>
             </div>
             <div class="column is-flex is-justify-content-center">
               <b-field label="Oficio de respuesta">
-                <b-button v-if="form.response_doc" @click="downloadFile(form.response_doc, 'respuesta')">Descargar archivo</b-button>
-                <b-tag v-else>Sin archivo</b-tag>
-                <!--
-                <b-field
-                  class="file is-primary"
-                  :class="{ 'has-name': !!fileRespuesta }"
+                <b-button
+                  v-if="form.response_doc"
+                  @click="downloadFile(form.response_doc, 'respuesta')"
                 >
-                  <b-upload
-                    v-model="fileRespuesta"
-                    class="file-label"
-                    rounded
-                  >
-                    <span class="file-cta">
-                      <b-icon class="file-icon" icon="upload" />
-                      <span class="file-label">{{
-                        fileRespuesta.name || 'Subir archivo'
-                      }}</span>
-                    </span>
-                  </b-upload>
-                </b-field>
-                  -->
+                  Descargar archivo
+                </b-button>
+                <b-tag v-else>
+                  Sin archivo
+                </b-tag>
               </b-field>
             </div>
           </div>
           <br>
         </form>
         <div class="container m-2 has-text-centered">
-          <b-button @click="close"><strong>Cerrar</strong></b-button>
+          <b-button @click="close">
+            <strong>Cerrar</strong>
+          </b-button>
         </div>
       </div>
     </div>
@@ -501,6 +445,7 @@ export default {
       formCoord: {},
       temporalPoint: [224190.791, 2311022.379],
       ViewPoint: [-89.60984537598705, 20.85610769792424],
+      activeViewEdit: false,
       pointsMap: [[-89.60984537598705, 20.85610769792424]],
       viewCoords: false,
       points: [],
@@ -546,23 +491,18 @@ export default {
     async getTablaje () {
       try {
         this.tablaje = []
-        const res = await this.$store.dispatch(
-          'modules/tablaje/getTablajes'
-        )
+        const res = await this.$store.dispatch('modules/tablaje/getTablajes')
         this.tablaje = res
         this.filterTablaje = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     filterTablajeFun (text) {
       this.filterTablaje = this.tablaje.filter((option) => {
         if (
           option.name &&
-          option.name
-            .toString()
-            .toLowerCase()
-            .includes(text.toLowerCase())
+          option.name.toString().toLowerCase().includes(text.toLowerCase())
         ) {
           return option
         }
@@ -576,10 +516,19 @@ export default {
     },
     async getTechOp (object) {
       try {
-        const res = await this.$store.dispatch('modules/technicalOp/getInfoTechnicalOp', object.idtechnical_opinion)
-        res.application_date = res.application_date ? new Date(res.application_date) : null
-        res.response_date = res.response_date ? new Date(res.response_date) : null
-        res.reception_date = res.reception_date ? new Date(res.reception_date) : null
+        const res = await this.$store.dispatch(
+          'modules/technicalOp/getInfoTechnicalOp',
+          object.idtechnical_opinion
+        )
+        res.application_date = res.application_date
+          ? new Date(res.application_date)
+          : null
+        res.response_date = res.response_date
+          ? new Date(res.response_date)
+          : null
+        res.reception_date = res.reception_date
+          ? new Date(res.reception_date)
+          : null
         if (res.list_coordinates && res.list_coordinates.length > 0) {
           this.viewCoords = false
           const temporalCoords = res.list_coordinates.map((x) => {
@@ -590,25 +539,37 @@ export default {
           this.pointsMap = temporalCoords
           this.viewCoords = true
         }
-        if (this.objectTech.list_techop_cadastral_record && this.objectTech.list_techop_cadastral_record.length > 0) {
-          const temporal = this.objectTech.list_techop_cadastral_record.map((object) => {
-            const cadastral = this.tablaje.find(x => x.idcadastral_record === object.idcadastral_record)
-            return cadastral
-          })
+        if (
+          this.objectTech.list_techop_cadastral_record &&
+          this.objectTech.list_techop_cadastral_record.length > 0
+        ) {
+          const temporal = this.objectTech.list_techop_cadastral_record.map(
+            (object) => {
+              const cadastral = this.tablaje.find(
+                (x) => x.idcadastral_record === object.idcadastral_record
+              )
+              return cadastral
+            }
+          )
           res.list_techop_cadastral_record = temporal
         }
-        const type = this.typeLegalEntity.find(x => x.idtype_legal_entity === res.idtype_legal_entity)
+        const type = this.typeLegalEntity.find(
+          (x) => x.idtype_legal_entity === res.idtype_legal_entity
+        )
         res.type_legal_entity = type ? type.description : null
         this.form = res
-        // console.log(res)
+        // // console.log(res)
       } catch (error) {}
     },
     // Crear opinión técnica
     async createOrUpdate () {
       try {
         this.isLoading = true
-        console.log(this.form)
-        const id = await this.$store.dispatch('modules/technicalOp/createOrUpdateTechnicalOp', this.form)
+        // console.log(this.form)
+        const id = await this.$store.dispatch(
+          'modules/technicalOp/createOrUpdateTechnicalOp',
+          this.form
+        )
         if (this.points && this.points.length > 0) {
           this.form.idtechnical_opinion = id
           const temporalPoints = this.points.map((x) => {
@@ -616,7 +577,10 @@ export default {
             return x
           })
           this.form.list_coordinates = temporalPoints
-          await this.$store.dispatch('modules/technicalOp/createOrUpdateTechnicalOp', this.form)
+          await this.$store.dispatch(
+            'modules/technicalOp/createOrUpdateTechnicalOp',
+            this.form
+          )
         }
         if (this.fileOficio.name || this.fileRespuesta.name) {
           await this.uploadFiles(id)
@@ -637,7 +601,7 @@ export default {
           message: 'Ocurrió un error, intente nuevamente',
           type: 'is-danger'
         })
-        // console.log(error)
+        // // console.log(error)
       } finally {
         this.isLoading = false
       }
@@ -645,7 +609,7 @@ export default {
     async uploadFiles (id) {
       const formData = new FormData()
       formData.append('idtechnical_opinion', id)
-      console.log(this.fileOficio)
+      // console.log(this.fileOficio)
       if (this.fileOficio.name) {
         formData.append('request_doc', this.fileOficio)
       }
@@ -655,7 +619,7 @@ export default {
       try {
         await this.$store.dispatch('modules/technicalOp/uploadFiles', formData)
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async downloadFile (urlFile, type) {
@@ -683,14 +647,16 @@ export default {
         )
         this.filterVegetable = this.vegetation
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getDependences () {
       try {
-        this.dependences = await this.$store.dispatch('modules/coordinations/getCoordinations')
+        this.dependences = await this.$store.dispatch(
+          'modules/coordinations/getCoordinations'
+        )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     filterVegetableFun (text) {
@@ -708,58 +674,72 @@ export default {
     },
     async getLegalEntity () {
       try {
-        this.legalEntity = await this.$store.dispatch('modules/legalEntity/getLegalEntitys')
+        this.legalEntity = await this.$store.dispatch(
+          'modules/legalEntity/getLegalEntitys'
+        )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getTypeLegalEntity () {
       try {
-        this.typeLegalEntity = await this.$store.dispatch('modules/legalEntity/getTypeLegalEntitys')
+        this.typeLegalEntity = await this.$store.dispatch(
+          'modules/legalEntity/getTypeLegalEntitys'
+        )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getAppMethod () {
       try {
-        this.appMethod = await this.$store.dispatch('modules/apMethod/getApplicationMethods')
+        this.appMethod = await this.$store.dispatch(
+          'modules/apMethod/getApplicationMethods'
+        )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getAppType () {
       try {
-        this.appType = await this.$store.dispatch('modules/apType/getApplicantTypes')
+        this.appType = await this.$store.dispatch(
+          'modules/apType/getApplicantTypes'
+        )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getRequestMotive () {
       try {
-        this.requestMotive = await this.$store.dispatch('modules/requestMotive/getRequestMotives')
+        this.requestMotive = await this.$store.dispatch(
+          'modules/requestMotive/getRequestMotives'
+        )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getMotiveDescription () {
       try {
-        this.motiveDescription = await this.$store.dispatch('modules/motiveDescription/getMotiveDescriptions')
+        this.motiveDescription = await this.$store.dispatch(
+          'modules/motiveDescription/getMotiveDescriptions'
+        )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getTenure () {
       try {
         this.tenure = await this.$store.dispatch('modules/tenure/getTenures')
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getResponseOp () {
       try {
-        this.responseOp = await this.$store.dispatch('modules/responseOp/getResponseOps')
+        this.responseOp = await this.$store.dispatch(
+          'modules/responseOp/getResponseOps'
+        )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     // Coordenadas
@@ -831,7 +811,37 @@ export default {
     },
     convertCoordinatesFromUtm (coords) {},
     viewPoint () {
-      this.ViewPoint = this.convertCoordinatesToUtm(this.temporalPoint)
+      this.activeViewEdit = false
+      this.ViewPoint = this.convertCoordinatesToUtm([this.formCoord.x, this.formCoord.y])
+      this.activeViewEdit = true
+    },
+    editPoint (point) {
+      this.activeViewEdit = false
+      this.ViewPoint = this.convertCoordinatesToUtm([point.x, point.y])
+      this.formCoord = point
+      this.activeViewEdit = true
+    },
+    async updatePoint () {
+      this.activeViewEdit = false
+      this.isLoading = true
+      const tempCoords = this.form.list_coordinates
+      this.form.list_coordinates = tempCoords.map((x) => {
+        if (x.idtech_op_coordinates === this.form.idtech_op_coordinates) {
+          return this.form
+        } else {
+          return x
+        }
+      })
+      try {
+        await this.$store.dispatch(
+          'modules/technicalOp/createOrUpdateTechnicalOp',
+          this.form
+        )
+        this.getTechOp(this.objectTech)
+        this.isLoading = false
+      } catch (error) {
+        // console.log(error)
+      }
     }
   }
 }

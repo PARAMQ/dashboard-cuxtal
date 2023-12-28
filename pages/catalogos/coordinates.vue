@@ -202,7 +202,7 @@ export default {
   },
   methods: {
     viewCoordinate (coordinate) {
-      // console.log(coordinate)
+      // // console.log(coordinate)
       this.point = [coordinate.x, coordinate.y]
       this.center = this.coordinate
       this.selectCoordinate = true
@@ -231,7 +231,7 @@ export default {
           message: 'Ocurrió un error, intente nuevamente',
           type: 'is-danger'
         })
-        // console.log(error)
+        // // console.log(error)
       }
     },
     deleteZone (zone) {
@@ -275,7 +275,7 @@ export default {
         )
         this.coordenadas = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     }
   }

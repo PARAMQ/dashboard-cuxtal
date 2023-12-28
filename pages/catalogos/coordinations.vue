@@ -206,7 +206,7 @@ export default {
           message: 'Ocurrió un error, intente nuevamente',
           type: 'is-danger'
         })
-        // console.log(error)
+        // // console.log(error)
       }
     },
     deleteCoord (coordination) {
@@ -256,7 +256,7 @@ export default {
         )
         this.coordinaciones = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     }
   }

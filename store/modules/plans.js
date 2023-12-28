@@ -1,4 +1,4 @@
-import { getPlans, createOrUpdatePlan, getInfoPlan, deletePlan, updatePlan, getAllPlannifications } from '~/api/plans'
+import { getMetas, createOrUpdateMeta, getPlans, createOrUpdatePlan, getInfoPlan, deletePlan, updatePlan, getAllPlannifications } from '~/api/plans'
 
 export const actions = {
   async getPlans ({ commit }, data) {
@@ -23,6 +23,14 @@ export const actions = {
   },
   async updatePlan ({ commit }, plan) {
     const res = await updatePlan(plan)
+    return res
+  },
+  async createOrUpdateMeta ({ commit }, data) {
+    const res = await createOrUpdateMeta(data)
+    return res
+  },
+  async getMetas ({ commit }) {
+    const res = await getMetas()
     return res
   }
 }

@@ -110,7 +110,7 @@ export default {
     },
     handleSelected (option) {
       if (option && this.selected !== option) {
-        // console.log(option)
+        // // console.log(option)
         this.$emit('selected', option)
       }
       this.selected = option || {}

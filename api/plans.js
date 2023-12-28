@@ -38,3 +38,18 @@ export const deletePlan = (data) => {
     data
   })
 }
+
+export const createOrUpdateMeta = (data) => {
+  return request({
+    url: '/apiMeta.php/meta',
+    method: 'POST',
+    data
+  })
+}
+
+export const getMetas = () => {
+  return request({
+    url: '/apiMeta.php/metas',
+    method: 'GET'
+  })
+}

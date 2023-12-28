@@ -277,7 +277,7 @@ export default {
         })
         this.getData()
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     // Obtener todas las bitacoras
@@ -291,7 +291,7 @@ export default {
         // \this.getCoordinates(this.binnacles)
         this.isLoadingBinnacles = false
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     // Obtener la información por bitácora
@@ -303,7 +303,7 @@ export default {
         )
         return res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     // filtar bitácoras
@@ -311,7 +311,7 @@ export default {
       if (text && text.length > 0) {
         this.binnaclesFilter = this.binnacles.filter((x) => {
           if (x.number.toUpperCase().includes(text.toUpperCase())) {
-            console.log(x)
+            // console.log(x)
             return x
           }
         })
@@ -330,7 +330,7 @@ export default {
         const point = [object.x, object.y]
         const pointConvert = this.convertCoordinatesToUtm(point)
         binnacle.points.push(pointConvert)
-        // console.log(pointConvert)
+        // // console.log(pointConvert)
       })
       if (binnacle.points.length > 0) {
         this.temporalPoints = binnacle.points
@@ -346,7 +346,7 @@ export default {
       }
     },
     convertCoordinatesToUtm (coords) {
-      // console.log(coords)
+      // // console.log(coords)
       const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')
       return [latLng.longitude, latLng.latitude]
     },
@@ -380,7 +380,7 @@ export default {
         this.downloadFile = false
       } catch (error) {
         this.downloadFile = false
-        // console.log(error)
+        // // console.log(error)
       } finally {
         this.downloadFile = false
       }

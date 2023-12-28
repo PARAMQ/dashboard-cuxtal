@@ -171,12 +171,12 @@ export default {
           object.dependence = dependence
           return object
         })
-        // console.log(complaints)
+        // // console.log(complaints)
         this.data = complaints
         this.complaintFilter = complaints
         this.isLoadingData = false
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       } finally {
         this.isLoadingData = false
       }
@@ -207,7 +207,7 @@ export default {
         const res = await this.$store.dispatch('modules/complaint/getInfoComplaint', id)
         return res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async deleteComplaint (complaint) {
@@ -222,7 +222,7 @@ export default {
         })
         this.getData()
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     // Visualizar una bitácora en el mapa
@@ -246,7 +246,7 @@ export default {
         this.temporalPoints = points
         this.viewPoints = true
         this.activatePoints = true
-        console.log(this.temporalPoints)
+        // console.log(this.temporalPoints)
       } else {
         this.$buefy.notification.open({
           message: 'La denuncia no contiene coordenadas.',
@@ -258,7 +258,7 @@ export default {
       }
     },
     convertCoordinatesToUtm (coords) {
-      // console.log(coords)
+      // // console.log(coords)
       const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')
       return [latLng.longitude, latLng.latitude]
     },
@@ -267,9 +267,9 @@ export default {
         this.dependences = await this.$store.dispatch(
           'modules/coordinations/getCoordinations'
         )
-        // // console.log(this.dependences)
+        // // // console.log(this.dependences)
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     }
   }

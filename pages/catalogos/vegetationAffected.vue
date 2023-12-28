@@ -225,7 +225,7 @@ export default {
           message: 'Ocurrió un error, intente nuevamente',
           type: 'is-danger'
         })
-        // console.log(error)
+        // // console.log(error)
       }
     },
     deleteVeg (vegetation) {
@@ -272,7 +272,7 @@ export default {
         )
         this.vegetacion = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     }
   }

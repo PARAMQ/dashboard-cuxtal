@@ -229,7 +229,7 @@ export default {
           message: 'Ocurrió un error, intente nuevamente',
           type: 'is-danger'
         })
-        // console.log(error)
+        // // console.log(error)
       }
     },
     deleteVeg (vegetation) {
@@ -281,14 +281,14 @@ export default {
         })
         this.vegetacion = temporal
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getTypes () {
       try {
         this.types = await this.$store.dispatch('modules/legalEntity/getTypeLegalEntitys')
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     }
   }

@@ -737,7 +737,7 @@ export default {
           'modules/binnacles/getBinnacle',
           id
         )
-        console.log(res)
+        // console.log(res)
         res.date = new Date(res.date)
         res.hourInit = new Date(res.hour_init)
         res.hourEnd = new Date(res.hour_end)
@@ -775,11 +775,11 @@ export default {
         this.viewPoints = false
         if (res.coordinates_binnacle && res.coordinates_binnacle.length > 0) {
           const temporalPoints = res.coordinates_binnacle
-          console.log(temporalPoints)
+          // console.log(temporalPoints)
           temporalPoints.forEach((object) => {
             const point = [object.x, object.y]
             const pointConvert = this.convertCoordinatesToUtm(point)
-            // console.log(pointConvert)
+            // // console.log(pointConvert)
             res.points = []
             res.points.push(pointConvert)
           })
@@ -796,13 +796,13 @@ export default {
               ? 'No'
               : 'No'
         this.form = res
-        console.log(this.form)
+        // console.log(this.form)
       } catch (error) {
-        // // console.log(error)
+        // // // console.log(error)
       }
     },
     convertCoordinatesToUtm (coords) {
-      // console.log(coords)
+      // // console.log(coords)
       const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')
       return [latLng.longitude, latLng.latitude]
     },
@@ -810,9 +810,9 @@ export default {
     async getCharges () {
       try {
         this.charges = await this.$store.dispatch('modules/charges/getCharges')
-        // console.log(this.charges)
+        // // console.log(this.charges)
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     // Obtener zonas operativas
@@ -820,7 +820,7 @@ export default {
       try {
         this.zoning = await this.$store.dispatch('modules/zones/getZones')
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     // Participantes
@@ -832,7 +832,7 @@ export default {
         this.participants = res
         this.participantsFilter = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     // Evidencia
@@ -850,7 +850,7 @@ export default {
           cancelButtonText: 'Cancelar'
         })
         .then(async (result) => {
-          // // console.log(result)
+          // // // console.log(result)
           if (result.isConfirmed) {
             if (
               this.form.list_image_deleted &&
@@ -863,7 +863,7 @@ export default {
               this.form.list_image_deleted.push(object)
               this.form.list_image.splice(index, 1)
             }
-            console.log(this.form)
+            // console.log(this.form)
             try {
               await this.$store.dispatch(
                 'modules/binnacles/createOrUpdateBinnacle',
@@ -897,7 +897,7 @@ export default {
           cancelButtonText: 'Cancelar'
         })
         .then(async (result) => {
-          // // console.log(result)
+          // // // console.log(result)
           if (result.isConfirmed) {
             if (
               this.form.list_coordinates_deleted &&
@@ -910,7 +910,7 @@ export default {
               this.form.list_coordinates_deleted.push(object)
               // this.form.coordinates_binnacle.splice(index, 1)
             }
-            console.log(this.form)
+            // console.log(this.form)
             try {
               await this.$store.dispatch(
                 'modules/binnacles/createOrUpdateBinnacle',
@@ -934,9 +934,9 @@ export default {
         })
     },
     async updateStatusBinnacle () {
-      // console.log(this.form)
+      // // console.log(this.form)
       this.form.isprocessed = this.form.isprocessed === 'Si' ? 1 : 0
-      console.log(this.form)
+      // console.log(this.form)
       try {
         await this.$store.dispatch(
           'modules/binnacles/createOrUpdateBinnacle',
@@ -956,9 +956,9 @@ export default {
     },
     convertCoordinatesFromUtm (coords) {},
     viewPoint () {
-      // console.log(this.temporalPoint)
+      // // console.log(this.temporalPoint)
       this.ViewPoint = this.convertCoordinatesToUtm(this.temporalPoint)
-      // console.log(this.ViewPoint)
+      // // console.log(this.ViewPoint)
     }
   }
 }

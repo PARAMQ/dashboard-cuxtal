@@ -170,7 +170,7 @@ export default {
           x.date_register = new Date(x.date_register)
           return x
         })
-        console.log(temporal)
+        // console.log(temporal)
         temporal.sort((a, b) => b.date_register - a.date_register)
         this.plans = []
         this.plans = temporal
@@ -190,7 +190,7 @@ export default {
         this.plans = plans
         this.isLoadingPlans = false
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     updateView () {

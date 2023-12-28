@@ -291,7 +291,7 @@ export default {
         this.isLoadingBinnacles = false
       } catch (error) {
         this.isLoadingBinnacles = false
-        // console.log(error)
+        // // console.log(error)
       } finally {
         this.isLoadingBinnacles = false
       }
@@ -308,7 +308,7 @@ export default {
       if (text && text.length > 0) {
         this.binnaclesFilter = this.plan.binnacles.filter((x) => {
           if (x.number.toUpperCase().includes(text.toUpperCase())) {
-            console.log(x)
+            // console.log(x)
             return x
           }
         })
@@ -333,7 +333,7 @@ export default {
         })
         this.getPlan()
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     viewBinnalceObject (binnacle) {
@@ -365,7 +365,7 @@ export default {
         this.downloadFile = false
       } catch (error) {
         this.downloadFile = false
-        // console.log(error)
+        // // console.log(error)
       } finally {
         this.downloadFile = false
       }
@@ -382,7 +382,7 @@ export default {
         })
         this.getPlan()
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     // Obtener la información por bitácora
@@ -391,7 +391,7 @@ export default {
         const res = await this.$store.dispatch('modules/binnacles/getBinnacle', idBinnacle)
         return res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     // Visualizar una bitácora en el mapa
@@ -405,7 +405,7 @@ export default {
         const point = [object.x, object.y]
         const pointConvert = this.convertCoordinatesToUtm(point)
         binnacle.points.push(pointConvert)
-        // console.log(pointConvert)
+        // // console.log(pointConvert)
       })
       if (binnacle.points.length > 0) {
         this.temporalPoints = binnacle.points
@@ -421,13 +421,13 @@ export default {
       }
     },
     convertCoordinatesToUtm (coords) {
-      // console.log(coords)
+      // // console.log(coords)
       const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')
       return [latLng.longitude, latLng.latitude]
     },
     async deletePlan () {
       try {
-        // // console.log(this.plan)
+        // // // console.log(this.plan)
         await this.$store.dispatch('modules/plans/deletePlan', this.plan)
         this.$buefy.toast.open({
           message: '¡Planificación eliminada!',
@@ -435,7 +435,7 @@ export default {
         })
         this.$router.push('/calendar')
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
         this.$buefy.toast.open({
           message: 'Ocurrió un error, intente más tarde',
           type: 'is-danger'

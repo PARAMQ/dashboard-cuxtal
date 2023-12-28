@@ -457,7 +457,7 @@ export default {
     isActive (newVal, oldVal) {
       if (newVal && !this.isExtraordinary) {
         this.form.idplanification = this.plannification
-        // console.log(this.form)
+        // // console.log(this.form)
       } else if (this.isExtraordinary) {
         this.form.isextraordinary = true
       }
@@ -508,12 +508,12 @@ export default {
         const res = await this.$store.dispatch('modules/users/getData')
         this.form.iduser = res.idusers
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     // Crear bitacora
     async createOrUpdate () {
-      // console.log(this.form)
+      // // console.log(this.form)
       this.isLoading = true
       this.form.hour_init = this.hourInit
       this.form.hour_end = this.hourEnd
@@ -525,7 +525,7 @@ export default {
         )
         if (this.points.length > 0) {
           const binnacle = await this.getBinnacle(idBinnacle)
-          console.log(binnacle)
+          // console.log(binnacle)
           this.points.map((point) => {
             const coord = point
             coord.idbinnacle = idBinnacle
@@ -544,12 +544,12 @@ export default {
               const temporalName = 'evidencia_' + (index + 1) + '_bitacora_' + temporalNumber + '.png'
               const temporalFile = new File([file], temporalName, { type: 'image/png' })
               formData.append('binnacle_photo[]', temporalFile)
-              console.log(temporalFile)
+              // console.log(temporalFile)
             } else if (file.type === 'image/jpeg') {
               const temporalName = 'evidencia_' + (index + 1) + '_bitacora_' + temporalNumber + '.jpg'
               const temporalFile = new File([file], temporalName, { type: 'image/jpeg' })
               formData.append('binnacle_photo[]', temporalFile)
-              console.log(temporalFile)
+              // console.log(temporalFile)
             }
           })
           this.files.forEach((files, index) => {
@@ -567,7 +567,7 @@ export default {
           await this.uploadEvidences(formData)
           if (this.vegetableAffected.length > 0) {
             const binnacle = await this.getBinnacle(idBinnacle)
-            console.log(binnacle)
+            // console.log(binnacle)
             binnacle.list_vegetable_affected = this.vegetableAffected.map((x) => {
               x.idbinnacle = idBinnacle
               return x
@@ -605,7 +605,7 @@ export default {
         this.$emit('save')
       } catch (error) {
         this.isLoading = false
-        // console.log(error)
+        // // console.log(error)
       } finally {
         this.buttonDisabled = false
         this.isLoading = false
@@ -619,7 +619,7 @@ export default {
         )
         return res
       } catch (error) {
-        // // console.log(error)
+        // // // console.log(error)
       }
     },
     // Actualizar bitacora
@@ -644,7 +644,7 @@ export default {
         this.vehicles = res
         this.vehiclesFilter = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     filterVehicles (text) {
@@ -666,7 +666,7 @@ export default {
         this.participants = res
         this.participantsFilter = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     selectParticipant (option) {
@@ -694,7 +694,7 @@ export default {
         this.opZonesFilter = res
         this.opZones = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     filterOpZone (text) {
@@ -717,7 +717,7 @@ export default {
         this.subZones = res
         this.subZonesFilter = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     filterSubZones (text) {
@@ -742,7 +742,7 @@ export default {
         this.vegetation = res
         this.vegetationFilter = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     filterVegetation (text) {
@@ -831,7 +831,7 @@ export default {
             'modules/coordinates/createOrUpdateCoordinate',
             point
           )
-          // // console.log(this.idPoints)
+          // // // console.log(this.idPoints)
           this.idPoints.push({
             idcoordinates: res,
             idbinnacle: binnacle
@@ -850,10 +850,10 @@ export default {
     },
     convertCoordinatesFromUtm (coords) {},
     viewPoint () {
-      // console.log(this.temporalPoint)
+      // // console.log(this.temporalPoint)
       this.ViewPoint = this.convertCoordinatesToUtm(this.temporalPoint)
       this.viewActive = true
-      // console.log(this.ViewPoint)
+      // // console.log(this.ViewPoint)
     }
   }
 }

@@ -311,7 +311,7 @@ export default {
               type: 'is-success'
             })
           } catch (error) {
-            // console.log(error)
+            // // console.log(error)
           }
         }
       })
@@ -336,9 +336,9 @@ export default {
         })
         this.isLoading = false
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
-      // console.log()
+      // // console.log()
     },
     cancelEdit () {
       this.hasEdit = false
@@ -357,10 +357,10 @@ export default {
           'modules/participants/getParticipants',
           this.params
         )
-        // console.log(res)
+        // // console.log(res)
         this.participantes = res
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getDepartaments () {
@@ -369,14 +369,14 @@ export default {
           'modules/deptos/getDeptos'
         )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getRoles () {
       try {
         this.roles = await this.$store.dispatch('modules/charges/getCharges')
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
     async getAreasAdsc () {
@@ -385,7 +385,7 @@ export default {
           'modules/adscriptions/getAdscriptions'
         )
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     }
   }
