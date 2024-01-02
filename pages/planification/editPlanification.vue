@@ -1,50 +1,59 @@
 <template>
   <div class="container">
-    <div class="section">
-      <div class="columns">
-        <div class="column">
-          <strong>Fecha de inicio: </strong>{{ plan.start_date | shortDate }}
+    <div class="columns m-2 has-text-centered">
+      <div class="column">
+        <div>
+          <strong>Fecha de inicio: </strong>{{ plan.start_date }}
           <br>
-          <strong>Fecha de finalización: </strong>{{ plan.end_date | shortDate }}
+          <strong>Fecha de finalización: </strong>{{ plan.end_date }}
         </div>
-        <div class="column">
-          <strong>Estado del recorrido: </strong> {{ plan.estatus && plan.estatus === 'process' ? 'En proceso' : (plan.estatus && plan.estatus === 'finally' ? 'Finalizado' : (plan.estatus && plan.estatus === 'active' ? 'Por comenzar' : 'Sin estado' ) ) }}
-        </div>
-        <div class="column">
-          <nav class="level">
-            <div class="level-left">
-              <div>
-                <b-label label="Cambiar estado del recorrido">
-                  <b-select v-model="plan.estatus">
-                    <option
-                      v-for="option in options"
-                      :key="option.value"
-                      :value="option.value"
-                    >
-                      {{ option.label }}
-                    </option>
-                  </b-select>
-                </b-label>
-              </div>
-              <div>
-                <b-button
-                  size="is-small"
-                  type="is-success is-light"
-                  icon-right="content-save"
-                  @click="updateStatus"
-                />
-              </div>
-            </div>
-            <div class="level-right"></div>
-          </nav>
-        </div>
-        <div class="column">
+        <div>
           <b-button
-            label="Nueva bitácora"
+            size="is-small"
             type="is-light"
-            @click="activeModal = true"
+            icon-right="calendar-edit"
+            @click="activeEditPlan = true"
+            @close="refresh"
           />
         </div>
+      </div>
+      <div class="column">
+        <strong>Estado del recorrido: </strong> {{ plan.estatus && plan.estatus === 'process' ? 'En proceso' : (plan.estatus && plan.estatus === 'finally' ? 'Finalizado' : (plan.estatus && plan.estatus === 'active' ? 'Por comenzar' : 'Sin estado' ) ) }}
+      </div>
+      <div class="column">
+        <nav class="level">
+          <div class="level-left">
+            <div>
+              <b-label label="Cambiar estado del recorrido">
+                <b-select v-model="plan.estatus">
+                  <option
+                    v-for="option in options"
+                    :key="option.value"
+                    :value="option.value"
+                  >
+                    {{ option.label }}
+                  </option>
+                </b-select>
+              </b-label>
+            </div>
+            <div>
+              <b-button
+                size="is-small"
+                type="is-success is-light"
+                icon-right="content-save"
+                @click="updateStatus"
+              />
+            </div>
+          </div>
+          <div class="level-right"></div>
+        </nav>
+      </div>
+      <div class="column">
+        <b-button
+          label="Nueva bitácora"
+          type="is-light"
+          @click="activeModal = true"
+        />
       </div>
     </div>
     <div id="map" class="columns">
@@ -212,6 +221,12 @@
       @save="refresh"
     />
 
+    <edit-plan
+      :active-modal="activeEditPlan"
+      :plan="plan"
+      @close="refresh"
+    />
+
     <b-notification
       v-model="downloadFile"
       type="is-info is-light"
@@ -231,6 +246,12 @@ export default {
   name: 'EditPlanification',
   data () {
     return {
+      dates: {
+        startDate: new Date(),
+        endDate: new Date()
+      },
+      activeEditPlan: false,
+      changeDates: false,
       idPlanification: this.$route.query.id,
       isLoadingBinnacles: false,
       downloadFile: false,
@@ -287,6 +308,7 @@ export default {
           this.idPlanification
         )
         this.plan = res
+        console.log(res)
         this.binnaclesFilter = this.plan.binnacles
         this.isLoadingBinnacles = false
       } catch (error) {
@@ -296,7 +318,11 @@ export default {
         this.isLoadingBinnacles = false
       }
     },
+    changeDatesPlan () {
+      console.log(this.plan)
+    },
     refresh () {
+      this.activeEditPlan = false
       this.activeModal = false
       this.activeViewModal = false
       this.binnacleSelect = {}
