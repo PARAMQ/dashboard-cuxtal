@@ -308,6 +308,25 @@
                     </b-tag>
                   </div>
                 </div>
+                <h1>Tablajes seleccionados (haz click sobre uno de ellos para visualizarlo en el mapa)</h1>
+                <div class="level">
+                  <div
+                    class="level-item m-3"
+                    v-for="tablaje in form.list_complaint_cadastral_record"
+                    :key="tablaje.description"
+                  >
+                    <div class="control">
+                      <b-tag
+                        :type="selectVectorId ? (selectVectorId === tablaje.idcadastral_record ? 'is-primary' : 'is-light') : 'is-light'"
+                        attached
+                        aria-close-label="Close tag"
+                        @click="viewVector(tablaje)"
+                      >
+                        {{ tablaje.name }}
+                      </b-tag>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div class="column is-8">
                 <vl-map
@@ -348,6 +367,14 @@
 
                   <vl-layer-vector>
                     <vl-source-vector :features.sync="features" />
+                  </vl-layer-vector>
+
+                  <vl-layer-vector v-if="selectVector">
+                    <vl-source-vector :features.sync="vector" />
+                    <vl-style-box>
+                      <vl-style-stroke color="red" :width="3" />
+                      <vl-style-fill color="rgba(255,255,255,1)" />
+                    </vl-style-box>
                   </vl-layer-vector>
                 </vl-map>
               </div>
@@ -499,6 +526,9 @@ export default {
       ],
       tablaje: [],
       filterTablaje: [],
+      selectVector: false,
+      vector: [],
+      selectVectorId: null,
       activeViewPoint: false,
       fileRespuesta: {},
       fileTramite: {},
@@ -596,7 +626,24 @@ export default {
       this.activeViewPoint = false
       this.pointsMap = [[-89.60984537598705, 20.85610769792424]]
       this.points = []
+      this.selectVectorId = null
+      this.vector = []
+      this.selectVector = false
       this.$emit('close')
+    },
+    viewVector (object) {
+      this.selectVectorId = object.idcadastral_record
+      this.vector = [
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [JSON.parse(object.coordinates)]
+          }
+        }
+      ]
+      this.selectVector = true
+      console.log(object)
     },
     async getUser () {
       try {
@@ -649,6 +696,9 @@ export default {
         this.fileTramite = {}
         this.activeViewPoint = false
         this.isLoading = false
+        this.selectVectorId = null
+        this.vector = []
+        this.selectVector = false
         this.$buefy.toast.open({
           message: 'Denuncia guardada!',
           type: 'is-success'
