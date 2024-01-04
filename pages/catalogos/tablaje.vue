@@ -86,6 +86,23 @@
                       {{ vegetation.name }}
                     </p>
                   </div>
+                  <div>
+                    <p class="is-size-2">
+                      Polígono cargado?
+                    </p>
+                    <b-icon
+                      v-if="vegetation.coordinates"
+                      icon="check-bold"
+                      size="is-large"
+                      type="is-success">
+                    </b-icon>
+                    <b-icon
+                      v-else
+                      icon="close-octagon"
+                      size="is-large"
+                      type="is-danger">
+                    </b-icon>
+                  </div>
                   <!--
                   <div>
                     <p class="is-size-2">
@@ -143,16 +160,20 @@
                           required
                         />
                       </b-field>
-                      <!--
-                      <b-field horizontal label="Nombre científico">
-                        <b-input
-                          v-model="vegetation.cientificName"
-                          name="nombre científico"
-                          type="text"
-                          required
-                        />
+                      <b-field class="file is-primary" :class="{'has-name': !!file}">
+                        <b-upload v-model="file" class="file-label">
+                          <span class="file-cta">
+                            <b-icon class="file-icon" icon="upload"></b-icon>
+                            <span class="file-label">Subir archivo (solo DBF)</span>
+                          </span>
+                          <span v-if="loadingGetCoordinates">
+                            Procesando archivo...
+                          </span>
+                          <span class="file-name" v-if="file">
+                            {{ file.name }}
+                          </span>
+                        </b-upload>
                       </b-field>
-                      -->
                     </form>
                   </div>
                 </div>
@@ -193,11 +214,20 @@ export default {
       hasEdit: false,
       params: {
         _t: Date.now()
-      }
+      },
+      file: null,
+      loadingGetCoordinates: false
     }
   },
   mounted () {
     this.getData()
+  },
+  watch: {
+    file (newVal, oldVal) {
+      if (newVal) {
+        this.getCoordinates()
+      }
+    }
   },
   methods: {
     viewVeg (vegetation, index) {
@@ -267,6 +297,18 @@ export default {
     updateView () {
       this.isActive = false
       this.getData()
+    },
+    async getCoordinates () {
+      try {
+        this.loadingGetCoordinates = true
+        const formData = new FormData()
+        formData.append('file', this.file)
+        const res = await this.$axios.post('https://vectors-cuxtal-api.onrender.com/procesar_dbf', formData)
+        this.vegetation.coordinates = JSON.stringify(res.data.coordinates)
+        this.loadingGetCoordinates = false
+      } catch (error) {
+        console.log(error)
+      }
     },
     async getData () {
       try {

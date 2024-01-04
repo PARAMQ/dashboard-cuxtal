@@ -255,6 +255,27 @@
                   </b-tag>
                 </div>
               </div>
+              <!--
+              <h1>Tablajes seleccionados (haz click sobre uno de ellos para visualizarlo en el mapa)</h1>
+              <div class="level">
+                <div
+                  class="level-item m-3"
+                  v-for="tablaje in form.list_complaint_cadastral_record"
+                  :key="tablaje.description"
+                >
+                  <div class="control">
+                    <b-tag
+                      :type="selectVectorId ? (selectVectorId === tablaje.idcadastral_record ? 'is-primary' : 'is-light') : 'is-light'"
+                      attached
+                      aria-close-label="Close tag"
+                      @click="viewVector(tablaje)"
+                    >
+                      {{ tablaje.name }}
+                    </b-tag>
+                  </div>
+                </div>
+              </div>
+              -->
             </div>
             <div class="column">
               <vl-map
@@ -295,6 +316,14 @@
 
                 <vl-layer-vector>
                   <vl-source-vector :features.sync="features" />
+                </vl-layer-vector>
+
+                <vl-layer-vector v-if="viewVectors">
+                  <vl-source-vector :features.sync="vector" />
+                  <vl-style-box>
+                    <vl-style-stroke color="red" :width="3" />
+                    <vl-style-fill color="rgba(255,255,255,1)" />
+                  </vl-style-box>
                 </vl-layer-vector>
               </vl-map>
             </div>
@@ -435,6 +464,18 @@ export default {
       fileRespuesta: {},
       fileTramite: {},
       fileDenuncia: {},
+      selectVector: false,
+      vector: [
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: []
+          }
+        }
+      ],
+      viewVectors: false,
+      selectVectorId: null,
       vegetation: [],
       filterVegetable: [],
       dependences: [],
@@ -502,6 +543,18 @@ export default {
       this.fileTramite = {}
       this.activePoints = false
       this.pointsMap = []
+      this.selectVectorId = null
+      this.vector = [
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: []
+          }
+        }
+      ]
+      this.viewVectors = false
+      this.selectVector = false
       this.$emit('close')
     },
     async getUser () {
@@ -511,6 +564,20 @@ export default {
       } catch (error) {
         // // console.log(error)
       }
+    },
+    viewVector (object) {
+      this.selectVectorId = object.idcadastral_record
+      this.vector = [
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [JSON.parse(object.coordinates)]
+          }
+        }
+      ]
+      this.selectVector = true
+      console.log(object)
     },
     async getIncident (object) {
       try {
@@ -566,6 +633,18 @@ export default {
             )
             return cadastral
           })
+          const tablajesConPoligono = temporal.filter(x => x.coordinates !== null)
+          if (tablajesConPoligono.length > 0) {
+            const temporalCoords = tablajesConPoligono.map(x => JSON.parse(x.coordinates))
+            this.vector[0].geometry.coordinates = temporalCoords
+            this.viewVectors = true
+          } else {
+            this.$buefy.toast.open({
+              duration: 6000,
+              message: 'Este registro contiene tablajes que no tienen polígonos registrados en el sistema',
+              type: 'is-warning'
+            })
+          }
           res.list_complaint_cadastral_record = temporal
         }
         if (res.complaint_coordinates && res.complaint_coordinates.length > 0) {

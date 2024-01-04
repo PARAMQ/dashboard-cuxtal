@@ -279,6 +279,26 @@
                   </b-tag>
                 </div>
               </div>
+              <!--
+              <h1>Tablajes seleccionados (haz click sobre uno de ellos para visualizarlo en el mapa)</h1>
+              <div class="level">
+                <div
+                  class="level-item m-3"
+                  v-for="tablaje in form.list_techop_cadastral_record"
+                  :key="tablaje.description"
+                >
+                  <div class="control">
+                    <b-tag
+                      :type="selectVectorId ? (selectVectorId === tablaje.idcadastral_record ? 'is-primary' : 'is-light') : 'is-light'"
+                      attached
+                      aria-close-label="Close tag"
+                      @click="viewVector(tablaje)"
+                    >
+                      {{ tablaje.name }}
+                    </b-tag>
+                  </div>
+                </div>
+              </div-->
             </div>
             <div class="column">
               <vl-map
@@ -319,6 +339,14 @@
 
                 <vl-layer-vector>
                   <vl-source-vector :features.sync="features" />
+                </vl-layer-vector>
+
+                <vl-layer-vector v-if="viewVectors">
+                  <vl-source-vector :features.sync="vector" />
+                  <vl-style-box>
+                    <vl-style-stroke color="red" :width="3" />
+                    <vl-style-fill color="rgba(255,255,255,1)" />
+                  </vl-style-box>
                 </vl-layer-vector>
               </vl-map>
             </div>
@@ -427,6 +455,16 @@ export default {
       isLoading: false,
       catastralRecord: [],
       form: {},
+      viewVectors: false,
+      vector: [
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: []
+          }
+        }
+      ],
       tenenciaPredio: [],
       dependences: [],
       fileOficio: {},
@@ -512,7 +550,33 @@ export default {
       this.form = {}
       this.pointsMap = false
       this.viewCoords = false
+      this.vector = [
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: []
+          }
+        }
+      ]
+      this.viewVectors = false
       this.$emit('close')
+    },
+    viewVector (object) {
+      if (object.coordinates) {
+        this.selectVectorId = object.idcadastral_record
+        this.vector = [
+          {
+            type: 'Feature',
+            geometry: {
+              type: 'Polygon',
+              coordinates: [JSON.parse(object.coordinates)]
+            }
+          }
+        ]
+        this.selectVector = true
+      }
+      console.log(object)
     },
     async getTechOp (object) {
       try {
@@ -551,6 +615,18 @@ export default {
               return cadastral
             }
           )
+          const tablajesConPoligono = temporal.filter(x => x.coordinates !== null)
+          if (tablajesConPoligono.length > 0) {
+            const temporalCoords = tablajesConPoligono.map(x => JSON.parse(x.coordinates))
+            this.vector[0].geometry.coordinates = temporalCoords
+            this.viewVectors = true
+          } else {
+            this.$buefy.toast.open({
+              duration: 6000,
+              message: 'Este registro contiene tablajes que no tienen polígonos registrados en el sistema',
+              type: 'is-warning'
+            })
+          }
           res.list_techop_cadastral_record = temporal
         }
         const type = this.typeLegalEntity.find(

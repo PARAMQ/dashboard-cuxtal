@@ -154,6 +154,8 @@
                   autocomplete
                   :open-on-focus="true"
                   @typing="filterTablajeFun"
+                  @add="viewInMap"
+                  @remove="removeInMap"
                 >
                   <template v-slot="props">
                     <strong>{{ props.option.name }}</strong>
@@ -308,6 +310,7 @@
                     </b-tag>
                   </div>
                 </div>
+                <!--
                 <h1>Tablajes seleccionados (haz click sobre uno de ellos para visualizarlo en el mapa)</h1>
                 <div class="level">
                   <div
@@ -327,6 +330,7 @@
                     </div>
                   </div>
                 </div>
+                -->
               </div>
               <div class="column is-8">
                 <vl-map
@@ -345,16 +349,6 @@
                     <vl-source-osm />
                   </vl-layer-tile>
 
-                  <vl-feature v-if="activeViewPoint">
-                    <vl-geom-point :coordinates="ViewPoint" />
-                    <vl-style>
-                      <vl-style-circle :radius="5">
-                        <vl-style-fill color="red" />
-                        <vl-style-stroke color="red" />
-                      </vl-style-circle>
-                    </vl-style>
-                  </vl-feature>
-
                   <vl-feature v-if="points.length > 0">
                     <vl-geom-multi-point :coordinates="pointsMap" />
                     <vl-style>
@@ -365,11 +359,21 @@
                     </vl-style>
                   </vl-feature>
 
+                  <vl-feature v-if="activeViewPoint">
+                    <vl-geom-point :coordinates="ViewPoint" />
+                    <vl-style>
+                      <vl-style-circle :radius="5">
+                        <vl-style-fill color="blue" />
+                        <vl-style-stroke color="blue" />
+                      </vl-style-circle>
+                    </vl-style>
+                  </vl-feature>
+
                   <vl-layer-vector>
                     <vl-source-vector :features.sync="features" />
                   </vl-layer-vector>
 
-                  <vl-layer-vector v-if="selectVector">
+                  <vl-layer-vector v-if="viewVectors">
                     <vl-source-vector :features.sync="vector" />
                     <vl-style-box>
                       <vl-style-stroke color="red" :width="3" />
@@ -526,9 +530,17 @@ export default {
       ],
       tablaje: [],
       filterTablaje: [],
-      selectVector: false,
-      vector: [],
-      selectVectorId: null,
+      viewVectors: false,
+      vector: [
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: []
+          }
+        }
+      ],
+      vectorObjects: [],
       activeViewPoint: false,
       fileRespuesta: {},
       fileTramite: {},
@@ -626,24 +638,59 @@ export default {
       this.activeViewPoint = false
       this.pointsMap = [[-89.60984537598705, 20.85610769792424]]
       this.points = []
-      this.selectVectorId = null
-      this.vector = []
-      this.selectVector = false
-      this.$emit('close')
-    },
-    viewVector (object) {
-      this.selectVectorId = object.idcadastral_record
+      this.viewVectors = false
+      this.vectorObjects = []
       this.vector = [
         {
           type: 'Feature',
           geometry: {
             type: 'Polygon',
-            coordinates: [JSON.parse(object.coordinates)]
+            coordinates: []
           }
         }
       ]
-      this.selectVector = true
-      console.log(object)
+      this.$emit('close')
+    },
+    viewInMap (object) {
+      this.viewVectors = false
+      this.vectorObjects.push(object)
+      if (object.coordinates) {
+        if (this.vector[0].geometry.coordinates.length === 0) {
+          this.vector = [
+            {
+              type: 'Feature',
+              geometry: {
+                type: 'Polygon',
+                coordinates: [JSON.parse(object.coordinates)]
+              }
+            }
+          ]
+        } else {
+          this.vector[0].geometry.coordinates.push(JSON.parse(object.coordinates))
+        }
+        this.viewVectors = true
+      } else {
+        this.$buefy.toast.open({
+          duration: 5000,
+          message: 'Este tablaje no tiene polígono para graficar',
+          type: 'is-warning'
+        })
+        if (this.vector[0].geometry.coordinates.length > 0) {
+          this.viewVectors = true
+        }
+      }
+    },
+    removeInMap (object) {
+      this.viewVectors = false
+      if (this.vector[0].geometry.coordinates.length === 1) {
+        this.vector[0].geometry.coordinates = []
+        this.vectorObjects = []
+      } else {
+        const findElement = (element) => element.coordinates === object.coordinates
+        const index = this.vectorObjects.findIndex(findElement)
+        this.vector[0].geometry.coordinates.splice(index, 1)
+        this.viewVectors = true
+      }
     },
     async getUser () {
       try {

@@ -22,16 +22,20 @@
                 required
               />
             </b-field>
-            <!--
-            <b-field horizontal label="Nombre científico">
-              <b-input
-                v-model="form.cientificName"
-                name="nombre científico"
-                type="text"
-                required
-              />
+            <b-field class="file is-primary" :class="{'has-name': !!file}">
+              <b-upload v-model="file" class="file-label">
+                <span class="file-cta">
+                  <b-icon class="file-icon" icon="upload"></b-icon>
+                  <span class="file-label">Subir archivo (solo DBF)</span>
+                </span>
+                <span v-if="loadingGetCoordinates">
+                  Procesando archivo...
+                </span>
+                <span class="file-name" v-if="file">
+                  {{ file.name }}
+                </span>
+              </b-upload>
             </b-field>
-            -->
           </form>
         </div>
         <div class="card-footer">
@@ -63,7 +67,16 @@ export default {
   data () {
     return {
       isLoading: false,
-      form: {}
+      form: {},
+      file: null,
+      loadingGetCoordinates: false
+    }
+  },
+  watch: {
+    file (newVal, oldVal) {
+      if (newVal) {
+        this.getCoordinates()
+      }
     }
   },
   methods: {
@@ -87,6 +100,19 @@ export default {
         // // console.log(error)
       } finally {
         this.isLoading = false
+      }
+    },
+    async getCoordinates () {
+      try {
+        this.loadingGetCoordinates = true
+        const formData = new FormData()
+        formData.append('file', this.file)
+        const res = await this.$axios.post('https://vectors-cuxtal-api.onrender.com/procesar_dbf', formData)
+        this.form.coordinates = JSON.stringify(res.data.coordinates)
+        this.loadingGetCoordinates = false
+        console.log(res.data.coordinates)
+      } catch (error) {
+        console.log(error)
       }
     }
   }
