@@ -380,7 +380,7 @@
               <b-field label="Oficio de denuncia">
                 <b-button
                   v-if="form.complaint_doc"
-                  @click="downloadFile(form.complaint_doc, 'denuncia')"
+                  @click="downloadFile(form.complaint_doc, 'denuncia.pdf')"
                 >
                   Descargar archivo
                 </b-button>
@@ -393,7 +393,7 @@
               <b-field label="Oficio de respuesta">
                 <b-button
                   v-if="form.response_doc"
-                  @click="downloadFile(form.response_doc, 'respuesta')"
+                  @click="downloadFile(form.response_doc, 'respuesta.pdf')"
                 >
                   Descargar archivo
                 </b-button>
@@ -406,7 +406,7 @@
               <b-field label="Conclusión de trámite">
                 <b-button
                   v-if="form.tramit_conclusion"
-                  @click="downloadFile(form.tramit_conclusion, 'tramite')"
+                  @click="downloadFile(form.tramit_conclusion, 'tramite.pdf')"
                 >
                   Descargar archivo
                 </b-button>

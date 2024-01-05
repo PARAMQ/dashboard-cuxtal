@@ -632,6 +632,7 @@ export default {
     },
     close () {
       this.form = {}
+      this.form.idbinnacle = null
       this.fileDenuncia = {}
       this.fileRespuesta = {}
       this.fileTramite = {}
@@ -1041,10 +1042,23 @@ export default {
       })
       // console.log(this.filteredSubZones)
     },
-    selectBinnacle (option) {
-      if (option) {
-        // console.log(option)
+    async getBinnacle (option) {
+      try {
+        const res = await this.$store.dispatch('modules/binnacles/getBinnacle', option.idbinnacle)
+        return res
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async selectBinnacle (binnacle) {
+      if (binnacle) {
+        const option = await this.getBinnacle(binnacle)
+        console.log(option)
+        this.form.idbinnacle = null
         this.form.idbinnacle = option.idbinnacle
+        this.form.list_complaint_operative_zone = []
+        this.form.list_subzoning_complaint = []
+        this.form.complaint_va = []
         if (option.list_operative_zones) {
           this.form.list_complaint_operative_zone =
             option.list_operative_zones.map((x) => {

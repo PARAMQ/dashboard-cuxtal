@@ -395,7 +395,7 @@
               <b-field label="Oficio/escrito de solicitud">
                 <b-button
                   v-if="form.request_doc"
-                  @click="downloadFile(form.request_doc, 'oficio')"
+                  @click="downloadFile(form.request_doc, 'oficio.pdf')"
                 >
                   Descargar archivo
                 </b-button>
@@ -408,7 +408,7 @@
               <b-field label="Oficio de respuesta">
                 <b-button
                   v-if="form.response_doc"
-                  @click="downloadFile(form.response_doc, 'respuesta')"
+                  @click="downloadFile(form.response_doc, 'respuesta.pdf')"
                 >
                   Descargar archivo
                 </b-button>
