@@ -82,6 +82,9 @@
         </b-navbar-item>
       </b-navbar-dropdown>
       <b-navbar-dropdown label="Seguimiento">
+        <b-navbar-item tag="router-link" :to="{ path: '/tracking/concentrado' }">
+          Concentrado
+        </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/tracking/technicalOp' }">
           Opiniones técnicas
         </b-navbar-item>

@@ -1,6 +1,6 @@
 <template>
   <div id="home">
-    <b-loading :is-full-page="true" v-model="isLoading" :can-cancel="false" />
+    <b-loading v-model="isLoading" :is-full-page="true" :can-cancel="false" />
     <div class="columns mt-2">
       <div class="column">
         <div class="card">
@@ -8,7 +8,10 @@
             <div class="columns">
               <div class="column">
                 <b-field horizontal label="Año de visualización">
-                  <b-select v-model="selectYear" placeholder="Seleccione un año">
+                  <b-select
+                    v-model="selectYear"
+                    placeholder="Seleccione un año"
+                  >
                     <option
                       v-for="option in optionsMetas"
                       :key="option.idmeta"
@@ -20,16 +23,10 @@
                 </b-field>
               </div>
               <div class="column">
-                <b-button
-                  type="is-info is-light"
-                  @click="viewYearData"
-                >
+                <b-button type="is-info is-light" @click="viewYearData">
                   Visualizar
                 </b-button>
-                <b-button
-                  type="is-warning is-light"
-                  @click="editMeta"
-                >
+                <b-button type="is-warning is-light" @click="editMeta">
                   Editar
                 </b-button>
               </div>
@@ -52,10 +49,7 @@
                 type="text"
                 expanded
               />
-              <b-button
-                type="is-success is-light"
-                @click="createMeta"
-              >
+              <b-button type="is-success is-light" @click="createMeta">
                 Guardar
               </b-button>
             </b-field>
@@ -68,7 +62,10 @@
         <div id="card-info" class="card">
           <header class="card-header">
             <p class="card-header-title">
-              Recorridos del año {{ selectYear ? selectYear.fecha_captura : dateNow.getFullYear() }}
+              Recorridos del año
+              {{
+                selectYear ? selectYear.fecha_captura : dateNow.getFullYear()
+              }}
             </p>
           </header>
           <div
@@ -87,7 +84,9 @@
           </div>
           <footer class="card-footer">
             <div class="card-footer-item">
-              <p>Meta de recorridos: <strong>{{ selectYear.dato }}</strong></p>
+              <p>
+                Meta de recorridos: <strong>{{ selectYear.dato }}</strong>
+              </p>
             </div>
             <div class="card-footer-item">
               <p>
@@ -102,7 +101,52 @@
         <div id="card-info" class="card">
           <header class="card-header">
             <p class="card-header-title">
-              Bitácoras del año {{ selectYear ? selectYear.fecha_captura : dateNow.getFullYear() }}
+              Recorridos del año
+              {{
+                selectYear ? selectYear.fecha_captura : dateNow.getFullYear()
+              }}
+              representados por mes
+            </p>
+          </header>
+          <div
+            v-if="seriesPlansPerMoth[0].data.length > 0"
+            class="card-content is-flex is-justify-content-center"
+          >
+            <apexchart
+              width="380"
+              type="bar"
+              :options="optionsPlansPerMonth"
+              :series="seriesPlansPerMoth"
+            />
+          </div>
+          <div v-else class="card-content has-text-centered">
+            <p>No hay datos por mostrar</p>
+          </div>
+          <footer class="card-footer">
+            <div class="card-footer-item">
+              <p>
+                Meta de recorridos anual: <strong>{{ selectYear.dato }}</strong>
+              </p>
+            </div>
+            <div class="card-footer-item">
+              <p>
+                Recorridos registrados:
+                <strong>{{ planification.length }}</strong>
+              </p>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+    <div v-if="selectYear" class="columns">
+      <div class="column">
+        <div id="card-info" class="card">
+          <header class="card-header">
+            <p class="card-header-title">
+              Bitácoras del año
+              {{
+                selectYear ? selectYear.fecha_captura : dateNow.getFullYear()
+              }}
             </p>
           </header>
           <div
@@ -119,19 +163,9 @@
           <div v-else class="card-content has-text-centered">
             <p>No hay datos por mostrar</p>
           </div>
-          <footer class="card-footer">
-            <div class="card-footer-item">
-              <p>
-                Total de bitácoras registradas para el año:
-                <strong>{{ binnacles.length }}</strong>
-              </p>
-            </div>
-          </footer>
         </div>
       </div>
-    </div>
-    <div v-if="selectYear" class="columns">
-      <div class="column is-6 is-offset-3">
+      <div class="column">
         <div class="card">
           <header class="card-header">
             <p class="card-header-title">
@@ -143,7 +177,7 @@
             class="card-content is-flex is-justify-content-center"
           >
             <apexchart
-              width="380"
+              width="480"
               type="donut"
               :options="options"
               :series="series"
@@ -199,6 +233,45 @@ export default {
       optionsPlanification: {
         labels: ['En proceso', 'Finalizado', 'Por comenzar']
       },
+      optionsPlansPerMonth: {
+        labels: [
+          'Enero',
+          'Febrero',
+          'Marzo',
+          'Abril',
+          'Mayo',
+          'Junio',
+          'Julio',
+          'Agosto',
+          'Septiembre',
+          'Octubre',
+          'Noviembre',
+          'Diciembre'
+        ],
+        yaxis: {
+          labels: {
+            formatter (value) {
+              return parseInt(value)
+            }
+          }
+        },
+        tooltip: {
+          y: {
+            formatter (val) {
+              return parseInt(val) + ' recorridos'
+            }
+          }
+        },
+        noData: {
+          text: 'Cargando...'
+        }
+      },
+      seriesPlansPerMoth: [
+        {
+          name: 'Recorridos',
+          data: []
+        }
+      ],
       dateNow: new Date(),
       techOps: [],
       techOp: [],
@@ -350,7 +423,17 @@ export default {
           lastDayOfYear
         ])
         this.planification = res
-        // console.log(res.length)
+        this.seriesPlansPerMoth[0].data = []
+        // console.log(res)
+        for (let i = 0; i < 12; i++) {
+          const temporalFilter = res.filter((x) => {
+            const temporalDate = new Date(x.start_date)
+            if (temporalDate.getMonth() === i) {
+              return x
+            }
+          })
+          this.seriesPlansPerMoth[0].data.push(parseInt(temporalFilter.length))
+        }
         const processPlanification = res.filter((x) => x.estatus === 'process')
         const finallyPlanification = res.filter((x) => x.estatus === 'finally')
         const activePlanification = res.filter((x) => x.estatus === 'active')
@@ -373,6 +456,7 @@ export default {
     },
     async viewYearData () {
       this.isLoading = true
+      this.seriesPlansPerMoth[0].data = []
       await this.getComplaints(this.selectYear.fecha_captura)
       await this.getTechOp(this.selectYear.fecha_captura)
       await this.getBinnacles(this.selectYear.fecha_captura)
@@ -386,8 +470,12 @@ export default {
         const res = await this.$store.dispatch('modules/plans/getMetas')
         this.optionsMetas = res
         const nowDate = new Date()
-        if (res.find(x => Number(x.fecha_captura) === nowDate.getFullYear())) {
-          this.selectYear = res.find(x => Number(x.fecha_captura) === nowDate.getFullYear())
+        if (
+          res.find((x) => Number(x.fecha_captura) === nowDate.getFullYear())
+        ) {
+          this.selectYear = res.find(
+            (x) => Number(x.fecha_captura) === nowDate.getFullYear()
+          )
         } else {
           this.selectYear = null
         }
@@ -402,7 +490,7 @@ export default {
       if (
         !this.formMeta.idmeta &&
         this.optionsMetas.find(
-          x => x.fecha_captura === this.formMeta.fecha_captura
+          (x) => x.fecha_captura === this.formMeta.fecha_captura
         )
       ) {
         this.$buefy.toast.open({
