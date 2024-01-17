@@ -111,8 +111,35 @@
           </div>
         </div>
       </div>
+      <div class="columns">
+        <div class="column">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Bitácoras
+              </p>
+            </header>
+            <div class="card-content">
+              <div
+                v-if="seriesBinnacles.length > 0"
+                class="card-content is-flex is-justify-content-center"
+              >
+                <apexchart
+                  width="380"
+                  type="donut"
+                  :options="optionsBinnacle"
+                  :series="seriesBinnacles"
+                />
+              </div>
+              <div v-else class="card-content has-text-centered">
+                <p>No hay datos por mostrar</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div></div>
+    <div />
   </div>
 </template>
 
@@ -223,7 +250,12 @@ export default {
           name: 'Recorridos',
           data: []
         }
-      ]
+      ],
+      seriesBinnacles: [],
+      optionsBinnacle: {
+        labels: ['Revisado', 'En revisión', 'Por revisar']
+      },
+      binnacles: []
     }
   },
   async mounted () {
@@ -283,11 +315,45 @@ export default {
       this.seriesPlansPerMoth[0].data = []
       // await this.getComplaints(this.selectYear.fecha_captura)
       // await this.getTechOp(this.selectYear.fecha_captura)
-      // await this.getBinnacles(this.selectYear.fecha_captura)
+      await this.getBinnacles(this.selectYear.fecha_captura)
       await this.getPlanifications(this.selectYear.fecha_captura)
       // this.getVegetation()
       // this.getInfoDonnut()
       this.isLoading = false
+    },
+    // Bitácoras
+    async getBinnacles (yearSelect) {
+      try {
+        const res = await this.$store.dispatch('modules/binnacles/getBinnacles')
+        const nowDate = new Date()
+        this.binnacles = res.filter((x) => {
+          const temporalDate = new Date(x.date)
+          if (yearSelect) {
+            if (temporalDate.getFullYear() === Number(yearSelect)) {
+              return x
+            }
+          } else {
+            // eslint-disable-next-line no-lonely-if
+            if (temporalDate.getFullYear() === nowDate.getFullYear()) {
+              return x
+            }
+          }
+        })
+        const revisado = this.binnacles.filter((x) => x.status === 'revisado')
+        const enRevision = this.binnacles.filter(
+          (x) => x.status === 'en-revision'
+        )
+        const porRevisar = this.binnacles.filter(
+          (x) => x.status === 'por-revisar'
+        )
+        this.seriesBinnacles = [
+          Number(revisado.length),
+          Number(enRevision.length),
+          Number(porRevisar.length)
+        ]
+      } catch (error) {
+        // // console.log(error)
+      }
     },
     // Recorridos
     async getPlanifications (selectYear) {
