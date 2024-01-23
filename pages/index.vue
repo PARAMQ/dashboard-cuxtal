@@ -58,7 +58,7 @@
       </div>
     </div>
     <div v-if="selectYear" class="columns">
-      <div class="column">
+      <div class="column is-three-fifths is-offset-one-fifth">
         <div id="card-info" class="card">
           <header class="card-header">
             <p class="card-header-title">
@@ -73,7 +73,7 @@
             class="card-content is-flex is-justify-content-center"
           >
             <apexchart
-              width="380"
+              width="400"
               type="donut"
               :options="optionsPlanification"
               :series="seriesPlanification"
@@ -97,6 +97,7 @@
           </footer>
         </div>
       </div>
+      <!--
       <div class="column">
         <div id="card-info" class="card">
           <header class="card-header">
@@ -137,7 +138,9 @@
           </footer>
         </div>
       </div>
+      -->
     </div>
+    <!--
     <div v-if="selectYear" class="columns">
       <div class="column">
         <div id="card-info" class="card">
@@ -189,6 +192,7 @@
         </div>
       </div>
     </div>
+    -->
     <div v-else>
       <div class="columns">
         <div class="column">
@@ -549,6 +553,6 @@ tr.is-warning {
   background-position: center center;
 }
 #card-info {
-  height: 400px;
+  height: auto;
 }
 </style>

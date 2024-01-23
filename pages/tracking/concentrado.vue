@@ -1,6 +1,7 @@
 <template>
   <div id="home">
     <b-loading v-model="isLoading" :is-full-page="true" :can-cancel="false" />
+    <!-- Seleccionar año para visualizar su meta -->
     <div class="columns mt-2">
       <div class="column">
         <div class="card">
@@ -58,7 +59,7 @@
       </div>
     </div>
     <div>
-      <!-- Recorridos por año y mes -->
+      <!-- Recorridos por año y bitácoras (con sus estados) -->
       <div class="columns">
         <div class="column">
           <div class="card">
@@ -89,33 +90,6 @@
           <div class="card">
             <header class="card-header">
               <p class="card-header-title">
-                Recorridos por mes
-              </p>
-            </header>
-            <div class="card-content">
-              <div
-                v-if="seriesPlansPerMoth[0].data.length > 0"
-                class="card-content is-flex is-justify-content-center"
-              >
-                <apexchart
-                  width="380"
-                  type="bar"
-                  :options="optionsPlansPerMonth"
-                  :series="seriesPlansPerMoth"
-                />
-              </div>
-              <div v-else class="card-content has-text-centered">
-                <p>No hay datos por mostrar</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="columns">
-        <div class="column">
-          <div class="card">
-            <header class="card-header">
-              <p class="card-header-title">
                 Bitácoras
               </p>
             </header>
@@ -138,6 +112,179 @@
           </div>
         </div>
       </div>
+      <!-- Recorridos por mes -->
+      <div class="columns">
+        <div class="column">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Recorridos por mes
+              </p>
+            </header>
+            <div class="card-content">
+              <div
+                v-if="seriesPlansPerMoth[0].data.length > 0"
+                class="card-content is-flex is-justify-content-center"
+              >
+                <apexchart
+                  width="800"
+                  type="bar"
+                  :options="optionsPlansPerMonth"
+                  :series="seriesPlansPerMoth"
+                />
+              </div>
+              <div v-else class="card-content has-text-centered">
+                <p>No hay datos por mostrar</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Recorridos filtrado por ilicito y Ha -->
+      <div class="columns" />
+      <!-- Recorridos filtrado por zonas y subzonas -->
+      <div class="columns">
+        <div class="column">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Denuncias por zonas y subzonas
+              </p>
+            </header>
+            <div class="card-content">
+              <div class="columns">
+                <div class="column">
+                  <b-navbar>
+                    <template slot="brand">
+                      <b-navbar-item>
+                        <b-field horizontal label="Zonas">
+                          <b-select
+                            v-model="selectZone"
+                            placeholder="Seleccione una opción"
+                          >
+                            <option
+                              v-for="option in zones"
+                              :key="option.idzoning"
+                              :value="option.idzoning"
+                            >
+                              {{ option.description }}
+                            </option>
+                          </b-select>
+                        </b-field>
+                      </b-navbar-item>
+                      <b-navbar-item>
+                        <b-field horizontal label="Subzonas">
+                          <b-select
+                            v-model="selectSubZone"
+                            placeholder="Seleccione una opción"
+                          >
+                            <option
+                              v-for="option in subZones"
+                              :key="option.idsubzoning"
+                              :value="option.idsubzoning"
+                            >
+                              {{ option.description }}
+                            </option>
+                          </b-select>
+                        </b-field>
+                      </b-navbar-item>
+                    </template>
+                    <template #end>
+                      <b-navbar-item>
+                        <b-field>
+                          <b-button @click="getComplaintsPerZones(selectZone, selectSubZone, selectYear.fecha_captura)">
+                            Filtrar
+                          </b-button>
+                        </b-field>
+                      </b-navbar-item>
+                    </template>
+                  </b-navbar>
+                  <div
+                    v-if="seriesComplaintsPerMonth[0].data.length > 0"
+                    class="card-content is-flex is-justify-content-center"
+                  >
+                    <apexchart
+                      width="800"
+                      type="bar"
+                      :options="optionsComplaintsPerMonth"
+                      :series="seriesComplaintsPerMonth"
+                    />
+                  </div>
+                  <div v-else class="card-content has-text-centered">
+                    <p>No hay datos por mostrar</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Denuncias filtrado por ilicitos -->
+      <div class="columns">
+        <div class="column">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Denuncias por ilícito denunciado
+              </p>
+            </header>
+            <div class="card-content">
+              <div class="columns">
+                <div class="column">
+                  <b-navbar>
+                    <template slot="brand">
+                      <b-navbar-item>
+                        <b-field horizontal label="Ilícitos">
+                          <b-select
+                            v-model="selectIlicit"
+                            placeholder="Seleccione una opción"
+                            :expanded="true"
+                          >
+                            <option
+                              v-for="option in ilicits"
+                              :key="option.idilicit_denounced"
+                              :value="option.idilicit_denounced"
+                            >
+                              {{ option.description }}
+                            </option>
+                          </b-select>
+                        </b-field>
+                      </b-navbar-item>
+                    </template>
+                    <template #end>
+                      <b-navbar-item>
+                        <b-field>
+                          <b-button @click="getComplaintsPerIlicits(selectIlicit, selectYear.fecha_captura)">
+                            Filtrar
+                          </b-button>
+                        </b-field>
+                      </b-navbar-item>
+                    </template>
+                  </b-navbar>
+                  <div
+                    v-if="seriesComplaintsIlicitsPerMonth[0].data.length > 0"
+                    class="card-content is-flex is-justify-content-center"
+                  >
+                    <apexchart
+                      width="800"
+                      type="bar"
+                      :options="optionsComplaintsIlicitsPerMonth"
+                      :series="seriesComplaintsIlicitsPerMonth"
+                    />
+                  </div>
+                  <div v-else class="card-content has-text-centered">
+                    <p>No hay datos por mostrar</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Denuncias filtrado por presentadas y concluidas -->
+      <div class="columns" />
+      <!-- Opiniones técnicas filtrado por tipo de resultado -->
+      <div class="columns" />
     </div>
     <div />
   </div>
@@ -153,6 +300,10 @@ export default {
       selectYear: {},
       formMeta: {},
       planifications: [],
+      zones: [],
+      subZones: [],
+      selectZone: null,
+      selectSubZone: null,
       optionsPlanification: {
         labels: ['En proceso', 'Finalizado', 'Por comenzar'],
         chart: {
@@ -253,12 +404,193 @@ export default {
       ],
       seriesBinnacles: [],
       optionsBinnacle: {
-        labels: ['Revisado', 'En revisión', 'Por revisar']
+        labels: ['Revisado', 'En revisión', 'Por revisar'],
+        chart: {
+          toolbar: {
+            show: true,
+            offsetX: 0,
+            offsetY: 0,
+            tools: {
+              download: true,
+              selection: true,
+              zoom: true,
+              zoomin: true,
+              zoomout: true,
+              pan: true,
+              reset: true,
+              customIcons: []
+            },
+            export: {
+              csv: {
+                filename: 'bitácoras-por-estado',
+                columnDelimiter: ',',
+                headerCategory: 'Estado',
+                headerValue: 'Bitácoras',
+                dateFormatter (timestamp) {
+                  return new Date(timestamp).toDateString()
+                }
+              },
+              svg: {
+                filename: 'bitácoras-por-estado'
+              },
+              png: {
+                filename: 'bitácoras-por-estado'
+              }
+            }
+          }
+        }
       },
-      binnacles: []
+      binnacles: [],
+      optionsComplaintsPerMonth: {
+        labels: [
+          'Enero',
+          'Febrero',
+          'Marzo',
+          'Abril',
+          'Mayo',
+          'Junio',
+          'Julio',
+          'Agosto',
+          'Septiembre',
+          'Octubre',
+          'Noviembre',
+          'Diciembre'
+        ],
+        yaxis: {
+          labels: {
+            formatter (value) {
+              return parseInt(value)
+            }
+          }
+        },
+        tooltip: {
+          y: {
+            formatter (val) {
+              return parseInt(val) + ' registros'
+            }
+          }
+        },
+        chart: {
+          toolbar: {
+            show: true,
+            offsetX: 0,
+            offsetY: 0,
+            tools: {
+              download: true,
+              selection: true,
+              zoom: true,
+              zoomin: true,
+              zoomout: true,
+              pan: true,
+              reset: true,
+              customIcons: []
+            },
+            export: {
+              csv: {
+                filename: 'bitácoras-por-zona-y-subzona',
+                columnDelimiter: ',',
+                headerCategory: 'Mes',
+                headerValue: 'Bitácoras',
+                dateFormatter (timestamp) {
+                  return new Date(timestamp).toDateString()
+                }
+              },
+              svg: {
+                filename: 'bitácoras-por-zona-y-subzona'
+              },
+              png: {
+                filename: 'bitácoras-por-zona-y-subzona'
+              }
+            }
+          }
+        }
+      },
+      seriesComplaintsPerMonth: [
+        {
+          name: 'Denuncias',
+          data: []
+        }
+      ],
+      complaints: [],
+      complaintsIlicits: [],
+      ilicits: [],
+      selectIlicit: null,
+      optionsComplaintsIlicitsPerMonth: {
+        labels: [
+          'Enero',
+          'Febrero',
+          'Marzo',
+          'Abril',
+          'Mayo',
+          'Junio',
+          'Julio',
+          'Agosto',
+          'Septiembre',
+          'Octubre',
+          'Noviembre',
+          'Diciembre'
+        ],
+        yaxis: {
+          labels: {
+            formatter (value) {
+              return parseInt(value)
+            }
+          }
+        },
+        tooltip: {
+          y: {
+            formatter (val) {
+              return parseInt(val) + ' registros'
+            }
+          }
+        },
+        chart: {
+          toolbar: {
+            show: true,
+            offsetX: 0,
+            offsetY: 0,
+            tools: {
+              download: true,
+              selection: true,
+              zoom: true,
+              zoomin: true,
+              zoomout: true,
+              pan: true,
+              reset: true,
+              customIcons: []
+            },
+            export: {
+              csv: {
+                filename: 'denuncias-por-ilícito',
+                columnDelimiter: ',',
+                headerCategory: 'Mes',
+                headerValue: 'Denuncias',
+                dateFormatter (timestamp) {
+                  return new Date(timestamp).toDateString()
+                }
+              },
+              svg: {
+                filename: 'denuncias-por-ilícito'
+              },
+              png: {
+                filename: 'denuncias-por-ilícito'
+              }
+            }
+          }
+        }
+      },
+      seriesComplaintsIlicitsPerMonth: [
+        {
+          name: 'Denuncias',
+          data: []
+        }
+      ]
     }
   },
   async mounted () {
+    this.getZonings()
+    this.getSubZonings()
+    this.getIlicits()
     await this.getMetas()
     await this.viewYearData()
   },
@@ -313,10 +645,11 @@ export default {
     async viewYearData () {
       this.isLoading = true
       this.seriesPlansPerMoth[0].data = []
-      // await this.getComplaints(this.selectYear.fecha_captura)
       // await this.getTechOp(this.selectYear.fecha_captura)
       await this.getBinnacles(this.selectYear.fecha_captura)
       await this.getPlanifications(this.selectYear.fecha_captura)
+      await this.getComplaintsPerZones(null, null, this.selectYear.fecha_captura)
+      await this.getComplaintsPerIlicits(null, this.selectYear.fecha_captura)
       // this.getVegetation()
       // this.getInfoDonnut()
       this.isLoading = false
@@ -404,6 +737,211 @@ export default {
         ]
       } catch (error) {
         // console.log(error)
+      }
+    },
+    // Denuncias
+    async getComplaintsPerZones (zone, subzone, selectYear) {
+      // console.log(zone)
+      // console.log(subzone)
+      // console.log(selectYear)
+      this.seriesComplaintsPerMonth[0].data = []
+      let filterFlag = false
+      if (zone || subzone) {
+        filterFlag = true
+      } else {
+        filterFlag = false
+      }
+      try {
+        const res = await this.$store.dispatch(
+          'modules/complaint/getComplaints'
+        )
+        this.complaints = []
+        let temporalComplaints = []
+        const resTemporal = res.filter((x) => {
+          if (selectYear) {
+            const temporalDate = new Date(x.date_reception)
+            if (temporalDate.getFullYear() === Number(selectYear)) {
+              return x
+            }
+          } else {
+            const temporalDate = new Date(x.date_reception)
+            const today = new Date()
+            if (temporalDate.getFullYear() === today.getFullYear()) {
+              return x
+            }
+          }
+        })
+        // console.log(resTemporal)
+        if (zone) {
+          temporalComplaints = resTemporal.filter((x) => {
+            if (x.list_subzoning_complaint) {
+              const temporal = x.list_subzoning_complaint.filter(
+                (x) => x.idzoning === zone
+              )
+              if (temporal.length > 0) {
+                return x
+              }
+            }
+          })
+        }
+        if (subzone) {
+          if (temporalComplaints.length > 0) {
+            temporalComplaints = temporalComplaints.filter((x) => {
+              const temporal = x.list_subzoning_complaint.filter(
+                (x) => x.idsubzoning === subzone
+              )
+              if (temporal.length > 0) {
+                return x
+              }
+            })
+          } else {
+            temporalComplaints = resTemporal.filter((x) => {
+              const temporal = x.list_subzoning_complaint.filter(
+                (x) => x.idsubzoning === subzone
+              )
+              if (temporal.length > 0) {
+                return x
+              }
+            })
+          }
+        }
+        if (temporalComplaints.length > 0) {
+          for (let i = 0; i < 12; i++) {
+            const temporalFilter = temporalComplaints.filter((x) => {
+              const temporalDate = new Date(x.date_reception)
+              if (temporalDate.getMonth() === i) {
+                return x
+              }
+            })
+            this.seriesComplaintsPerMonth[0].data.push(
+              parseInt(temporalFilter.length)
+            )
+          }
+          this.complaints = temporalComplaints
+        } else if (!filterFlag) {
+          for (let i = 0; i < 12; i++) {
+            const temporalFilter = resTemporal.filter((x) => {
+              const temporalDate = new Date(x.date_reception)
+              if (temporalDate.getMonth() === i) {
+                return x
+              }
+            })
+            this.seriesComplaintsPerMonth[0].data.push(
+              parseInt(temporalFilter.length)
+            )
+          }
+          this.complaints = resTemporal
+          console.log(this.complaints)
+          console.log(this.seriesComplaintsPerMonth[0].data)
+        } else {
+          this.complaints = []
+          this.seriesComplaintsPerMonth[0].data = []
+        }
+      } catch (error) {
+        // // console.log(error)
+      }
+    },
+    async getComplaintsPerIlicits (ilicit, selectYear) {
+      // console.log(zone)
+      // console.log(subzone)
+      // console.log(selectYear)
+      // console.log('hola')
+      this.seriesComplaintsIlicitsPerMonth[0].data = []
+      let filterFlag = false
+      if (ilicit) {
+        filterFlag = true
+      } else {
+        filterFlag = false
+      }
+      try {
+        const res = await this.$store.dispatch(
+          'modules/complaint/getComplaints'
+        )
+        this.complaints = []
+        let temporalComplaints = []
+        const resTemporal = res.filter((x) => {
+          if (selectYear) {
+            const temporalDate = new Date(x.date_reception)
+            if (temporalDate.getFullYear() === Number(selectYear)) {
+              return x
+            }
+          } else {
+            const temporalDate = new Date(x.date_reception)
+            const today = new Date()
+            if (temporalDate.getFullYear() === today.getFullYear()) {
+              return x
+            }
+          }
+        })
+        // console.log(resTemporal)
+        if (ilicit) {
+          // console.log(ilicit)
+          temporalComplaints = resTemporal.filter(x => parseInt(x.idilicit_denounced) === parseInt(ilicit))
+        }
+        console.log(temporalComplaints)
+        if (temporalComplaints.length > 0) {
+          for (let i = 0; i < 12; i++) {
+            const temporalFilter = temporalComplaints.filter((x) => {
+              const temporalDate = new Date(x.date_reception)
+              if (temporalDate.getMonth() === i) {
+                return x
+              }
+            })
+            this.seriesComplaintsIlicitsPerMonth[0].data.push(
+              parseInt(temporalFilter.length)
+            )
+          }
+          this.complaintsIlicits = temporalComplaints
+        } else if (!filterFlag) {
+          for (let i = 0; i < 12; i++) {
+            const temporalFilter = resTemporal.filter((x) => {
+              const temporalDate = new Date(x.date_reception)
+              if (temporalDate.getMonth() === i) {
+                return x
+              }
+            })
+            this.seriesComplaintsIlicitsPerMonth[0].data.push(
+              parseInt(temporalFilter.length)
+            )
+          }
+          this.complaintsIlicits = resTemporal
+          console.log(resTemporal)
+          console.log(this.seriesComplaintsIlicitsPerMonth[0].data)
+        } else {
+          console.log(resTemporal)
+          this.complaintsIlicits = []
+          this.seriesComplaintsIlicitsPerMonth[0].data = []
+        }
+      } catch (error) {
+        // // console.log(error)
+      }
+    },
+    // Zonas y subzonas
+    async getSubZonings () {
+      try {
+        const res = await this.$store.dispatch('modules/zones/getSubZones')
+        console.log(res)
+        this.subZones = res
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getZonings () {
+      try {
+        const res = await this.$store.dispatch('modules/zones/getZones')
+        console.log(res)
+        this.zones = res
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    // Ilicitos
+    async getIlicits () {
+      try {
+        this.ilicits = await this.$store.dispatch('modules/ilicitDenounced/getIlicitDenounceds')
+        console.log(this.ilicits)
+      } catch (error) {
+        console.log(error)
       }
     }
   },

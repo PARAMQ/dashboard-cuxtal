@@ -129,7 +129,7 @@
                     </template>
                   </b-taginput>
                 </b-field>
-                <b-field label="Participantes">
+                <b-field label="Ciudadanos">
                   <b-taginput
                     v-model="form.participants"
                     :data="participantsFilter"
@@ -570,6 +570,7 @@ export default {
             // console.log(binnacle)
             binnacle.list_vegetable_affected = this.vegetableAffected.map((x) => {
               x.idbinnacle = idBinnacle
+              x.description = ''
               return x
             })
             await this.updateBinnacle(binnacle)

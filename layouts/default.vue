@@ -26,7 +26,7 @@
     />
     -->
     <!--<title-bar :title-stack="titleStack" />-->
-    <nuxt />
+    <nuxt class="content" />
     <!--<aside-right />-->
     <footer-bar />
   </div>

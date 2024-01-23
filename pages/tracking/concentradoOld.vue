@@ -58,7 +58,6 @@
         </div>
       </div>
     </div>
-    <!--
     <div class="container m-2">
       <div class="columns m-2">
         <div class="column">
@@ -250,7 +249,6 @@
         </div>
       </div>
     </div>
-    -->
   </div>
 </template>
 
