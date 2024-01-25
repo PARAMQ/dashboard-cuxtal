@@ -282,11 +282,62 @@
         </div>
       </div>
       <!-- Denuncias filtrado por presentadas y concluidas -->
-      <div class="columns" />
+      <div class="columns">
+        <div class="column">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Denuncias si son o no concluidas
+              </p>
+            </header>
+            <div class="card-content">
+              <div
+                v-if="seriesComplaintsFinish.length > 0"
+                class="card-content is-flex is-justify-content-center"
+              >
+                <apexchart
+                  width="380"
+                  type="donut"
+                  :options="optionsComplaintsFinish"
+                  :series="seriesComplaintsFinish"
+                />
+              </div>
+              <div v-else class="card-content has-text-centered">
+                <p>No hay datos por mostrar</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- Opiniones técnicas filtrado por tipo de resultado -->
-      <div class="columns" />
+      <div class="columns">
+        <div class="column">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Opiniones técnicas por tipo de respuesta
+              </p>
+            </header>
+            <div class="card-content">
+              <div
+                v-if="seriesOp.length > 0"
+                class="card-content is-flex is-justify-content-center"
+              >
+                <apexchart
+                  width="380"
+                  type="donut"
+                  :options="optionsOp"
+                  :series="seriesOp"
+                />
+              </div>
+              <div v-else class="card-content has-text-centered">
+                <p>No hay datos por mostrar</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div />
   </div>
 </template>
 
@@ -585,7 +636,84 @@ export default {
           data: []
         }
       ],
-      resOps: []
+      resOps: [],
+      filterOps: [],
+      optionsOp: {
+        labels: ['Positivo', 'Negativo', 'Condicionado', 'Otro'],
+        chart: {
+          toolbar: {
+            show: true,
+            offsetX: 0,
+            offsetY: 0,
+            tools: {
+              download: true,
+              selection: true,
+              zoom: true,
+              zoomin: true,
+              zoomout: true,
+              pan: true,
+              reset: true,
+              customIcons: []
+            },
+            export: {
+              csv: {
+                filename: 'opiniones-tecnicas-por-respuesta',
+                columnDelimiter: ',',
+                headerCategory: 'Respuesta',
+                headerValue: 'Opiniones técnicas',
+                dateFormatter (timestamp) {
+                  return new Date(timestamp).toDateString()
+                }
+              },
+              svg: {
+                filename: 'opiniones-tecnicas-por-respuesta'
+              },
+              png: {
+                filename: 'opiniones-tecnicas-por-respuesta'
+              }
+            }
+          }
+        }
+      },
+      seriesOp: [],
+      optionsComplaintsFinish: {
+        labels: ['Presentados', 'Concluido'],
+        chart: {
+          toolbar: {
+            show: true,
+            offsetX: 0,
+            offsetY: 0,
+            tools: {
+              download: true,
+              selection: true,
+              zoom: true,
+              zoomin: true,
+              zoomout: true,
+              pan: true,
+              reset: true,
+              customIcons: []
+            },
+            export: {
+              csv: {
+                filename: 'denuncias-concluidas-y-no-concluidas',
+                columnDelimiter: ',',
+                headerCategory: 'Respuesta',
+                headerValue: 'Opiniones técnicas',
+                dateFormatter (timestamp) {
+                  return new Date(timestamp).toDateString()
+                }
+              },
+              svg: {
+                filename: 'denuncias-concluidas-y-no-concluidas'
+              },
+              png: {
+                filename: 'denuncias-concluidas-y-no-concluidas'
+              }
+            }
+          }
+        }
+      },
+      seriesComplaintsFinish: []
     }
   },
   async mounted () {
@@ -613,7 +741,7 @@ export default {
           this.selectYear = null
         }
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     editMeta () {
@@ -640,7 +768,7 @@ export default {
           this.formMeta = {}
           this.getMetas()
         } catch (error) {
-          console.log(error)
+          // console.log(error)
         }
       }
     },
@@ -653,6 +781,7 @@ export default {
       await this.getComplaintsPerZones(null, null, this.selectYear.fecha_captura)
       await this.getComplaintsPerIlicits(null, this.selectYear.fecha_captura)
       await this.getOp(this.selectYear.fecha_captura)
+      await this.getComplaintsPerResposne(this.selectYear.fecha_captura)
       // this.getVegetation()
       // this.getInfoDonnut()
       this.isLoading = false
@@ -688,7 +817,7 @@ export default {
           Number(porRevisar.length)
         ]
       } catch (error) {
-        // // console.log(error)
+        // // // console.log(error)
       }
     },
     // Recorridos
@@ -719,7 +848,7 @@ export default {
         ])
         this.planifications = res
         this.seriesPlansPerMoth[0].data = []
-        // console.log(res)
+        // // console.log(res)
         for (let i = 0; i < 12; i++) {
           const temporalFilter = res.filter((x) => {
             const temporalDate = new Date(x.start_date)
@@ -739,14 +868,14 @@ export default {
           Number(activePlanification.length)
         ]
       } catch (error) {
-        // console.log(error)
+        // // console.log(error)
       }
     },
-    // Denuncias
+    // Denuncias por zona y subzona
     async getComplaintsPerZones (zone, subzone, selectYear) {
-      // console.log(zone)
-      // console.log(subzone)
-      // console.log(selectYear)
+      // // console.log(zone)
+      // // console.log(subzone)
+      // // console.log(selectYear)
       this.seriesComplaintsPerMonth[0].data = []
       let filterFlag = false
       if (zone || subzone) {
@@ -774,7 +903,7 @@ export default {
             }
           }
         })
-        // console.log(resTemporal)
+        // // console.log(resTemporal)
         if (zone) {
           temporalComplaints = resTemporal.filter((x) => {
             if (x.list_subzoning_complaint) {
@@ -834,21 +963,22 @@ export default {
             )
           }
           this.complaints = resTemporal
-          console.log(this.complaints)
-          console.log(this.seriesComplaintsPerMonth[0].data)
+          // console.log(this.complaints)
+          // console.log(this.seriesComplaintsPerMonth[0].data)
         } else {
           this.complaints = []
           this.seriesComplaintsPerMonth[0].data = []
         }
       } catch (error) {
-        // // console.log(error)
+        // // // console.log(error)
       }
     },
+    // Denuncias por ilicitio denunciado
     async getComplaintsPerIlicits (ilicit, selectYear) {
-      // console.log(zone)
-      // console.log(subzone)
-      // console.log(selectYear)
-      // console.log('hola')
+      // // console.log(zone)
+      // // console.log(subzone)
+      // // console.log(selectYear)
+      // // console.log('hola')
       this.seriesComplaintsIlicitsPerMonth[0].data = []
       let filterFlag = false
       if (ilicit) {
@@ -876,12 +1006,12 @@ export default {
             }
           }
         })
-        // console.log(resTemporal)
+        // // console.log(resTemporal)
         if (ilicit) {
-          // console.log(ilicit)
+          // // console.log(ilicit)
           temporalComplaints = resTemporal.filter(x => parseInt(x.idilicit_denounced) === parseInt(ilicit))
         }
-        console.log(temporalComplaints)
+        // console.log(temporalComplaints)
         if (temporalComplaints.length > 0) {
           for (let i = 0; i < 12; i++) {
             const temporalFilter = temporalComplaints.filter((x) => {
@@ -908,56 +1038,102 @@ export default {
             )
           }
           this.complaintsIlicits = resTemporal
-          console.log(resTemporal)
-          console.log(this.seriesComplaintsIlicitsPerMonth[0].data)
+          // console.log(resTemporal)
+          // console.log(this.seriesComplaintsIlicitsPerMonth[0].data)
         } else {
-          console.log(resTemporal)
+          // console.log(resTemporal)
           this.complaintsIlicits = []
           this.seriesComplaintsIlicitsPerMonth[0].data = []
         }
       } catch (error) {
-        // // console.log(error)
+        // // // console.log(error)
+      }
+    },
+    // Dencuncias por fecha procesada
+    async getComplaintsPerResposne (selectYear) {
+      this.seriesComplaintsFinish = []
+      try {
+        const res = await this.$store.dispatch(
+          'modules/complaint/getComplaints'
+        )
+        const resTemporal = res.filter((x) => {
+          if (selectYear) {
+            const temporalDate = new Date(x.date_reception)
+            if (temporalDate.getFullYear() === Number(selectYear)) {
+              return x
+            }
+          } else {
+            const temporalDate = new Date(x.date_reception)
+            const today = new Date()
+            if (temporalDate.getFullYear() === today.getFullYear()) {
+              return x
+            }
+          }
+        })
+        const responseDate = resTemporal.filter((x) => {
+          if (x.response_date) {
+            return x
+          }
+        })
+        const notResponseDate = resTemporal.filter((x) => {
+          if (!x.response_date) {
+            return x
+          }
+        })
+        if (notResponseDate.length > 0) {
+          this.seriesComplaintsFinish.push(notResponseDate.length)
+        } else {
+          this.seriesComplaintsFinish.push(0)
+        }
+        if (responseDate.length > 0) {
+          this.seriesComplaintsFinish.push(responseDate.length)
+        } else {
+          this.seriesComplaintsFinish.push(0)
+        }
+      } catch (error) {
+        console.log(error)
       }
     },
     // Zonas y subzonas
     async getSubZonings () {
       try {
         const res = await this.$store.dispatch('modules/zones/getSubZones')
-        console.log(res)
+        // console.log(res)
         this.subZones = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     async getZonings () {
       try {
         const res = await this.$store.dispatch('modules/zones/getZones')
-        console.log(res)
+        // console.log(res)
         this.zones = res
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     // Ilicitos
     async getIlicits () {
       try {
         this.ilicits = await this.$store.dispatch('modules/ilicitDenounced/getIlicitDenounceds')
-        console.log(this.ilicits)
+        // console.log(this.ilicits)
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     // tipos de respuestas de opiniones técnicas
     async getResponsesOp () {
       try {
         this.resOps = await this.$store.dispatch('modules/responseOp/getResponseOps')
-        console.log(this.resOps)
+        // console.log(this.resOps)
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     // Opiniones técnicas
     async getOp (selectYear) {
+      this.seriesOp = []
       try {
         const res = await this.$store.dispatch('modules/technicalOp/getTechnicalOps')
         const opsYear = res.filter((x) => {
@@ -967,11 +1143,22 @@ export default {
           }
         })
         for (const i in this.resOps) {
-          
+          console.log(this.resOps[i])
+          const temporal = opsYear.filter((x) => {
+            if (this.resOps[i].description === x.response_op) {
+              return x
+            }
+          })
+          if (temporal.length > 0) {
+            this.seriesOp.push(temporal.length)
+          } else {
+            this.seriesOp.push(0)
+          }
+          // console.log(temporal)
         }
-        console.log(opsYear)
+        // console.log(temporal)
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     }
   },
