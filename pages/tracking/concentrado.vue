@@ -584,13 +584,15 @@ export default {
           name: 'Denuncias',
           data: []
         }
-      ]
+      ],
+      resOps: []
     }
   },
   async mounted () {
     this.getZonings()
     this.getSubZonings()
     this.getIlicits()
+    this.getResponsesOp()
     await this.getMetas()
     await this.viewYearData()
   },
@@ -650,6 +652,7 @@ export default {
       await this.getPlanifications(this.selectYear.fecha_captura)
       await this.getComplaintsPerZones(null, null, this.selectYear.fecha_captura)
       await this.getComplaintsPerIlicits(null, this.selectYear.fecha_captura)
+      await this.getOp(this.selectYear.fecha_captura)
       // this.getVegetation()
       // this.getInfoDonnut()
       this.isLoading = false
@@ -940,6 +943,33 @@ export default {
       try {
         this.ilicits = await this.$store.dispatch('modules/ilicitDenounced/getIlicitDenounceds')
         console.log(this.ilicits)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    // tipos de respuestas de opiniones técnicas
+    async getResponsesOp () {
+      try {
+        this.resOps = await this.$store.dispatch('modules/responseOp/getResponseOps')
+        console.log(this.resOps)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    // Opiniones técnicas
+    async getOp (selectYear) {
+      try {
+        const res = await this.$store.dispatch('modules/technicalOp/getTechnicalOps')
+        const opsYear = res.filter((x) => {
+          const temporalDate = new Date(x.application_date)
+          if (temporalDate.getFullYear() === Number(selectYear)) {
+            return x
+          }
+        })
+        for (const i in this.resOps) {
+          
+        }
+        console.log(opsYear)
       } catch (error) {
         console.log(error)
       }
