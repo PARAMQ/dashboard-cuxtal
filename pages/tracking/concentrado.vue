@@ -967,7 +967,7 @@ export default {
           }
         })
         for (const i in this.resOps) {
-          
+          console.log(i)
         }
         console.log(opsYear)
       } catch (error) {
