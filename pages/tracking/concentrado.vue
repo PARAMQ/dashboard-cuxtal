@@ -280,6 +280,31 @@
             </div>
           </div>
         </div>
+        <div class="column">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Denuncias por ilícito
+              </p>
+            </header>
+            <div class="card-content">
+              <div
+                v-if="seriesComplaintsPerIllicit.length > 0"
+                class="card-content is-flex is-justify-content-center"
+              >
+                <apexchart
+                  width="380"
+                  type="donut"
+                  :options="optionsComplaintsPerIlicit"
+                  :series="seriesComplaintsPerIllicit"
+                />
+              </div>
+              <div v-else class="card-content has-text-centered">
+                <p>No hay datos por mostrar</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <!-- Denuncias filtrado por presentadas y concluidas -->
       <div class="columns">
@@ -713,7 +738,59 @@ export default {
           }
         }
       },
-      seriesComplaintsFinish: []
+      seriesComplaintsFinish: [],
+      optionsComplaintsPerIlicit: {
+        labels: [],
+        yaxis: {
+          labels: {
+            formatter (value) {
+              return parseInt(value)
+            }
+          }
+        },
+        tooltip: {
+          y: {
+            formatter (val) {
+              return parseInt(val) + ' registros'
+            }
+          }
+        },
+        chart: {
+          toolbar: {
+            show: true,
+            offsetX: 0,
+            offsetY: 0,
+            tools: {
+              download: true,
+              selection: true,
+              zoom: true,
+              zoomin: true,
+              zoomout: true,
+              pan: true,
+              reset: true,
+              customIcons: []
+            },
+            export: {
+              csv: {
+                filename: 'denuncias-por-ilícito',
+                columnDelimiter: ',',
+                headerCategory: 'Mes',
+                headerValue: 'Denuncias',
+                dateFormatter (timestamp) {
+                  return new Date(timestamp).toDateString()
+                }
+              },
+              svg: {
+                filename: 'denuncias-por-ilícito'
+              },
+              png: {
+                filename: 'denuncias-por-ilícito'
+              }
+            }
+          }
+        }
+      },
+      seriesComplaintsPerIllicit: []
     }
   },
   async mounted () {
@@ -782,6 +859,7 @@ export default {
       await this.getComplaintsPerIlicits(null, this.selectYear.fecha_captura)
       await this.getOp(this.selectYear.fecha_captura)
       await this.getComplaintsPerResposne(this.selectYear.fecha_captura)
+      await this.complaintsPerIlicit(this.selectYear.fecha_captura)
       // this.getVegetation()
       // this.getInfoDonnut()
       this.isLoading = false
@@ -1047,6 +1125,42 @@ export default {
         }
       } catch (error) {
         // // // console.log(error)
+      }
+    },
+    // Denuncias por ilicito denunciado
+    async complaintsPerIlicit (selectYear) {
+      try {
+        const res = await this.$store.dispatch(
+          'modules/complaint/getComplaints'
+        )
+        const resTemporal = res.filter((x) => {
+          if (selectYear) {
+            const temporalDate = new Date(x.date_reception)
+            if (temporalDate.getFullYear() === Number(selectYear)) {
+              return x
+            }
+          } else {
+            const temporalDate = new Date(x.date_reception)
+            const today = new Date()
+            if (temporalDate.getFullYear() === today.getFullYear()) {
+              return x
+            }
+          }
+        })
+        console.log('hola')
+        console.log(this.ilicits)
+        this.optionsComplainstPerIlicit.labels = []
+        this.seriesComplaintsPerIllicit = []
+        console.log(this.ilicits)
+        this.ilicits.forEach((x) => {
+          console.log(x)
+          this.optionsComplainstPerIlicit.labels.push(x.description)
+          const temporalFilter = resTemporal.filter(y => y.idilicit_denounced === x.idilicit_denounced)
+          this.seriesComplaintsPerIllicit.push(temporalFilter.length)
+        })
+        console.log(this.seriesComplaintsPerIllicit)
+      } catch (error) {
+        // console.log(error)
       }
     },
     // Dencuncias por fecha procesada
