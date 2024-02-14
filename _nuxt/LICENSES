@@ -19,9 +19,6 @@
  */
 
 
-/*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
-
-
 /*!
  * Chart.js v2.9.4
  * https://www.chartjs.org
@@ -154,6 +151,9 @@ PERFORMANCE OF THIS SOFTWARE.
  * @license MIT
  * @copyright (c) 2017-2023, Vladimir Vershinin <ghettovoice@gmail.com>
  */
+
+
+/*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 
 
 /*! @preserve
