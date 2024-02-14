@@ -280,6 +280,8 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="columns">
         <div class="column">
           <div class="card">
             <header class="card-header">
@@ -293,7 +295,7 @@
                 class="card-content is-flex is-justify-content-center"
               >
                 <apexchart
-                  width="380"
+                  width="700"
                   type="donut"
                   :options="optionsComplaintsPerIlicit"
                   :series="seriesComplaintsPerIllicit"
@@ -325,6 +327,31 @@
                   type="donut"
                   :options="optionsComplaintsFinish"
                   :series="seriesComplaintsFinish"
+                />
+              </div>
+              <div v-else class="card-content has-text-centered">
+                <p>No hay datos por mostrar</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Denuncias por tipo de respuesta
+              </p>
+            </header>
+            <div class="card-content">
+              <div
+                v-if="seriesComplaintsPerResponseOptions.length > 0"
+                class="card-content is-flex is-justify-content-center"
+              >
+                <apexchart
+                  width="380"
+                  type="donut"
+                  :options="optionsComplaintsPerResponseOptions"
+                  :series="seriesComplaintsPerResponseOptions"
                 />
               </div>
               <div v-else class="card-content has-text-centered">
@@ -702,7 +729,7 @@ export default {
       },
       seriesOp: [],
       optionsComplaintsFinish: {
-        labels: ['Presentados', 'Concluido'],
+        labels: ['En proceso', 'Finalizado'],
         chart: {
           toolbar: {
             show: true,
@@ -790,10 +817,64 @@ export default {
           }
         }
       },
-      seriesComplaintsPerIllicit: []
+      seriesComplaintsPerIllicit: [],
+      resComplaint: [],
+      optionsComplaintsPerResponseOptions: {
+        labels: [],
+        yaxis: {
+          labels: {
+            formatter (value) {
+              return parseInt(value)
+            }
+          }
+        },
+        tooltip: {
+          y: {
+            formatter (val) {
+              return parseInt(val) + ' registros'
+            }
+          }
+        },
+        chart: {
+          toolbar: {
+            show: true,
+            offsetX: 0,
+            offsetY: 0,
+            tools: {
+              download: true,
+              selection: true,
+              zoom: true,
+              zoomin: true,
+              zoomout: true,
+              pan: true,
+              reset: true,
+              customIcons: []
+            },
+            export: {
+              csv: {
+                filename: 'denuncias-por-tipo-respuesta',
+                columnDelimiter: ',',
+                headerCategory: 'Mes',
+                headerValue: 'Denuncias',
+                dateFormatter (timestamp) {
+                  return new Date(timestamp).toDateString()
+                }
+              },
+              svg: {
+                filename: 'denuncias-por-tipo-respuesta'
+              },
+              png: {
+                filename: 'denuncias-por-tipo-respuesta'
+              }
+            }
+          }
+        }
+      },
+      seriesComplaintsPerResponseOptions: []
     }
   },
   async mounted () {
+    this.getResponsesComplaint()
     this.getZonings()
     this.getSubZonings()
     this.getIlicits()
@@ -860,6 +941,7 @@ export default {
       await this.getOp(this.selectYear.fecha_captura)
       await this.getComplaintsPerResposne(this.selectYear.fecha_captura)
       await this.complaintsPerIlicit(this.selectYear.fecha_captura)
+      await this.getComplaintsPerResponseOptions(this.selectYear.fecha_captura)
       // this.getVegetation()
       // this.getInfoDonnut()
       this.isLoading = false
@@ -1147,18 +1229,50 @@ export default {
             }
           }
         })
-        console.log('hola')
-        console.log(this.ilicits)
-        this.optionsComplainstPerIlicit.labels = []
+        this.optionsComplaintsPerIlicit.labels = []
         this.seriesComplaintsPerIllicit = []
-        console.log(this.ilicits)
         this.ilicits.forEach((x) => {
-          console.log(x)
-          this.optionsComplainstPerIlicit.labels.push(x.description)
-          const temporalFilter = resTemporal.filter(y => y.idilicit_denounced === x.idilicit_denounced)
+          this.optionsComplaintsPerIlicit.labels.push(x.description)
+          const temporalFilter = resTemporal.filter((y) => {
+            return y.idilicit_denounced === x.idilicit_denounced
+          })
           this.seriesComplaintsPerIllicit.push(temporalFilter.length)
         })
-        console.log(this.seriesComplaintsPerIllicit)
+      } catch (error) {
+        // console.log(error)
+      }
+    },
+    // Denuncias por tipo de respuesta
+    async getComplaintsPerResponseOptions (selectYear) {
+      try {
+        const res = await this.$store.dispatch(
+          'modules/complaint/getComplaints'
+        )
+        const resTemporal = res.filter((x) => {
+          if (selectYear) {
+            const temporalDate = new Date(x.date_reception)
+            if (temporalDate.getFullYear() === Number(selectYear)) {
+              return x
+            }
+          } else {
+            const temporalDate = new Date(x.date_reception)
+            const today = new Date()
+            if (temporalDate.getFullYear() === today.getFullYear()) {
+              return x
+            }
+          }
+        })
+        this.optionsComplaintsPerResponseOptions.labels = []
+        this.seriesComplaintsPerResponseOptions = []
+        this.resComplaint.forEach((x) => {
+          this.optionsComplaintsPerResponseOptions.labels.push(x.description)
+          const tempFilter = resTemporal.filter((y) => {
+            console.log(y)
+            return y.response === x.description
+          })
+          this.seriesComplaintsPerResponseOptions.push(tempFilter.length)
+        })
+        console.log(this.seriesComplaintsPerResponseOptions)
       } catch (error) {
         // console.log(error)
       }
@@ -1243,6 +1357,16 @@ export default {
         // console.log(this.resOps)
       } catch (error) {
         // console.log(error)
+      }
+    },
+    // tipos de respuestas de denuncias
+    async getResponsesComplaint () {
+      try {
+        this.resComplaint = await this.$store.dispatch(
+          'modules/response/getResponses'
+        )
+      } catch (error) {
+        // // console.log(error)
       }
     },
     // Opiniones técnicas
