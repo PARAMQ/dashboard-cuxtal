@@ -225,42 +225,65 @@
           <div class="card">
             <header class="card-header">
               <p class="card-header-title">
-                Denuncias por ilícito denunciado
+                Denuncias por ilícito
               </p>
             </header>
             <div class="card-content">
               <div class="columns">
                 <div class="column">
-                  <b-navbar>
-                    <template slot="brand">
-                      <b-navbar-item>
-                        <b-field horizontal label="Ilícitos">
-                          <b-select
-                            v-model="selectIlicit"
-                            placeholder="Seleccione una opción"
-                            :expanded="true"
-                          >
-                            <option
-                              v-for="option in ilicits"
-                              :key="option.idilicit_denounced"
-                              :value="option.idilicit_denounced"
-                            >
-                              {{ option.description }}
-                            </option>
-                          </b-select>
-                        </b-field>
-                      </b-navbar-item>
-                    </template>
-                    <template #end>
-                      <b-navbar-item>
-                        <b-field>
-                          <b-button @click="getComplaintsPerIlicits(selectIlicit, selectYear.fecha_captura)">
-                            Filtrar
-                          </b-button>
-                        </b-field>
-                      </b-navbar-item>
-                    </template>
-                  </b-navbar>
+                  <div class="container">
+                    <b-field horizontal label="Ilícitos">
+                      <b-select
+                        v-model="selectComplaintIlicit"
+                        placeholder="Seleccione una opción"
+                        :expanded="true"
+                      >
+                        <option
+                          v-for="option in ilicits"
+                          :key="option.idilicit_denounced"
+                          :value="option.idilicit_denounced"
+                        >
+                          {{ option.description }}
+                        </option>
+                      </b-select>
+                    </b-field>
+                    <b-field horizontal label="Zonas">
+                      <b-select
+                        v-model="selectZoneComplaintIlicit"
+                        placeholder="Seleccione una opción"
+                        :expanded="true"
+                      >
+                        <option
+                          v-for="option in zones"
+                          :key="option.idzoning"
+                          :value="option.idzoning"
+                        >
+                          {{ option.description }}
+                        </option>
+                      </b-select>
+                    </b-field>
+                    <b-field horizontal label="Subzonas">
+                      <b-select
+                        v-model="selectSubZoneComplaintIlicit"
+                        placeholder="Seleccione una opción"
+                      >
+                        <option
+                          v-for="option in subZones"
+                          :key="option.idsubzoning"
+                          :value="option.idsubzoning"
+                        >
+                          {{ option.description }}
+                        </option>
+                      </b-select>
+                    </b-field>
+                  </div>
+                  <div>
+                    <b-field>
+                      <b-button @click="getComplaintsPerIlicits(selectComplaintIlicit, selectZoneComplaintIlicit, selectSubZoneComplaintIlicit, selectYear.fecha_captura)">
+                        Filtrar
+                      </b-button>
+                    </b-field>
+                  </div>
                   <div
                     v-if="seriesComplaintsIlicitsPerMonth[0].data.length > 0"
                     class="card-content is-flex is-justify-content-center"
@@ -617,7 +640,9 @@ export default {
       complaints: [],
       complaintsIlicits: [],
       ilicits: [],
-      selectIlicit: null,
+      selectComplaintIlicit: null,
+      selectZoneComplaintIlicit: null,
+      selectSubZoneComplaintIlicit: null,
       optionsComplaintsIlicitsPerMonth: {
         labels: [
           'Enero',
@@ -937,7 +962,7 @@ export default {
       await this.getBinnacles(this.selectYear.fecha_captura)
       await this.getPlanifications(this.selectYear.fecha_captura)
       await this.getComplaintsPerZones(null, null, this.selectYear.fecha_captura)
-      await this.getComplaintsPerIlicits(null, this.selectYear.fecha_captura)
+      await this.getComplaintsPerIlicits(null, null, null, this.selectYear.fecha_captura)
       await this.getOp(this.selectYear.fecha_captura)
       await this.getComplaintsPerResposne(this.selectYear.fecha_captura)
       await this.complaintsPerIlicit(this.selectYear.fecha_captura)
@@ -1134,14 +1159,14 @@ export default {
       }
     },
     // Denuncias por ilicitio denunciado
-    async getComplaintsPerIlicits (ilicit, selectYear) {
-      // // console.log(zone)
-      // // console.log(subzone)
+    async getComplaintsPerIlicits (ilicit, zone, subZone, selectYear) {
+      console.log(zone)
+      console.log(subZone)
       // // console.log(selectYear)
       // // console.log('hola')
       this.seriesComplaintsIlicitsPerMonth[0].data = []
       let filterFlag = false
-      if (ilicit) {
+      if (ilicit || zone || subZone) {
         filterFlag = true
       } else {
         filterFlag = false
@@ -1172,6 +1197,37 @@ export default {
           temporalComplaints = resTemporal.filter(x => parseInt(x.idilicit_denounced) === parseInt(ilicit))
         }
         // console.log(temporalComplaints)
+        if (zone && temporalComplaints.length > 0) {
+          temporalComplaints = temporalComplaints.filter((x) => {
+            const findZone = x.list_subzoning_complaint.find(y => parseInt(y.idzoning) === parseInt(zone))
+            if (findZone) {
+              return x
+            }
+          })
+        } else if (zone) {
+          temporalComplaints = resTemporal.filter((x) => {
+            const findZone = x.list_subzoning_complaint.find(y => parseInt(y.idzoning) === parseInt(zone))
+            if (findZone) {
+              return x
+            }
+          })
+        }
+        if (subZone && temporalComplaints.length > 0) {
+          temporalComplaints = temporalComplaints.filter((x) => {
+            const findSubZone = x.list_subzoning_complaint.find(y => parseInt(y.idsubzoning) === parseInt(subZone))
+            if (findSubZone) {
+              return x
+            }
+          })
+        } else if (subZone) {
+          temporalComplaints = resTemporal.filter((x) => {
+            const findSubZone = x.list_subzoning_complaint.find(y => parseInt(y.idsubzoning) === parseInt(subZone))
+            if (findSubZone) {
+              return x
+            }
+          })
+        }
+        console.log(temporalComplaints)
         if (temporalComplaints.length > 0) {
           for (let i = 0; i < 12; i++) {
             const temporalFilter = temporalComplaints.filter((x) => {
@@ -1198,7 +1254,7 @@ export default {
             )
           }
           this.complaintsIlicits = resTemporal
-          // console.log(resTemporal)
+          console.log(resTemporal)
           // console.log(this.seriesComplaintsIlicitsPerMonth[0].data)
         } else {
           // console.log(resTemporal)
