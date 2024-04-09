@@ -225,7 +225,7 @@
           <div class="card">
             <header class="card-header">
               <p class="card-header-title">
-                Denuncias por ilícito denunciado
+                Denuncias por tipo de ilícito
               </p>
             </header>
             <div class="card-content">

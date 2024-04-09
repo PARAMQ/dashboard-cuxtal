@@ -102,7 +102,7 @@
                 class="has-text-primary"
                 title="Filtros"
                 @click="$emit('filters')"
-                ><b-icon icon="filter" />
+              ><b-icon icon="filter" />
                 <span class="is-hidden-desktop">Filtros</span>
               </a>
             </template>
@@ -125,7 +125,7 @@
                       size="is-small"
                       type="is-warning"
                       @click="$emit('clearFilters')"
-                  /></a>
+                    /></a>
                 </footer>
               </div>
             </b-dropdown-item>
@@ -141,7 +141,7 @@
                 onChecked([]),
                 $emit('change-view', 'table')
             "
-            ><b-icon icon="table-large" />
+          ><b-icon icon="table-large" />
             <span class="is-hidden-desktop">Vista de tabla</span>
           </a>
           <a
@@ -151,7 +151,7 @@
             @click="
               ;(viewMode = 'grid'), onChecked([]), $emit('change-view', 'grid')
             "
-            ><b-icon icon="view-grid" />
+          ><b-icon icon="view-grid" />
             <span class="is-hidden-desktop">Vista de tarjetas</span>
           </a>
         </p>

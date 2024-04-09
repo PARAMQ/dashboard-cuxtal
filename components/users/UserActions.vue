@@ -11,7 +11,7 @@
           <b-icon icon="dots-vertical" />
         </span>
       </template>
-      <template >
+      <template>
         <div v-if="canEdit" class="has-text-dark" @click="$emit('edit', item)">
           <b-dropdown-item aria-role="listitem">
             <b-icon pack="uil" icon="pen" />

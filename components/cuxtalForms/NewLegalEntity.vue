@@ -26,10 +26,10 @@
               <b-select v-model="form.idtype_legal_entity" placeholder="Selecciona una opción">
                 <option
                   v-for="option in types"
-                  :value="option.idtype_legal_entity"
                   :key="option.idtype_legal_entity"
-                  >
-                    {{ option.description }}
+                  :value="option.idtype_legal_entity"
+                >
+                  {{ option.description }}
                 </option>
               </b-select>
             </b-field>

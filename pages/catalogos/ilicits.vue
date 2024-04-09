@@ -173,15 +173,18 @@ export default {
       hasEdit: false,
       params: {
         _t: Date.now()
-      }
+      },
+      incidents: []
     }
   },
   mounted () {
     this.getData()
+    this.getIncidents()
   },
   methods: {
     viewVeg (vegetation) {
       this.vegetation = vegetation
+      this.findIncident(vegetation.idilicit_denounced)
       this.selectVeg = true
     },
     cancelEdit () {
@@ -196,6 +199,9 @@ export default {
           'modules/ilicitDenounced/createOrUpdateIlicitDenounced',
           this.vegetation
         )
+        const incident = this.findIncident(this.vegetation.idilicit_denounced)
+        incident.description = this.vegetation.description
+        await this.$store.dispatch('modules/incidents/createOrUpdateIncident', incident)
         this.vegetation = {}
         this.selectVeg = false
         this.hasEdit = false
@@ -224,6 +230,8 @@ export default {
               'modules/ilicitDenounced/deleteIlicitDenounced',
               vegetation
             )
+            const incident = this.findIncident(vegetation.idilicit_denounced)
+            await this.$store.dispatch('modules/incidents/deleteIncident', incident)
             this.getData()
             this.vegetation = {}
             this.selectVeg = false
@@ -256,6 +264,22 @@ export default {
         this.vegetacion = res
       } catch (error) {
         // // console.log(error)
+      }
+    },
+    findIncident (id) {
+      const res = this.incidents.find(x => x.idincidents === id)
+      console.log(res)
+      return res
+    },
+    async getIncidents () {
+      try {
+        const res = await this.$store.dispatch(
+          'modules/incidents/getIncidents'
+        )
+        this.incidents = res
+        console.log(this.incidents)
+      } catch (error) {
+        console.log(error)
       }
     }
   }

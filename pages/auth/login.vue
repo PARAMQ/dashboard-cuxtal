@@ -1,7 +1,7 @@
 <template>
   <ValidationObserver v-slot="{ handleSubmit }">
     <section class="hero is-fullheight">
-      <div class="hero-body" >
+      <div class="hero-body">
         <div class="login">
           <div class="card box">
             <div class="has-text-centered">
@@ -12,7 +12,7 @@
                   src="../../assets/cuxtal/cuxtal_merida.png"
                   width="200px"
                   alt="Logo"
-                />
+                >
               </figure>
             </div>
             <form @submit="false">
@@ -41,7 +41,7 @@
                 password-reveal
                 :normal="true"
               />
-              <hr />
+              <hr>
               <b-field>
                 <b-button
                   expanded

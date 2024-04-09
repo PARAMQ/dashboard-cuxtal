@@ -20,7 +20,9 @@
                 name="persona física"
                 normal
               />
-              <b-tag size="is-small">Actualmente: {{ form.individual ? form.individual : 'Dato no asignado' }}</b-tag>
+              <b-tag size="is-small">
+                Actualmente: {{ form.individual ? form.individual : 'Dato no asignado' }}
+              </b-tag>
             </div>
             <div class="column">
               <b-field label="Nombre de la persona moral">
@@ -37,7 +39,9 @@
                   </option>
                 </b-select>
               </b-field>
-              <b-tag size="is-small">Actualmente: {{ form.legal_entity ? form.legal_entity : 'Dato no asignado' }}</b-tag>
+              <b-tag size="is-small">
+                Actualmente: {{ form.legal_entity ? form.legal_entity : 'Dato no asignado' }}
+              </b-tag>
             </div>
             <div class="column">
               <b-field label="Tipo de persona moral">
@@ -54,7 +58,9 @@
                   </option>
                 </b-select>
               </b-field>
-              <b-tag size="is-small">Actualmente: {{ form.type_legal_entity ? form.type_legal_entity : 'Dato no asignado' }}</b-tag>
+              <b-tag size="is-small">
+                Actualmente: {{ form.type_legal_entity ? form.type_legal_entity : 'Dato no asignado' }}
+              </b-tag>
             </div>
           </div>
           <div>
@@ -66,7 +72,9 @@
                   name="titular/representante de la persona moral"
                   normal
                 />
-                <b-tag size="is-small">Actualmente: {{ form.holder_name ? form.holder_name : 'Dato no asignado' }}</b-tag>
+                <b-tag size="is-small">
+                  Actualmente: {{ form.holder_name ? form.holder_name : 'Dato no asignado' }}
+                </b-tag>
               </div>
             </div>
           </div>
@@ -79,7 +87,9 @@
                   name="número de oficio"
                   normal
                 />
-                <b-tag size="is-small">Actualmente: {{ form.folium ? form.folium : 'Dato no asignado' }}</b-tag>
+                <b-tag size="is-small">
+                  Actualmente: {{ form.folium ? form.folium : 'Dato no asignado' }}
+                </b-tag>
               </div>
               <div class="column">
                 <b-field label="Medio de solicitud">
@@ -96,7 +106,9 @@
                     </option>
                   </b-select>
                 </b-field>
-                <b-tag size="is-small">Actualmente: {{ form.application_method ? form.application_method : 'Dato no asignado' }}</b-tag>
+                <b-tag size="is-small">
+                  Actualmente: {{ form.application_method ? form.application_method : 'Dato no asignado' }}
+                </b-tag>
               </div>
               <div class="column">
                 <b-field label="Fecha de solicitud">
@@ -129,7 +141,9 @@
                 name="nombre del promovente"
                 normal
               />
-              <b-tag size=is-small>Actualmente: {{ form.applicant_name ? form.applicant_name : 'Dato no asignado' }}</b-tag>
+              <b-tag size="is-small">
+                Actualmente: {{ form.applicant_name ? form.applicant_name : 'Dato no asignado' }}
+              </b-tag>
             </div>
             <div class="column">
               <b-field label="Tipo de promovente">
@@ -146,7 +160,9 @@
                   </option>
                 </b-select>
               </b-field>
-              <b-tag size=is-small>Actualmente: {{ form.applicant_type ? form.applicant_type : 'Dato no asignado' }}</b-tag>
+              <b-tag size="is-small">
+                Actualmente: {{ form.applicant_type ? form.applicant_type : 'Dato no asignado' }}
+              </b-tag>
             </div>
           </div>
           <div class="columns">
@@ -165,7 +181,9 @@
                   </option>
                 </b-select>
               </b-field>
-              <b-tag size="is-small">Actualmente: {{ form.request_motive ? form.request_motive : 'Dato no asignado' }}</b-tag>
+              <b-tag size="is-small">
+                Actualmente: {{ form.request_motive ? form.request_motive : 'Dato no asignado' }}
+              </b-tag>
             </div>
             <div class="column">
               <b-field label="Descripción del motivo">
@@ -182,7 +200,9 @@
                   </option>
                 </b-select>
               </b-field>
-              <b-tag size="is-small">Actualmente: {{ form.motive_description ? form.motive_description : 'Dato no asignado' }}</b-tag>
+              <b-tag size="is-small">
+                Actualmente: {{ form.motive_description ? form.motive_description : 'Dato no asignado' }}
+              </b-tag>
             </div>
             <div class="column">
               <BInputWithValidation
@@ -191,7 +211,9 @@
                 name="superficie solicitada(Ha)"
                 normal
               />
-              <b-tag size="is-small">Actualmente: {{ form.surface_affected ? form.surface_affected : 'Dato no asignado' }}</b-tag>
+              <b-tag size="is-small">
+                Actualmente: {{ form.surface_affected ? form.surface_affected : 'Dato no asignado' }}
+              </b-tag>
             </div>
           </div>
           <div class="columns">
@@ -202,7 +224,9 @@
                 name="dirección del predio"
                 normal
               />
-              <b-tag size="is-small">Actualmente: {{ form.address ? form.address : 'Dato no asignado' }}</b-tag>
+              <b-tag size="is-small">
+                Actualmente: {{ form.address ? form.address : 'Dato no asignado' }}
+              </b-tag>
             </div>
             <div class="column">
               <b-field label="Tenencia del predio">
@@ -219,7 +243,9 @@
                   </option>
                 </b-select>
               </b-field>
-              <b-tag size="is-small">Actualmente: {{ form.tenure ? form.tenure : 'Dato no asignado' }}</b-tag>
+              <b-tag size="is-small">
+                Actualmente: {{ form.tenure ? form.tenure : 'Dato no asignado' }}
+              </b-tag>
             </div>
           </div>
           <div class="divider">
@@ -371,7 +397,9 @@
                     </option>
                   </b-select>
                 </b-field>
-                <b-tag size="is-small">Actualmente: {{ form.response_op ? form.response_op : 'Dato no asignado' }}</b-tag>
+                <b-tag size="is-small">
+                  Actualmente: {{ form.response_op ? form.response_op : 'Dato no asignado' }}
+                </b-tag>
               </div>
               <div class="column">
                 <b-field label="Fecha de respuesta">
@@ -392,7 +420,9 @@
                   normal
                 />
               </div>
-              <b-tag size="is-small">Actualmente: {{ form.other ? form.other : 'Dato no asignado' }}</b-tag>
+              <b-tag size="is-small">
+                Actualmente: {{ form.other ? form.other : 'Dato no asignado' }}
+              </b-tag>
             </div>
           </div>
           <div class="divider">
@@ -416,8 +446,12 @@
                 </b-field>
                 <br>
               </b-field>
-              <b-button v-if="form.request_doc" @click="downloadFile(form.request_doc, 'oficio')">Descargar archivo existente</b-button>
-              <b-tag v-else>Sin archivo actualmente</b-tag>
+              <b-button v-if="form.request_doc" @click="downloadFile(form.request_doc, 'oficio')">
+                Descargar archivo existente
+              </b-button>
+              <b-tag v-else>
+                Sin archivo actualmente
+              </b-tag>
             </div>
             <div class="column">
               <b-field label="Oficio de respuesta">
@@ -439,15 +473,23 @@
                   </b-upload>
                 </b-field>
               </b-field>
-              <b-button v-if="form.response_doc" @click="downloadFile(form.response_doc, 'respuesta')">Descargar archivo existente</b-button>
-              <b-tag v-else>Sin archivo actualmente</b-tag>
+              <b-button v-if="form.response_doc" @click="downloadFile(form.response_doc, 'respuesta')">
+                Descargar archivo existente
+              </b-button>
+              <b-tag v-else>
+                Sin archivo actualmente
+              </b-tag>
             </div>
           </div>
           <br>
         </form>
         <div class="container m-2 has-text-centered">
-          <b-button @click="close"><strong>Cerrar</strong></b-button>
-          <b-button type="is-success" @click="createOrUpdate"><strong>Guardar</strong></b-button>
+          <b-button @click="close">
+            <strong>Cerrar</strong>
+          </b-button>
+          <b-button type="is-success" @click="createOrUpdate">
+            <strong>Guardar</strong>
+          </b-button>
         </div>
       </div>
     </div>

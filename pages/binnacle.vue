@@ -120,18 +120,10 @@
                 <p>
                   <strong>Fecha: </strong>
                   {{
-                    bitacora.date ? bitacora.date : 'No hay fecha registrada'
+                    bitacora.date ? (bitacora.date.getDate() + '/' + (bitacora.date.getMonth() + 1) + '/' + bitacora.date.getFullYear()) : 'No hay fecha registrada'
                   }}
                 </p>
                 <br>
-                <p>
-                  <strong>Relatoría: </strong>
-                  {{
-                    bitacora.rapporteur
-                      ? bitacora.rapporteur
-                      : 'No hay relatoría'
-                  }}
-                </p>
               </div>
               <div class="m-2">
                 <p class="has-text-grey">
@@ -287,7 +279,13 @@ export default {
         this.binnacles = await this.$store.dispatch(
           'modules/binnacles/getBinnacles'
         )
-        this.binnaclesFilter = this.binnacles
+        const temporal = this.binnacles.map((x) => {
+          x.date = new Date(x.date)
+          return x
+        })
+        // console.log(temporal)
+        temporal.sort((a, b) => b.date - a.date)
+        this.binnaclesFilter = temporal
         // \this.getCoordinates(this.binnacles)
         this.isLoadingBinnacles = false
       } catch (error) {

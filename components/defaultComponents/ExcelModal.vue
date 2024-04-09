@@ -70,7 +70,7 @@
               </span>
             </div>
           </div>
-          <hr class="navbar-divider" />
+          <hr class="navbar-divider">
           <b-collapse
             :open="false"
             position="is-top"
@@ -78,12 +78,12 @@
           >
             <template #trigger="props">
               <a class="has-text-primary" aria-controls="contentIdForA11y1">
-                <b-icon :icon="!props.open ? 'menu-down' : 'menu-up'"></b-icon>
+                <b-icon :icon="!props.open ? 'menu-down' : 'menu-up'" />
                 <small>{{ !props.open ? 'Ver formato' : 'Ocultar formato' }}</small>
               </a>
             </template>
-            <b-table v-if="type === 'clients'" style="font-size: 15px;" :data="clientData" :columns="clientColumns"></b-table>
-            <b-table v-else-if="type === 'policies'" style="font-size: 15px;" :data="policyData" :columns="policyColumns"></b-table>
+            <b-table v-if="type === 'clients'" style="font-size: 15px;" :data="clientData" :columns="clientColumns" />
+            <b-table v-else-if="type === 'policies'" style="font-size: 15px;" :data="policyData" :columns="policyColumns" />
             <strong style="font-size: 12px;" class="has-text-info">* Todos los campos son obligatorios</strong>
           </b-collapse>
         </section>

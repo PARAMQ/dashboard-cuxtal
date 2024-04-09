@@ -61,6 +61,7 @@ export default {
       try {
         this.isLoading = true
         await this.$store.dispatch('modules/ilicitDenounced/createOrUpdateIlicitDenounced', this.form)
+        await this.$store.dispatch('modules/incidents/createOrUpdateIncident', this.form)
         this.form = {}
         this.isLoading = false
         this.$buefy.toast.open({

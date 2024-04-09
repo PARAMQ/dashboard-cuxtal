@@ -147,8 +147,8 @@
                             v-for="option in types"
                             :key="option.idtype_legal_entity"
                             :value="option.idtype_legal_entity"
-                            >
-                              {{ option.description }}
+                          >
+                            {{ option.description }}
                           </option>
                         </b-select>
                       </b-field>

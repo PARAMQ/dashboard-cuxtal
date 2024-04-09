@@ -22,8 +22,7 @@
                   normal
                 />
               </div>
-              <div>
-              </div>
+              <div />
               <div v-if="!isParticular" class="column is-flex is-justify-content-center">
                 <b-field label="Nombre de la persona moral">
                   <b-select

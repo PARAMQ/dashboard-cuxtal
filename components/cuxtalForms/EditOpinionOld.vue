@@ -4,7 +4,7 @@
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
-          Editar opinión técnica {{  }}
+          Editar opinión técnica {{ }}
         </p>
       </div>
       <div class="card-content">

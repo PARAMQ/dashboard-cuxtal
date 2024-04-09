@@ -18,14 +18,8 @@
             <div class="columns">
               <div class="column">
                 <b-field label="Estado de la bitácora">
-                  <b-select
-                    v-model="form.status"
-                  >
-                    <option
-                      v-for="option in estados"
-                      :key="option.value"
-                      :value="option.value"
-                    >
+                  <b-select v-model="form.status">
+                    <option v-for="option in estados" :key="option.value" :value="option.value">
                       {{ option.label }}
                     </option>
                   </b-select>
@@ -33,14 +27,20 @@
               </div>
               <div class="column">
                 <b-field label="¿Fue procesado?">
-                  <b-checkbox
-                    v-model="form.isprocessed"
-                    true-value="Si"
-                    false-value="No"
-                  >
+                  <b-checkbox v-model="form.isprocessed" true-value="Si" false-value="No">
                     {{ form.isprocessed }}
                   </b-checkbox>
                 </b-field>
+              </div>
+              <div class="column">
+                <BInputWithValidation
+                  v-model="form.ha"
+                  label="Area (Ha)"
+                  name="area"
+                  label-position="inside"
+                  rules="required"
+                  normal
+                />
               </div>
             </div>
             <div class="columns">
@@ -68,10 +68,7 @@
               <div
                 class="column is-3 is-flex is-flex-direction-column is-justify-content-center has-text-centered"
               >
-                <b-notification
-                  v-model="validateHours"
-                  aria-close-label="Close notification"
-                >
+                <b-notification v-model="validateHours" aria-close-label="Close notification">
                   Es necesario que ingreses una hora de inicio y una hora de
                   fin.
                 </b-notification>
@@ -183,6 +180,25 @@
                 </b-field>
               </div>
               <div class="column">
+                <b-field label="Ilícitos">
+                  <b-taginput
+                    v-model="form.list_incidents"
+                    :data="incidentsFilter"
+                    field="description"
+                    autocomplete
+                    :open-on-focus="true"
+                    @typing="filterIncident"
+                  >
+                    <template v-slot="props">
+                      <strong>{{ props.option.description }}</strong>
+                    </template>
+                    <template #empty>
+                      Sin resultados
+                    </template>
+                  </b-taginput>
+                </b-field>
+              </div>
+              <div class="column">
                 <b-field label="Zonas operativas">
                   <b-taginput
                     v-model="form.list_operative_zones"
@@ -255,11 +271,7 @@
                     Ver punto
                   </b-button>
                 </div>
-                <div
-                  v-for="pointCoord in points"
-                  :key="pointCoord.name"
-                  class="container m-3"
-                >
+                <div v-for="pointCoord in points" :key="pointCoord.name" class="container m-3">
                   <div class="control">
                     <b-tag
                       type="is-primary"
@@ -281,19 +293,13 @@
                   data-projection="EPSG:4326"
                   style="height: 400px"
                 >
-                  <vl-view
-                    :zoom.sync="zoom"
-                    :center.sync="ViewPoint"
-                    :rotation.sync="rotation"
-                  />
+                  <vl-view :zoom.sync="zoom" :center.sync="ViewPoint" :rotation.sync="rotation" />
 
                   <vl-layer-tile>
                     <vl-source-osm />
                   </vl-layer-tile>
 
-                  <vl-feature
-                    v-if="viewActive"
-                  >
+                  <vl-feature v-if="viewActive">
                     <vl-geom-point :coordinates="ViewPoint" />
                     <vl-style>
                       <vl-style-circle :radius="5">
@@ -355,12 +361,7 @@
                 </section>
               </div>
             </div>
-            <ButtonGroup
-              :handle-submit="handleSubmit"
-              saving
-              @save="createOrUpdate"
-              @cancel="close"
-            />
+            <ButtonGroup :handle-submit="handleSubmit" saving @save="createOrUpdate" @cancel="close" />
           </form>
         </ValidationObserver>
       </section>
@@ -450,7 +451,9 @@ export default {
           label: 'Por revisar',
           value: 'por-revisar'
         }
-      ]
+      ],
+      incidents: [],
+      incidentsFilter: []
     }
   },
   watch: {
@@ -475,6 +478,7 @@ export default {
     this.getVegetation()
     this.getSubZones()
     this.getOpZones()
+    this.getIncidents()
   },
   methods: {
     // Funciones generales
@@ -652,7 +656,7 @@ export default {
       this.vehiclesFilter = this.vehicles.filter((option) => {
         if (
           option.number &&
-          option.number.toString().toLowerCase().includes(text.toLowerCase())
+                    option.number.toString().toLowerCase().includes(text.toLowerCase())
         ) {
           return option
         }
@@ -682,7 +686,7 @@ export default {
       this.participantsFilter = this.participants.filter((option) => {
         if (
           option.name &&
-          option.name.toString().toLowerCase().includes(text.toLowerCase())
+                    option.name.toString().toLowerCase().includes(text.toLowerCase())
         ) {
           return option
         }
@@ -702,10 +706,10 @@ export default {
       this.opZonesFilter = this.opZones.filter((option) => {
         if (
           option.description &&
-          option.description
-            .toString()
-            .toLowerCase()
-            .includes(text.toLowerCase())
+                    option.description
+                      .toString()
+                      .toLowerCase()
+                      .includes(text.toLowerCase())
         ) {
           return option
         }
@@ -725,10 +729,10 @@ export default {
       this.subZonesFilter = this.subZones.filter((option) => {
         if (
           option.description &&
-          option.description
-            .toString()
-            .toLowerCase()
-            .includes(text.toLowerCase())
+                    option.description
+                      .toString()
+                      .toLowerCase()
+                      .includes(text.toLowerCase())
         ) {
           return option
         }
@@ -750,10 +754,10 @@ export default {
       this.vegetationFilter = this.vegetation.filter((option) => {
         if (
           option.description &&
-          option.description
-            .toString()
-            .toLowerCase()
-            .includes(text.toLowerCase())
+                    option.description
+                      .toString()
+                      .toLowerCase()
+                      .includes(text.toLowerCase())
         ) {
           return option
         }
@@ -849,12 +853,35 @@ export default {
       const latLng = utm.toLatLon(coords[0], coords[1], '16', 'T')
       return [latLng.longitude, latLng.latitude]
     },
-    convertCoordinatesFromUtm (coords) {},
+    convertCoordinatesFromUtm (coords) { },
     viewPoint () {
       // // console.log(this.temporalPoint)
       this.ViewPoint = this.convertCoordinatesToUtm(this.temporalPoint)
       this.viewActive = true
       // // console.log(this.ViewPoint)
+    },
+    async getIncidents () {
+      try {
+        const res = await this.$store.dispatch('modules/incidents/getIncidents')
+        this.incidents = res
+        this.incidentsFilter = res
+        console.log(this.incidents)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    filterIncident (text) {
+      this.incidentsFilter = this.incidents.filter((option) => {
+        if (
+          option.description &&
+          option.description
+            .toString()
+            .toLowerCase()
+            .includes(text.toLowerCase())
+        ) {
+          return option
+        }
+      })
     }
   }
 }

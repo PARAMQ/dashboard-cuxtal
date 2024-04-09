@@ -45,7 +45,7 @@
               />
             </div>
           </div>
-          <div class="level-right"></div>
+          <div class="level-right" />
         </nav>
       </div>
       <div class="column">

@@ -2,14 +2,14 @@ import request from './config'
 
 export const getIncidents = () => {
   return request({
-    url: '/apiIncidents.php/incidentss',
+    url: '/apiIncidents.php/incidents',
     method: 'GET'
   })
 }
 
 export const createOrUpdateIncident = (data) => {
   return request({
-    url: '/apiIncidents.php/incidents',
+    url: '/apiIncidents.php/incident',
     method: 'POST',
     data
   })
@@ -17,7 +17,7 @@ export const createOrUpdateIncident = (data) => {
 
 export const deleteIncident = (data) => {
   return request({
-    url: '/apiIncidents.php/aincidents',
+    url: '/apiIncidents.php/incident',
     method: 'DELETE',
     data
   })
@@ -25,7 +25,7 @@ export const deleteIncident = (data) => {
 
 export const getInfoIncident = (id) => {
   return request({
-    url: '/apiIncidents.php/incidents/' + id,
+    url: '/apiIncidents.php/incident/' + id,
     method: 'GET'
   })
 }

@@ -30,7 +30,7 @@
                     <span class="title is-7">
                       {{ user.license.business_name }}
                     </span>
-                    <br />
+                    <br>
                     <small class="has-text-weight-light">ParamQ</small>
                   </div>
                 </div>

@@ -1,13 +1,13 @@
 <template>
-    <section class='hero mt-4'>
-        <div class="card">
-            <div class="card-container">
-                <h1 class="title">
-                    En construcción.
-                </h1>
-            </div>
-        </div>
-    </section>
+  <section class="hero mt-4">
+    <div class="card">
+      <div class="card-container">
+        <h1 class="title">
+          En construcción.
+        </h1>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script>

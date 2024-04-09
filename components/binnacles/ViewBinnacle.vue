@@ -317,6 +317,13 @@
                   </b-field>
                 </div>
                 <div class="column">
+                  <b-field label="Area (Ha)">
+                    <p>
+                      {{ form.ha ? form.ha : 'Hectáreas no registradas' }}
+                    </p>
+                  </b-field>
+                </div>
+                <div class="column">
                   <b-button
                     type="is-success"
                     @click="updateStatusBinnacle"
@@ -517,6 +524,79 @@
           </div>
         </div>
         <div class="container">
+          <div class="columns">
+            <div class="column">
+              <div class="divider">
+                <strong>Ilícitos</strong>
+              </div>
+              <div v-if="form.list_incidents.length > 0" class="container">
+                <div
+                  v-for="va in form.list_incidents"
+                  :key="va.idincidents"
+                  class="m-2"
+                >
+                  <b-tag type="is-light" size="is-medium">
+                    {{ va.description }}
+                  </b-tag>
+                </div>
+              </div>
+              <div v-else class="container has-text-centered">
+                <p>Sin vegetación</p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="divider">
+                <strong>Zonas de vigilancia</strong>
+              </div>
+              <div
+                v-if="form.list_operative_zones.length > 0"
+                class="container"
+              >
+                <div
+                  v-for="opZone in form.list_operative_zones"
+                  :key="opZone.idoperative_zones"
+                  class="m-2"
+                >
+                  <b-tag type="is-light" size="is-medium">
+                    {{ opZone.description }}
+                  </b-tag>
+                </div>
+              </div>
+              <div v-else class="container has-text-centered">
+                <p>Sin zonas de vigilancia</p>
+              </div>
+            </div>
+            <div class="column is-6">
+              <div class="divider">
+                <strong>Zonificación y Subzonificación PM</strong>
+              </div>
+              <div v-if="form.temporalZoning.length > 0" class="container">
+                <div
+                  v-for="subzone in form.temporalZoning"
+                  :key="subzone.idsubzoning"
+                  class="m-2"
+                >
+                  <b-taglist attached>
+                    <b-tag type="is-light" size="is-medium">
+                      {{ subzone.description }}
+                    </b-tag>
+                    <b-tag type="is-info is-light" size="is-medium">
+                      {{
+                        subzone.zoning
+                          ? subzone.zoning.description
+                          : 'Sin zoníficacion asignada'
+                      }}
+                    </b-tag>
+                  </b-taglist>
+                </div>
+              </div>
+              <div v-else class="container has-text-centered">
+                <p>Sin zonificación y subzonificación PM</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="container">
           <div class="divider">
             <strong>Coordenadas registradas</strong>
           </div>
@@ -654,7 +734,8 @@ export default {
         temporalZoning: [],
         list_operative_zones: [],
         vegetableAffected: [],
-        list_vehicle: []
+        list_vehicle: [],
+        list_incidents: []
       },
       isLoading: false,
       hourInit: new Date(),

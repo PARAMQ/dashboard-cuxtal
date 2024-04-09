@@ -11,7 +11,7 @@
             rules="required"
             normal
           />
-          <br />
+          <br>
           <BInputWithValidation
             v-model="form.username"
             label="Usuario"
@@ -20,7 +20,7 @@
             rules="required"
             normal
           />
-          <br />
+          <br>
           <BInputWithValidation
             v-model="form.password"
             rules="min:8"
@@ -42,7 +42,7 @@
             rules="required"
             normal
           />
-          <br />
+          <br>
           <BInputWithValidation
             v-model="form.email"
             label-position="on-border"
@@ -51,7 +51,7 @@
             rules="required"
             normal
           />
-          <br />
+          <br>
           <BInputWithValidation
             v-model="form.password_confirm"
             rules="confirmed:password"

@@ -25,13 +25,13 @@
             <b-field class="file is-primary" :class="{'has-name': !!file}">
               <b-upload v-model="file" class="file-label">
                 <span class="file-cta">
-                  <b-icon class="file-icon" icon="upload"></b-icon>
+                  <b-icon class="file-icon" icon="upload" />
                   <span class="file-label">Subir archivo (solo DBF)</span>
                 </span>
                 <span v-if="loadingGetCoordinates">
                   Procesando archivo...
                 </span>
-                <span class="file-name" v-if="file">
+                <span v-if="file" class="file-name">
                   {{ file.name }}
                 </span>
               </b-upload>
