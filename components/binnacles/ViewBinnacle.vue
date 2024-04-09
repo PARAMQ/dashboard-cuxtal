@@ -804,7 +804,8 @@ export default {
         temporalZoning: [],
         list_operative_zones: [],
         vegetableAffected: [],
-        list_vehicle: []
+        list_vehicle: [],
+        list_incidents: []
       }
       this.temporalPoint = [224190.791, 2311022.379]
       this.ViewPoint = [-89.60984537598705, 20.85610769792424]

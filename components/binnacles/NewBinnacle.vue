@@ -154,6 +154,103 @@
                     </template>
                   </b-taginput>
                 </b-field>
+                <b-button
+                  v-if="!activeAddParticipant"
+                  type="is-primary is-ligth"
+                  @click="activeAddParticipant = true"
+                >
+                  Agregar ciudadano
+                </b-button>
+                <div v-if="activeAddParticipant" class="card">
+                  <header class="card-header">
+                    <p class="card-header-title">
+                      <strong>Agregar Ciudadano</strong>
+                    </p>
+                  </header>
+                  <div class="card-content">
+                    <b-loading
+                      v-model="isLoadingParticipant"
+                      :is-full-page="false"
+                      :can-cancel="false"
+                    />
+                    <form>
+                      <b-field horizontal label="Nombre">
+                        <b-input
+                          v-model="formParticipant.name"
+                          name="Nombre"
+                          type="text"
+                        />
+                      </b-field>
+                      <b-field horizontal label="Apellido">
+                        <b-input
+                          v-model="formParticipant.lastname"
+                          name="Nombre"
+                          type="text"
+                        />
+                      </b-field>
+                      <b-field horizontal label="Calle">
+                        <b-input
+                          v-model="formParticipant.street"
+                          name="Calle"
+                          type="text"
+                        />
+                      </b-field>
+                      <b-field horizontal label="Número">
+                        <b-input
+                          v-model="formParticipant.number"
+                          name="Número"
+                          type="text"
+                        />
+                      </b-field>
+                      <b-field horizontal label="Colonia">
+                        <b-input
+                          v-model="formParticipant.settle"
+                          name="Colonia"
+                          type="text"
+                        />
+                      </b-field>
+                      <b-field horizontal label="Municipio">
+                        <b-input
+                          v-model="formParticipant.municipality"
+                          name="Municipio"
+                          type="text"
+                        />
+                      </b-field>
+                      <b-field horizontal label="Estado">
+                        <b-input
+                          v-model="formParticipant.state"
+                          name="Estado"
+                          type="text"
+                        />
+                      </b-field>
+                      <b-field horizontal label="Código postal">
+                        <b-input
+                          v-model="formParticipant.zip_code"
+                          name="Código postal"
+                          type="text"
+                        />
+                      </b-field>
+                    </form>
+                  </div>
+                  <footer class="card-footer">
+                    <div class="card-footer-item">
+                      <b-button
+                        type="is-danger is-light"
+                        @click="cancelParticipant"
+                      >
+                        Cancelar
+                      </b-button>
+                    </div>
+                    <div class="card-footer-item">
+                      <b-button
+                        type="is-success is-light"
+                        @click="createParticipant"
+                      >
+                        Agregar
+                      </b-button>
+                    </div>
+                  </footer>
+                </div>
               </div>
             </div>
             <div class="divider">
@@ -399,6 +496,9 @@ export default {
         status: 'por-revisar',
         isprocessed: 'No'
       },
+      activeAddParticipant: false,
+      formParticipant: {},
+      isLoadingParticipant: false,
       isLoading: false,
       hourInit: new Date(),
       hourEnd: new Date(),
@@ -882,6 +982,29 @@ export default {
           return option
         }
       })
+    },
+    async createParticipant () {
+      try {
+        this.isLoadingParticipant = true
+        await this.$store.dispatch(
+          'modules/participants/createOrUpdateParticipant',
+          this.formParticipant
+        )
+        this.$buefy.toast.open({
+          message: '¡Ciudadano guardado!',
+          type: 'is-success'
+        })
+        this.getParticipants()
+        this.formParticipant = {}
+        this.isLoadingParticipant = false
+        this.activeAddParticipant = false
+      } catch (error) {
+        // // console.log(error)
+      }
+    },
+    cancelParticipant () {
+      this.formParticipant = {}
+      this.activeAddParticipant = false
     }
   }
 }
