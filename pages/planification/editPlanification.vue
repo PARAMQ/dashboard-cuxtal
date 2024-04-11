@@ -160,14 +160,6 @@
                     }}
                   </p>
                   <br>
-                  <p>
-                    <strong>Relatoría: </strong>
-                    {{
-                      bitacora.rapporteur
-                        ? bitacora.rapporteur
-                        : 'No hay relatoría'
-                    }}
-                  </p>
                 </div>
                 <div class="m-2">
                   <p class="has-text-grey">

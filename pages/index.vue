@@ -75,8 +75,8 @@
             <apexchart
               width="400"
               type="donut"
-              :options="optionsPlanification"
-              :series="seriesPlanification"
+              :options="optionsPlanification2"
+              :series="seriesPlanification2"
             />
           </div>
           <div v-else class="card-content has-text-centered">
@@ -90,7 +90,7 @@
             </div>
             <div class="card-footer-item">
               <p>
-                Recorridos registrados:
+                Recorridos finalizados:
                 <strong>{{ planification.length }}</strong>
               </p>
             </div>
@@ -228,6 +228,7 @@ export default {
       series: [],
       seriesBinnacles: [],
       seriesPlanification: [],
+      seriesPlanification2: [],
       options: {
         labels: ['Opiniones técnicas', 'Denuncias']
       },
@@ -236,6 +237,9 @@ export default {
       },
       optionsPlanification: {
         labels: ['En proceso', 'Finalizado', 'Por comenzar']
+      },
+      optionsPlanification2: {
+        labels: ['Programados', 'Finalizado']
       },
       optionsPlansPerMonth: {
         labels: [
@@ -445,6 +449,10 @@ export default {
           Number(processPlanification.length),
           Number(finallyPlanification.length),
           Number(activePlanification.length)
+        ]
+        this.seriesPlanification2 = [
+          Number(parseInt(this.selectYear.dato)),
+          Number(parseInt(res.length))
         ]
       } catch (error) {
         // console.log(error)

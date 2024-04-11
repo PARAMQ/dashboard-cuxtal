@@ -1425,7 +1425,7 @@ export default {
         // // console.log(error)
       }
     },
-    // Opiniones técnicas
+    // Opiniones técnicas por tipo de respuesta
     async getOp (selectYear) {
       this.seriesOp = []
       try {

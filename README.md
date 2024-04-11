@@ -18,6 +18,14 @@ To launch server run `npm run start`
 
 To generate static project run `npm run generate`
 
+### Deploy static project
+
+First, run `npm run generate`
+
+The build for project can find in `/dist` folder
+
+latter, run `deploy-main:gh-pages`
+
 ## Browser Support
 
 We try to make sure Dashboard works well in the latest versions of all major browsers
