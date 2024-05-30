@@ -69,7 +69,8 @@ export default {
     { src: '~/plugins/vue-charts.js', mode: 'client' },
     { src: '~/plugins/gmap.js', mode: 'client' },
     { src: '~/plugins/vue-calendar.js', mode: 'client' },
-    { src: '~/plugins/carousel.js', mode: 'client' }
+    { src: '~/plugins/carousel.js', mode: 'client' },
+    { src: '~/plugins/month-picker.js', mode: 'client' }
   ],
   /*
    ** Nuxt.js dev-modules

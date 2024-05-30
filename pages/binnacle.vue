@@ -37,6 +37,14 @@
           </b-autocomplete>
         </b-field>
       </section>
+      <section class="m-2 has-text-centered">
+        <b-button @click="openModalFilter = true">Filtrar por mes y año</b-button>
+        <month-picker-filter
+          :is-open="openModalFilter"
+          @close="openModalFilter = false"
+          @getData="getDataFilter"
+        />
+      </section>
       <div class="columns m-2 binnalces">
         <div class="column">
           <div v-for="bitacora in binnaclesFilter" :key="bitacora.idbinnacle">
@@ -203,6 +211,7 @@ export default {
   name: 'Binnacle',
   data () {
     return {
+      openModalFilter: false,
       activeModal: false,
       activeViewModal: false,
       activeEditModal: false,
@@ -287,6 +296,33 @@ export default {
         temporal.sort((a, b) => b.date - a.date)
         this.binnaclesFilter = temporal
         // \this.getCoordinates(this.binnacles)
+        this.isLoadingBinnacles = false
+      } catch (error) {
+        // // console.log(error)
+      }
+    },
+    async getDataFilter (month, year) {
+      // console.log(month)
+      // console.log(year)
+      try {
+        this.isLoadingBinnacles = true
+        this.binnacles = await this.$store.dispatch(
+          'modules/binnacles/getBinnacles'
+        )
+        const temporal = this.binnacles.filter((x) => {
+          x.date = new Date(x.date)
+          if (x.date.getFullYear() === year && x.date.getMonth() === month) {
+            return x
+          }
+        })
+        if (temporal.length > 0) {
+          temporal.sort((a, b) => b.date - a.date)
+          this.binnaclesFilter = temporal
+        } else {
+          // console.log('no hay')
+          this.binnaclesFilter = []
+        }
+        this.openModalFilter = false
         this.isLoadingBinnacles = false
       } catch (error) {
         // // console.log(error)
