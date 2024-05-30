@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[30],{1205:function(t,n,e){"use strict";e.r(n);var r=e(1204);n.default={name:"line-chart",extends:r.a,mixins:[r.b.reactiveProp],props:{extraOptions:Object},data:function(){return{ctx:null}},mounted:function(){var t=this;this.$watch("chartData",(function(n,e){e||t.renderChart(t.chartData,t.extraOptions)}),{immediate:!0})}}}}]);
