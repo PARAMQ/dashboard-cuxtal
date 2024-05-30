@@ -32,6 +32,14 @@
           </b-autocomplete>
         </b-field>
       </section>
+      <section class="m-2 has-text-centered">
+        <b-button @click="openModalFilter = true">Filtrar por mes y año</b-button>
+        <month-picker-filter
+          :is-open="openModalFilter"
+          @close="openModalFilter = false"
+          @getData="getDataFilter"
+        />
+      </section>
       <div class="columns m-2 binnalces">
         <div v-if="data.length > 0" class="column">
           <div v-for="technicalOp in techOpFilter" :key="technicalOp.idtechnical_opinion">
@@ -153,6 +161,7 @@ export default {
   name: 'TechnicalOp',
   data () {
     return {
+      openModalFilter: false,
       isLoadingData: false,
       activeModal: false,
       data: [],
@@ -184,7 +193,36 @@ export default {
       try {
         this.isLoadingData = true
         this.data = await this.$store.dispatch('modules/technicalOp/getTechnicalOps')
-        this.techOpFilter = this.data
+        const temporal = this.data.map((x) => {
+          x.application_date = new Date(x.application_date)
+          return x
+        })
+        temporal.sort((a, b) => b.application_date - a.application_date)
+        this.techOpFilter = temporal
+        this.isLoadingData = false
+      } catch (error) {
+        // // console.log(error)
+      } finally {
+        this.isLoadingData = false
+      }
+    },
+    async getDataFilter (month, year) {
+      try {
+        this.isLoadingData = true
+        this.data = await this.$store.dispatch('modules/technicalOp/getTechnicalOps')
+        const temporal = this.data.filter((x) => {
+          x.application_date = new Date(x.application_date)
+          if (x.application_date.getFullYear() === year && x.application_date.getMonth() === month) {
+            return x
+          }
+        })
+        if (temporal.length > 0) {
+          temporal.sort((a, b) => b.application_date - a.application_date)
+          this.techOpFilter = temporal
+        } else {
+          this.techOpFilter = temporal
+        }
+        this.openModalFilter = false
         this.isLoadingData = false
       } catch (error) {
         // // console.log(error)

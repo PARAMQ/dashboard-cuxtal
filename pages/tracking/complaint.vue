@@ -33,6 +33,14 @@
           </b-autocomplete>
         </b-field>
       </section>
+      <section class="m-2 has-text-centered">
+        <b-button @click="openModalFilter = true">Filtrar por mes y año</b-button>
+        <month-picker-filter
+          :is-open="openModalFilter"
+          @close="openModalFilter = false"
+          @getData="getDataFilter"
+        />
+      </section>
       <div class="columns m-2 binnalces">
         <div v-if="data.length > 0" class="column">
           <div v-for="complaint in complaintFilter" :key="complaint.idcomplaint">
@@ -133,6 +141,7 @@ export default {
   name: 'Complaint',
   data () {
     return {
+      openModalFilter: false,
       isLoadingData: false,
       activeModal: false,
       data: [],
@@ -174,6 +183,34 @@ export default {
         // // console.log(complaints)
         this.data = complaints
         this.complaintFilter = complaints
+        this.isLoadingData = false
+      } catch (error) {
+        // // console.log(error)
+      } finally {
+        this.isLoadingData = false
+      }
+    },
+    async getDataFilter (month, year) {
+      try {
+        this.isLoadingData = true
+        this.data = await this.$store.dispatch('modules/complaint/getComplaints')
+        const complaints = this.data.filter((object) => {
+          object.date_reception = new Date(object.date_reception)
+          if (object.date_reception.getFullYear() === year && object.date_reception.getMonth() === month) {
+            const dependence = this.dependences.find(x => x.idcoordination === object.iddepto)
+            object.dependence = dependence
+            return object
+          }
+        })
+        if (complaints.length > 0) {
+          complaints.sort((a, b) => b.date_reception - a.date_reception)
+          this.data = complaints
+          this.complaintFilter = complaints
+        } else {
+          this.data = []
+          this.complaintFilter = []
+        }
+        this.openModalFilter = false
         this.isLoadingData = false
       } catch (error) {
         // // console.log(error)
