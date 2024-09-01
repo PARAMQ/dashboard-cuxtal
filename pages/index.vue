@@ -450,8 +450,9 @@ export default {
           Number(finallyPlanification.length),
           Number(activePlanification.length)
         ]
+        // console.log(`recorridos dados de alta en este año: ${res.length}`)
         this.seriesPlanification2 = [
-          Number(parseInt(this.selectYear.dato)),
+          Number(parseInt((this.selectYear.dato - res.length))),
           Number(parseInt(res.length))
         ]
       } catch (error) {
