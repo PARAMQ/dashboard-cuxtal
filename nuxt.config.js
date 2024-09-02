@@ -118,8 +118,8 @@ export default {
   router: {
     middleware: ['auth'],
     mode: 'hash',
-    // base: '/sistema-iv/'
-    base: '/'
+    base: '/sistema-iv/'
+    //base: '/'
   },
   pwa: {
     icon: {
